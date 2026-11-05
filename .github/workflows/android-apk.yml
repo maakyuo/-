@@ -38,28 +38,31 @@ jobs:
           python3 - <<'PY'
           import base64, io, zipfile
           raw = ''.join(open('project-source.zip.b64').read().split())
-          candidates = []
+          def valid(data):
+              try:
+                  with zipfile.ZipFile(io.BytesIO(data)) as z:
+                      return z.testzip() is None
+              except Exception:
+                  return False
+          data = None
           try:
-              data = base64.b64decode(raw, validate=True)
-              if zipfile.is_zipfile(io.BytesIO(data)):
-                  candidates.append(data)
+              candidate = base64.b64decode(raw, validate=True)
+              if valid(candidate):
+                  data = candidate
           except Exception:
               pass
-          if not candidates:
+          if data is None:
               for i in range(len(raw) - 1):
                   try:
-                      data = base64.b64decode(raw[:i] + raw[i+2:], validate=True)
-                      if zipfile.is_zipfile(io.BytesIO(data)):
-                          candidates.append(data)
+                      candidate = base64.b64decode(raw[:i] + raw[i+2:], validate=True)
+                      if valid(candidate):
+                          data = candidate
                           break
                   except Exception:
                       continue
-          if not candidates:
-              raise SystemExit('Source archive is corrupted; could not recover it')
-          with zipfile.ZipFile(io.BytesIO(candidates[0])) as archive:
-              bad = archive.testzip()
-              if bad:
-                  raise SystemExit(f'Corrupt ZIP entry: {bad}')
+          if data is None:
+              raise SystemExit('Could not reconstruct the source ZIP')
+          with zipfile.ZipFile(io.BytesIO(data)) as archive:
               archive.extractall('.')
           PY
 
