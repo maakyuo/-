@@ -391,3 +391,15 @@ panel.addEventListener('click',e=>{if(e.target.id==='historyClose')panel.classLi
 })();
 </script>
 </body></html>
+
+/* Mission 03: hide the entire calculator keypad region, including scientific keys. */
+.app.mission-mode .key-area{
+  display:none !important;
+}
+.app.mission-mode .display{
+  display:none !important;
+}
+.app.mission-mode .mission3.active,
+.app.mission-mode .mission3{
+  display:flex !important;
+}
