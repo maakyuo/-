@@ -112,15 +112,15 @@ body.sci .scientific{
 body.sci .keys{
   flex:1 1 0;
   min-height:0;
-  width:calc(100% - 12px);
-  margin-inline:auto;
+  width:100%;
   grid-template-columns:repeat(4,minmax(0,1fr));
-  grid-template-rows:unset;
-  grid-auto-rows:calc((100% - 16px)/10);
-  gap:0;
-  align-content:start;
+  grid-template-rows:repeat(5,minmax(0,1fr));
+  grid-auto-rows:unset;
+  column-gap:7px;
+  row-gap:5px;
+  align-content:stretch;
 }
-body.sci .keys > .key{height:100%;align-self:start}
+body.sci .keys > .key{height:50%;align-self:center}
 body.sci .key{
   min-height:0;
   padding:0;
@@ -133,7 +133,7 @@ body.sci .footer{flex:0 0 auto;line-height:9px;font-size:7px}
   body.sci .top{min-height:29px}
   body.sci .display{flex-basis:11%;min-height:48px;max-height:11%}
   body.sci .scientific{flex-basis:18%;gap:3px}
-  body.sci .keys{gap:3px}
+  body.sci .keys{column-gap:5px;row-gap:4px}
   body.sci .key{font-size:clamp(12px,3.5vw,17px);border-radius:8px}
   body.sci .scientific .key{font-size:11px}
 }
