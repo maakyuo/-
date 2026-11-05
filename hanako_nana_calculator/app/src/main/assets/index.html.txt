@@ -188,9 +188,9 @@ body.sci .scientific .key{
   justify-self:stretch;
 }
 
-/* Mission 02: move scientific and numeric key groups as one unit */
+/* Mission 02: move both key groups downward together */
 body.sci .scientific,
-body.sci .key-area{transform:translateY(24px) !important;}
+body.sci .key-area{transform:translateY(8vh) !important;}
 </style>
 </head>
 <body>
