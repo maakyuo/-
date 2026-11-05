@@ -132,6 +132,7 @@ body.sci .footer{flex:0 0 auto;line-height:9px;font-size:7px}
   body.sci .scientific .key{font-size:11px}
 }
 
+body:not(.sci) .keys{grid-template-rows:repeat(5,minmax(0,calc((100% - 36px)/10)));grid-auto-rows:unset;align-content:start}
 </style>
 </head>
 <body>
