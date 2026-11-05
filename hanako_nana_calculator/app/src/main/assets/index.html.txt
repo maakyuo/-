@@ -407,7 +407,6 @@ body.sci .key-area .footer{
  </section>
  <section class="mission7" id="mission7" aria-label="나나 실험실">
   <div class="mission-head"><span>MISSION 07 · NANA LAB</span><small class="lab-status" id="labStatus">SYSTEM ONLINE</small></div><div class="lab-console"><div><strong>HANAKO NANA // EXPERIMENT CORE</strong><br><small id="labConsoleText">실험 코어가 대기 중입니다.</small></div><small>CODE AAA</small></div>
-  <div class="lab-intro">하나코 나나 실험실에 오신 것을 환영합니다. 실험을 선택하고 화면을 터치해 직접 반응을 만들어 보세요.</div>
   <div class="lab-tabs" role="group" aria-label="실험 선택">
    <button class="lab-tab active" data-lab="particle">입자</button><button class="lab-tab" data-lab="gravity">중력</button><button class="lab-tab" data-lab="fluid">시공간 왜곡</button><button class="lab-tab" data-lab="wave">파동</button><button class="lab-tab" data-lab="dimension">차원</button>
   </div>
