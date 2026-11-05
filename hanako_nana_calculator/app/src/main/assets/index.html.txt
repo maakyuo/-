@@ -112,10 +112,15 @@ body.sci .scientific{
 body.sci .keys{
   flex:1 1 0;
   min-height:0;
-  grid-template-rows:repeat(5,minmax(0,1fr));
-  gap:4px;
+  width:calc(100% - 12px);
+  margin-inline:auto;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:unset;
+  grid-auto-rows:calc((100% - 16px)/10);
+  gap:0;
+  align-content:start;
 }
-body.sci .keys > .key{height:50%;align-self:start}
+body.sci .keys > .key{height:100%;align-self:start}
 body.sci .key{
   min-height:0;
   padding:0;
