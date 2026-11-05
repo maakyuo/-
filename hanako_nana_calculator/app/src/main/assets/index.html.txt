@@ -191,6 +191,88 @@ body.sci .scientific .key{
 /* Mission 02: move both key groups downward together */
 body.sci .scientific,
 body.sci .key-area{transform:translateY(32vh) !important;}
+
+ 
+/* Mission 02 rebuilt: same overall screen regions as Mission 01 */
+body.sci .app{
+  gap:12px;
+  padding:16px 17px max(14px,env(safe-area-inset-bottom));
+  min-height:0;
+  overflow:hidden;
+}
+body.sci .top{
+  flex:0 0 auto;
+  min-height:42px;
+}
+body.sci .display{
+  flex:1 1 0;
+  min-height:130px;
+  max-height:32%;
+  padding:18px 5px 20px;
+}
+body.sci .key-area{
+  display:flex;
+  flex:1 1 0;
+  min-height:0;
+  flex-direction:column;
+  justify-content:flex-start;
+  gap:12px;
+  transform:none !important;
+}
+body.sci .scientific{
+  display:grid;
+  flex:0 0 36%;
+  min-height:0;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(4,minmax(0,1fr));
+  grid-auto-flow:row;
+  gap:7px;
+  align-content:stretch;
+  justify-content:stretch;
+  transform:none !important;
+}
+body.sci .scientific .key{
+  width:100%;
+  min-width:0;
+  min-height:0;
+  justify-self:stretch;
+  align-self:stretch;
+  font-size:clamp(13px,3.5vw,17px);
+}
+body.sci .key-area .keys{
+  display:grid;
+  flex:1 1 0;
+  width:100%;
+  height:auto;
+  min-height:0;
+  margin:0;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(5,minmax(0,1fr));
+  grid-auto-rows:unset;
+  column-gap:9px;
+  row-gap:9px;
+}
+body.sci .key-area .keys > .key{
+  height:auto;
+  min-height:0;
+  align-self:stretch;
+}
+body.sci .key-area .footer{
+  flex:0 0 auto;
+  padding-top:2px;
+  font-size:9px;
+  line-height:normal;
+}
+@media(max-height:680px){
+  body.sci .app{gap:8px;padding:10px 14px max(8px,env(safe-area-inset-bottom))}
+  body.sci .top{min-height:36px}
+  body.sci .display{min-height:90px;padding:10px 4px 12px}
+  body.sci .key-area{gap:8px}
+  body.sci .scientific{gap:5px}
+  body.sci .key-area .keys{column-gap:6px;row-gap:6px}
+  body.sci .key-area .footer{font-size:8px}
+}
+
 </style>
 </head>
 <body>
@@ -204,11 +286,7 @@ body.sci .key-area{transform:translateY(32vh) !important;}
   <div class="expression" id="expression"></div>
   <div class="result" id="result">0</div>
  </section>
- <section class="scientific" id="scientific">
-  <button class="key fn" data-value="sin(">sin</button><button class="key fn" data-value="cos(">cos</button><button class="key fn" data-value="tan(">tan</button><button class="key fn" data-value="log(">log</button><button class="key fn" data-value="ln(">ln</button>
-  <button class="key fn" data-value="sqrt(">√</button><button class="key fn" data-value="^2">x²</button><button class="key fn" data-value="^">xʸ</button><button class="key fn" data-value="(">(</button><button class="key fn" data-value=")">)</button>
-  <button class="key fn" data-value="pi">π</button><button class="key fn" data-value="e">e</button><button class="key fn" data-value="!">n!</button><button class="key fn" data-value="ans">ANS</button><button class="key fn" data-value="deg">DEG</button>
- </section>
+
  <section class="mission3" id="mission3" aria-label="단위 및 생활 계산">
   <div class="mission-head"><span>MISSION 03</span><small>UNIT & DAILY TOOLS</small></div>
   <label class="field-label" for="calcType">계산 종류</label>
@@ -228,6 +306,11 @@ body.sci .key-area{transform:translateY(32vh) !important;}
  </section>
  </section>
  <div class="key-area">
+ <section class="scientific" id="scientific">
+  <button class="key fn" data-value="sin(">sin</button><button class="key fn" data-value="cos(">cos</button><button class="key fn" data-value="tan(">tan</button><button class="key fn" data-value="log(">log</button><button class="key fn" data-value="ln(">ln</button>
+  <button class="key fn" data-value="sqrt(">√</button><button class="key fn" data-value="^2">x²</button><button class="key fn" data-value="^">xʸ</button><button class="key fn" data-value="(">(</button><button class="key fn" data-value=")">)</button>
+  <button class="key fn" data-value="pi">π</button><button class="key fn" data-value="e">e</button><button class="key fn" data-value="!">n!</button><button class="key fn" data-value="ans">ANS</button><button class="key fn" data-value="deg">DEG</button>
+ </section>
  <section class="keys" id="keys">
   <button class="key fn" data-action="clear">AC</button><button class="key fn" data-action="delete">⌫</button><button class="key fn" data-value="%">%</button><button class="key op" data-value="/">÷</button>
   <button class="key" data-value="7">7</button><button class="key" data-value="8">8</button><button class="key" data-value="9">9</button><button class="key op" data-value="*">×</button>
