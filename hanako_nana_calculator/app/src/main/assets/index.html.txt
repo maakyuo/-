@@ -289,7 +289,7 @@ body.sci .key-area .footer{
 .m4-category{min-height:76px;text-align:left;padding:12px;border:1px solid #604451;border-radius:12px;background:linear-gradient(145deg,#30232d,#211e28);color:var(--white);display:flex;flex-direction:column;justify-content:center;gap:5px}
 .m4-category strong{font-size:14px;color:var(--pink2)}
 .m4-category small{font-size:10px;color:var(--muted);line-height:1.4}
-.m4-tools{display:flex;flex-direction:column;gap:8px}
+.m4-tools{display:flex;flex-direction:column;gap:8px}#m4Work[hidden]{display:none}
 .m4-result{white-space:pre-line;line-height:1.6}
 .m4-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .m4-subtitle{font-size:11px;color:var(--muted);line-height:1.5}
