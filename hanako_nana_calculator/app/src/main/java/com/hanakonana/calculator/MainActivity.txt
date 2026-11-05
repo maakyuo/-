@@ -1,0 +1,2 @@
+package com.hanakonana.calculator;
+public class MainActivity extends android.app.Activity {}
