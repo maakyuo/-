@@ -34,13 +34,14 @@ body.sci .keys{grid-auto-rows:minmax(48px,1fr)}
 body.sci .display{max-height:24%}
 .footer{font-size:9px;color:#817984;letter-spacing:.12em;text-align:center;padding-top:2px}
 @media(max-height:680px){.app{gap:8px;padding-top:10px}.keys{gap:6px;grid-auto-rows:minmax(43px,1fr)}.key{border-radius:10px}.display{min-height:95px;padding-bottom:12px}.scientific{gap:5px;grid-auto-rows:minmax(35px,1fr)}}
+.top-actions{display:flex;align-items:center;gap:6px}.history-btn,.mission-btn{border:1px solid #51434f;background:#201d26;color:#c9bdc5;border-radius:8px;padding:8px 9px;font-size:10px;font-weight:700}.mission-btn{color:var(--pink2);border-color:#75404f}.history-panel{display:none;position:absolute;z-index:20;inset:12% 6% 12%;max-width:480px;margin:auto;background:#211e28;border:1px solid #684452;border-radius:16px;padding:16px;box-shadow:0 12px 50px #000b;flex-direction:column;gap:10px}.history-panel.open{display:flex}.history-title{display:flex;justify-content:space-between;align-items:center;color:var(--pink2);font-weight:750}.history-list{overflow:auto;flex:1}.history-item{padding:10px 4px;border-bottom:1px solid var(--line);font-size:13px}.history-item small{display:block;color:var(--muted);margin-bottom:3px}.history-close{background:#342a36;color:white;border:1px solid #634552;border-radius:8px;padding:8px}.mission3{display:none;flex:1;min-height:0;overflow:auto;padding:10px 2px;flex-direction:column;gap:9px}.mission3.active{display:flex}.mission-head{display:flex;justify-content:space-between;align-items:center;color:var(--pink2);font-size:13px;font-weight:800;letter-spacing:.12em}.mission-head small{font-size:9px;color:var(--muted)}.field-label{font-size:11px;color:#c9bdc5;margin-top:3px}.field{width:100%;min-height:43px;border:1px solid #514653;border-radius:9px;background:#211e28;color:#fff;padding:9px 11px;font-size:15px;outline:none}.field:focus{border-color:var(--pink)}.unit-row{display:grid;grid-template-columns:1fr 22px 1fr;align-items:end;gap:7px}.swap{text-align:center;color:var(--pink2);padding-bottom:12px}.convert-btn{min-height:45px;border:0;border-radius:10px;background:linear-gradient(180deg,#f19aae,#d96783);color:#24151b;font-weight:800;margin-top:5px}.conversion-result{border:1px solid #624451;background:#261e28;border-radius:11px;padding:13px;display:flex;flex-direction:column;gap:5px;margin-top:4px}.conversion-result small{color:var(--pink2);font-size:10px}.conversion-result strong{font-size:clamp(23px,6vw,32px);overflow-wrap:anywhere}.back-btn{background:#292530;color:#d9cdd5;border:1px solid #49414e;border-radius:9px;padding:10px}.app{position:relative}.app.mission-mode .display,.app.mission-mode .scientific,.app.mission-mode .keys,.app.mission-mode .footer{display:none}.app.mission-mode .mission3{display:flex}.app.mission-mode #mode{display:none}@media(max-height:680px){.mission3{gap:6px;padding-top:4px}.field{min-height:38px;padding:7px}.conversion-result{padding:9px}.app{gap:7px}} 
 </style>
 </head>
 <body>
 <main class="app">
  <header class="top">
   <div class="brand"><strong>하나코 나나 계산기</strong><small>TOP SECRET · LEVEL 07</small></div>
-  <button class="mode" id="mode">공학용 전환</button>
+  <div class="top-actions"><button class="history-btn" id="historyBtn">기록</button><button class="mission-btn" id="missionBtn">MISSION 03</button><button class="mode" id="mode">공학용 전환</button></div>
  </header>
  <section class="display" aria-live="polite">
   <div class="tag" id="tag">MISSION 01 / BASIC</div>
@@ -51,6 +52,23 @@ body.sci .display{max-height:24%}
   <button class="key fn" data-value="sin(">sin</button><button class="key fn" data-value="cos(">cos</button><button class="key fn" data-value="tan(">tan</button><button class="key fn" data-value="log(">log</button><button class="key fn" data-value="ln(">ln</button>
   <button class="key fn" data-value="sqrt(">√</button><button class="key fn" data-value="^2">x²</button><button class="key fn" data-value="^">xʸ</button><button class="key fn" data-value="(">(</button><button class="key fn" data-value=")">)</button>
   <button class="key fn" data-value="pi">π</button><button class="key fn" data-value="e">e</button><button class="key fn" data-value="!">n!</button><button class="key fn" data-value="ans">ANS</button><button class="key fn" data-value="deg">DEG</button>
+ </section>
+ <section class="mission3" id="mission3" aria-label="단위 및 생활 계산">
+  <div class="mission-head"><span>MISSION 03</span><small>UNIT & DAILY TOOLS</small></div>
+  <label class="field-label" for="calcType">계산 종류</label>
+  <select id="calcType" class="field"><option value="area">면적</option><option value="length">길이</option><option value="temperature">온도</option><option value="volume">부피</option><option value="weight">무게</option><option value="data">데이터</option><option value="speed">속도</option><option value="time">시간</option><option value="tip">팁 금액</option></select>
+  <div id="convertFields">
+   <label class="field-label" for="amount">변환할 값</label><input id="amount" class="field" type="number" inputmode="decimal" value="1">
+   <div class="unit-row"><div><label class="field-label" for="fromUnit">변환 전</label><select id="fromUnit" class="field"></select></div><div class="swap">→</div><div><label class="field-label" for="toUnit">변환 후</label><select id="toUnit" class="field"></select></div></div>
+  </div>
+  <div id="tipFields" hidden>
+   <label class="field-label" for="bill">결제 금액</label><input id="bill" class="field" type="number" inputmode="decimal" value="50000" class="field">
+   <label class="field-label" for="tipRate">팁 비율 (%)</label><input id="tipRate" class="field" type="number" inputmode="decimal" value="10">
+   <label class="field-label" for="people">인원수</label><input id="people" class="field" type="number" inputmode="numeric" value="1" min="1">
+  </div>
+  <button class="convert-btn" id="convertBtn">계산하기</button>
+  <div class="conversion-result"><small id="resultLabel">변환 결과</small><strong id="convertResult">1</strong></div>
+  <button class="back-btn" id="backBtn">계산기로 돌아가기</button>
  </section>
  <section class="keys" id="keys">
   <button class="key fn" data-action="clear">AC</button><button class="key fn" data-action="delete">⌫</button><button class="key fn" data-value="%">%</button><button class="key op" data-value="/">÷</button>
@@ -64,7 +82,7 @@ body.sci .display{max-height:24%}
 <script>
 (()=>{
 const $=id=>document.getElementById(id), expr=$('expression'), out=$('result'), mode=$('mode'), tag=$('tag');
-let input='',shown='0',ans=0,degrees=true,justSolved=false;
+let input='',shown='0',ans=0,degrees=true,justSolved=false; const history=[];
 const pretty=s=>s.replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');
 function render(){expr.textContent=pretty(input);out.textContent=shown;}
 function append(v){
@@ -100,7 +118,7 @@ function calculate(s){
  function add(){let v=mul();while(peek()==='+'||peek()==='-'){let op=take(),r=mul();v=op==='+'?v+r:v-r}return v}
  let v=add();if(p<t.length)throw Error('수식을 확인해 주세요');if(!Number.isFinite(v))throw Error('계산할 수 없는 값');return v;
 }
-function equals(){if(!input)return;try{let v=calculate(input);ans=v;shown=Number(v.toPrecision(12)).toString();expr.textContent=pretty(input)+' =';input=shown;justSolved=true;out.textContent=shown}catch(e){out.textContent=e.message}}
+function equals(){if(!input)return;try{let original=input,v=calculate(input);ans=v;shown=Number(v.toPrecision(12)).toString();expr.textContent=pretty(original)+' =';input=shown;justSolved=true;out.textContent=shown;history.unshift({q:pretty(original),a:shown});if(history.length>100)history.pop()}catch(e){out.textContent=e.message}}
 document.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
  const a=b.dataset.action,v=b.dataset.value;
  if(a==='clear')clear();else if(a==='delete')del();else if(a==='sign')sign();else if(a==='equals')equals();else if(v!==undefined)append(v);
@@ -108,6 +126,26 @@ document.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
 mode.addEventListener('click',()=>{document.body.classList.toggle('sci');let on=document.body.classList.contains('sci');mode.textContent=on?'일반으로 전환':'공학용 전환';tag.textContent=on?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 document.addEventListener('keydown',e=>{if(/^[0-9.+\-*/()%]$/.test(e.key))append(e.key);else if(e.key==='Enter'||e.key==='=')equals();else if(e.key==='Backspace')del();else if(e.key==='Escape')clear()});
 render();
+const app=document.querySelector('.app'),missionBtn=$('missionBtn'),historyBtn=$('historyBtn');
+missionBtn.addEventListener('click',()=>{app.classList.add('mission-mode');$('tag').textContent='MISSION 03 / CONVERTER';});
+$('backBtn').addEventListener('click',()=>{app.classList.remove('mission-mode');$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
+const units={
+ area:{'제곱밀리미터':1e-6,'제곱센티미터':1e-4,'제곱미터':1,'제곱킬로미터':1e6,'헥타르':1e4,'평':3.305785},
+ length:{'밀리미터':.001,'센티미터':.01,'미터':1,'킬로미터':1000,'인치':.0254,'피트':.3048,'야드':.9144,'마일':1609.344},
+ volume:{'밀리리터':.001,'리터':1,'세제곱미터':1000,'티스푼':.00492892,'큰술':.0147868,'컵':.236588,'갤런':3.78541},
+ weight:{'밀리그램':.000001,'그램':.001,'킬로그램':1,'톤':1000,'온스':.0283495,'파운드':.453592},
+ data:{'비트':1/8,'바이트':1,'킬로바이트':1024,'메가바이트':1048576,'기가바이트':1073741824,'테라바이트':1099511627776},
+ speed:{'미터/초':1,'킬로미터/시':1/3.6,'마일/시':.44704,'노트':.514444},
+ time:{'초':1,'분':60,'시간':3600,'일':86400,'주':604800,'년(365일)':31536000}
+};
+function populateUnits(){let type=$('calcType').value,from=$('fromUnit'),to=$('toUnit');from.innerHTML='';to.innerHTML='';if(type==='temperature'){['섭씨','화씨','켈빈'].forEach((u,i)=>{from.add(new Option(u,u));to.add(new Option(u,u));});}else if(units[type]){Object.keys(units[type]).forEach((u,i)=>{from.add(new Option(u,u));to.add(new Option(u,u));});to.selectedIndex=Math.min(1,to.options.length-1);} }
+$('calcType').addEventListener('change',()=>{let tip=$('calcType').value==='tip';$('convertFields').hidden=tip;$('tipFields').hidden=!tip;$('resultLabel').textContent=tip?'팁 포함 총액 / 1인 금액':'변환 결과';populateUnits();});
+function tempConvert(v,from,to){let c=from==='섭씨'?v:from==='화씨'?(v-32)*5/9:v-273.15;return to==='섭씨'?c:to==='화씨'?c*9/5+32:c+273.15;}
+$('convertBtn').addEventListener('click',()=>{let type=$('calcType').value,result,label='변환 결과';if(type==='tip'){let bill=Number($('bill').value),rate=Number($('tipRate').value),people=Math.max(1,Math.floor(Number($('people').value)||1)),tip=bill*rate/100,total=bill+tip;result='팁 '+tip.toLocaleString('ko-KR',{maximumFractionDigits:2})+'원 · 총액 '+total.toLocaleString('ko-KR',{maximumFractionDigits:2})+'원 · 1인 '+(total/people).toLocaleString('ko-KR',{maximumFractionDigits:2})+'원';label='팁 포함 총액 / 1인 금액';}else{let v=Number($('amount').value),f=$('fromUnit').value,t=$('toUnit').value;if(!Number.isFinite(v)){ $('convertResult').textContent='값을 입력해 주세요';return;}let n=type==='temperature'?tempConvert(v,f,t):v*units[type][f]/units[type][t];result=Number(n.toPrecision(12)).toLocaleString('ko-KR',{maximumFractionDigits:10})+' '+t;label=v+' '+f+' =';} $('resultLabel').textContent=label;$('convertResult').textContent=result;});
+populateUnits();
+const panel=document.createElement('div');panel.className='history-panel';panel.id='historyPanel';panel.innerHTML='<div class="history-title"><span>CALCULATION LOG</span><button class="history-close" id="historyClose">닫기</button></div><div class="history-list" id="historyList"></div><button class="history-close" id="historyClear">기록 지우기</button>';app.appendChild(panel);
+historyBtn.addEventListener('click',()=>{let list=$('historyList');list.innerHTML=history.length?history.map(x=>'<div class="history-item"><small>'+x.q+'</small>'+x.a+'</div>').join(''):'<div class="history-item">아직 계산 기록이 없습니다.</div>';panel.classList.add('open');});
+panel.addEventListener('click',e=>{if(e.target.id==='historyClose')panel.classList.remove('open');if(e.target.id==='historyClear'){history.length=0;$('historyList').textContent='기록이 삭제되었습니다.';}});
 })();
 </script>
 </body></html>
