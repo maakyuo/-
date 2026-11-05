@@ -569,11 +569,7 @@ labCanvas.addEventListener('pointerdown',e=>{let r=labCanvas.getBoundingClientRe
 labCanvas.addEventListener('pointermove',e=>{if(e.buttons===0)return;let r=labCanvas.getBoundingClientRect();if(labMode==='fluid')labAdd(e.clientX-r.left,e.clientY-r.top);});
 function labDraw(){
  if(!labW||!labH)return;let c=labCtx;c.clearRect(0,0,labW,labH);labFrame++;
- if(labMode==='particle'){
-  if(labMode==='particle'&&labParticles.length<Number($('labPower').value)){while(labParticles.length<Number($('labPower').value))labParticles.push({x:Math.random()*labW,y:Math.random()*labH,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,r:2+Math.random()*3,h:285+Math.random()*90});}
-  let gravity=Number($('labPower').value)/180;
-  labParticles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>labW)p.vx*=-1;if(p.y<0||p.y>labH)p.vy*=-1;c.beginPath();c.fillStyle='hsla('+p.h+',90%,72%,.9)';c.shadowBlur=13;c.shadowColor=c.fillStyle;c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fill();});c.shadowBlur=0;
-  if(labMode==='particle'){for(let i=0;i<labParticles.length;i++)for(let j=i+1;j<labParticles.length;j++){let a=labParticles[i],b=labParticles[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);if(d<65){c.strokeStyle='rgba(211,156,230,'+(1-d/65)*.22+')';c.lineWidth=1;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();}}}
+ if(labMode==='particle'){if(labParticles.length<Number($('labPower').value)){while(labParticles.length<Number($('labPower').value))labParticles.push({x:Math.random()*labW,y:Math.random()*labH,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,r:2+Math.random()*3,h:285+Math.random()*90});}const cx=labW*.5,cy=labH*.5;labParticles.forEach(p=>{if(labCluster){let dx=cx-p.x,dy=cy-p.y,d=Math.hypot(dx,dy)||1,pull=Math.min(.24,.055+210/(d+90)*.075);p.vx+=dx/d*pull;p.vy+=dy/d*pull;p.vx*=.965;p.vy*=.965;let speed=Math.hypot(p.vx,p.vy);if(speed>7){p.vx=p.vx/speed*7;p.vy=p.vy/speed*7;}p.x+=p.vx;p.y+=p.vy;}else{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>labW)p.vx*=-1;if(p.y<0||p.y>labH)p.vy*=-1;}c.beginPath();c.fillStyle='hsla('+p.h+',90%,72%,.9)';c.shadowBlur=13;c.shadowColor=c.fillStyle;c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fill();});c.shadowBlur=0;if(labCluster){c.save();c.globalCompositeOperation='screen';let glow=c.createRadialGradient(cx,cy,4,cx,cy,Math.min(labW,labH)*.28);glow.addColorStop(0,'rgba(255,190,245,.18)');glow.addColorStop(1,'rgba(180,90,255,0)');c.fillStyle=glow;c.fillRect(0,0,labW,labH);c.restore();}for(let i=0;i<labParticles.length;i++)for(let j=i+1;j<labParticles.length;j++){let a=labParticles[i],b=labParticles[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy),range=labCluster?105:65;if(d<range){c.strokeStyle='rgba(211,156,230,'+(1-d/range)*(labCluster?.52:.22)+')';c.lineWidth=labCluster?1.35:1;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();}}
  }else if(labMode==='fluid'){
   c.fillStyle='rgba(15,12,24,.075)';c.fillRect(0,0,labW,labH);labTrails.forEach(p=>{p.r*=.997;c.beginPath();let g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,'hsla('+p.h+',100%,72%,.52)');g.addColorStop(1,'hsla('+p.h+',95%,55%,0)');c.fillStyle=g;c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fill();});if(labTrails.length===0){for(let i=0;i<8;i++)labTrails.push({x:labW/2+Math.sin(labFrame*.015+i)*55,y:labH/2+Math.cos(labFrame*.013+i)*45,r:30,h:i*43});}
   labFluidDrops=labFluidDrops.filter(p=>p.life>0);labFluidDrops.forEach(p=>{p.vx+=(labW/2-p.x)*.0008;p.vy+=(labH/2-p.y)*.0008;p.x+=p.vx;p.y+=p.vy;p.vx*=.994;p.vy*=.994;p.life--;c.beginPath();c.fillStyle='hsla('+p.h+',100%,72%,'+(p.life/180)+')';c.shadowBlur=12;c.shadowColor=c.fillStyle;c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fill();});c.shadowBlur=0;
@@ -607,8 +603,8 @@ function labAbility(which){
  const x=labW/2,y=labH/2,first=which==='A';labPointer={x,y};labShock=1;
  labAbilityA=first?210:0;labAbilityB=first?0:210;
  if(labMode==='particle'){
-  if(first){for(let i=0;i<130;i++){let a=Math.random()*Math.PI*2,v=2+Math.random()*8;labParticles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:2+Math.random()*5,h:285+Math.random()*120});}}
-  else labParticles.forEach(p=>{p.vx*=.08;p.vy*=.08;});
+  if(first){labCluster=0;for(let i=0;i<130;i++){let a=Math.random()*Math.PI*2,v=2+Math.random()*8;labParticles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:2+Math.random()*5,h:285+Math.random()*120});}}
+  else{labCluster=1;labPointer={x:labW/2,y:labH/2};labParticles.forEach(p=>{p.vx*=.18;p.vy*=.18;});}
  }else if(labMode==='gravity'){
   if(first){labPointer=null;labBlackhole=1;$('mission7').classList.remove('blackhole-active');void $('mission7').offsetWidth;$('mission7').classList.add('blackhole-active');requestAnimationFrame(()=>labSuckUI());if(navigator.vibrate)navigator.vibrate([120,55,180,70,240]);}
   else{labReverse=720;labPointer=null;labOrbs.forEach(p=>{let dx=p.x-x,dy=p.y-y,d=Math.hypot(dx,dy)||1;p.vx+=dx/d*10;p.vy+=dy/d*10;});if(navigator.vibrate)navigator.vibrate([70,40,100]);}
@@ -620,7 +616,7 @@ function labAbility(which){
  }else{
   labDimensionMode=first?1:2;
  }
- const messages={particle:first?'입자 대폭발!':'입자 군집화!',gravity:first?'사건의 지평선 형성! 모든 실험 UI가 블랙홀로 빨려 들어갑니다.':'중력 방향 역전! 크기와 관계없이 모든 구체에 반전 중력이 적용됩니다.',fluid:first?'플라즈마 해일! 수백 개의 유체 입자가 폭발적으로 분출합니다.':'분자 붕괴! 유체가 거대한 색의 파편으로 분해됩니다.',wave:first?'충격파 간섭! 서로 다른 파동이 겹쳐 거대한 공명장을 만듭니다.':'파동 붕괴! 파동장이 뒤틀리며 충격 고리가 연속으로 퍼집니다.',dimension:first?'차원 도약! 4차원 구조가 폭발적으로 확장됩니다.':'공간 반전! 차원 축이 뒤집히며 투영 공간이 비틀립니다.'};
+ const messages={particle:first?'입자 대폭발!':'모든 입자가 화면 중앙으로 모입니다!',gravity:first?'사건의 지평선 형성! 모든 실험 UI가 블랙홀로 빨려 들어갑니다.':'중력 방향 역전! 크기와 관계없이 모든 구체에 반전 중력이 적용됩니다.',fluid:first?'플라즈마 해일! 수백 개의 유체 입자가 폭발적으로 분출합니다.':'분자 붕괴! 유체가 거대한 색의 파편으로 분해됩니다.',wave:first?'충격파 간섭! 서로 다른 파동이 겹쳐 거대한 공명장을 만듭니다.':'파동 붕괴! 파동장이 뒤틀리며 충격 고리가 연속으로 퍼집니다.',dimension:first?'차원 도약! 4차원 구조가 폭발적으로 확장됩니다.':'공간 반전! 차원 축이 뒤집히며 투영 공간이 비틀립니다.'};
  $('labConsoleText').textContent=messages[labMode];$('labStatus').textContent='EXPERIMENT OVERRIDE';
 }
 $('labPowerA').addEventListener('click',()=>labAbility('A'));
