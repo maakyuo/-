@@ -610,7 +610,7 @@ function labAbility(which){
   if(first){for(let i=0;i<130;i++){let a=Math.random()*Math.PI*2,v=2+Math.random()*8;labParticles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:2+Math.random()*5,h:285+Math.random()*120});}}
   else labParticles.forEach(p=>{p.vx*=.08;p.vy*=.08;});
  }else if(labMode==='gravity'){
-  if(first){labBlackhole=1;$('mission7').classList.remove('blackhole-active');void $('mission7').offsetWidth;$('mission7').classList.add('blackhole-active');requestAnimationFrame(()=>labSuckUI());if(navigator.vibrate)navigator.vibrate([120,55,180,70,240]);}
+  if(first){labPointer=null;labBlackhole=1;$('mission7').classList.remove('blackhole-active');void $('mission7').offsetWidth;$('mission7').classList.add('blackhole-active');requestAnimationFrame(()=>labSuckUI());if(navigator.vibrate)navigator.vibrate([120,55,180,70,240]);}
   else{labReverse=720;labPointer=null;labOrbs.forEach(p=>{let dx=p.x-x,dy=p.y-y,d=Math.hypot(dx,dy)||1;p.vx+=dx/d*10;p.vy+=dy/d*10;});if(navigator.vibrate)navigator.vibrate([70,40,100]);}
  }else if(labMode==='fluid'){
   if(first){labFluidDrops=[];for(let i=0;i<260;i++){let a=Math.random()*Math.PI*2,v=1+Math.random()*7;labFluidDrops.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:2+Math.random()*5,h:Math.random()*360,life:150+Math.random()*90});}}
