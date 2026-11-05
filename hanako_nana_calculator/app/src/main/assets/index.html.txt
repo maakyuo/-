@@ -302,12 +302,36 @@ body.sci .key-area .footer{
 .app.mission-mode.mission5-mode .mission5,.app.mission-mode.mission6-mode .mission6{display:flex !important}
 .mission-output{white-space:pre-line;line-height:1.65;overflow-wrap:anywhere}
 
+
+/* Mission 07: Nana Lab */
+.mission7{display:none;flex:1;min-height:0;overflow:auto;padding:8px 2px;flex-direction:column;gap:10px}
+.app.mission-mode.mission7-mode .mission3,
+.app.mission-mode.mission7-mode .mission4,
+.app.mission-mode.mission7-mode .mission5,
+.app.mission-mode.mission7-mode .mission6{display:none!important}
+.app.mission-mode.mission7-mode .mission7{display:flex!important}
+.app.mission-mode.mission7-mode #historyBtn{display:none!important}
+.lab-intro{font-size:11px;color:var(--muted);line-height:1.5}
+.lab-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.lab-tab{min-width:0;padding:9px 2px;border:1px solid #514653;border-radius:8px;background:#211e28;color:#c9bdc5;font-size:10px;font-weight:700}
+.lab-tab.active{background:#492a38;border-color:var(--pink);color:#ffd6df}
+.lab-stage{position:relative;width:100%;height:clamp(190px,32vh,300px);min-height:180px;overflow:hidden;border:1px solid #674452;border-radius:13px;background:radial-gradient(ellipse at 50% 45%,#292039,#100f18 75%)}
+#labCanvas{display:block;width:100%;height:100%;touch-action:none}
+.lab-hint{position:absolute;left:9px;bottom:7px;color:#d4b8c7;font-size:9px;pointer-events:none;text-shadow:0 1px 4px #000}
+.lab-controls{display:flex;flex-direction:column;gap:5px;border:1px solid #453744;border-radius:10px;padding:10px;background:#1c1922}
+.lab-control-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#e9c4d0}
+.lab-controls input{width:100%;accent-color:var(--pink)}
+.lab-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.lab-actions button{min-height:38px}
+.lab-note{font-size:10px;color:#918895;line-height:1.45}
+@media(max-height:700px){.mission7{gap:7px;padding-top:4px}.lab-stage{height:clamp(165px,27vh,230px);min-height:155px}.lab-tab{padding:7px 1px;font-size:9px}}
+
 </style>
 </head>
 <body>
 <main class="app">
  <header class="top">
-  <div class="brand"><strong>하나코 나나 계산기</strong><small>TOP SECRET • LEVEL B</small></div>
+  <div class="brand"><strong>하나코 나나 계산기</strong><small id="secretCode">TOP SECRET CODE B</small></div>
   <div class="top-actions"><button class="history-btn" id="historyBtn">기록</button><button class="mission-btn" id="missionBtn">MISSION 03</button><button class="mode" id="mode">공학용 전환</button></div>
  </header>
  <section class="display" aria-live="polite">
@@ -376,6 +400,21 @@ body.sci .key-area .footer{
   <button class="convert-btn" id="baseCalculate">전체 진법으로 변환</button>
   <div class="conversion-result"><small>변환 결과</small><strong class="mission-output" id="baseResult">값을 입력해 주세요.</strong></div>
   <button class="back-btn" id="baseBackCalc">계산기로 돌아가기</button>
+ </section>
+ <section class="mission7" id="mission7" aria-label="나나 실험실">
+  <div class="mission-head"><span>MISSION 07 · NANA LAB</span><small>TOP SECRET EXPERIMENT</small></div>
+  <div class="lab-intro">하나코 나나 실험실에 오신 것을 환영합니다. 실험을 선택하고 화면을 터치해 직접 반응을 만들어 보세요.</div>
+  <div class="lab-tabs" role="group" aria-label="실험 선택">
+   <button class="lab-tab active" data-lab="particle">입자</button><button class="lab-tab" data-lab="gravity">중력</button><button class="lab-tab" data-lab="fluid">유체</button><button class="lab-tab" data-lab="wave">파동</button><button class="lab-tab" data-lab="dimension">차원</button>
+  </div>
+  <div class="lab-stage"><canvas id="labCanvas"></canvas><div class="lab-hint" id="labHint">화면을 터치해 입자를 만들어 보세요</div></div>
+  <div class="lab-controls">
+   <div class="lab-control-head"><label for="labPower" id="labPowerLabel">입자 수</label><strong id="labPowerValue">70</strong></div>
+   <input id="labPower" type="range" min="20" max="140" value="70">
+  </div>
+  <div class="lab-actions"><button class="back-btn" id="labReset">실험 초기화</button><button class="convert-btn" id="labRandom">무작위 생성</button></div>
+  <div class="lab-note" id="labNote">손가락으로 화면을 터치하면 빛나는 입자가 생성됩니다.</div>
+  <button class="back-btn" id="mission7Back">계산기로 돌아가기</button>
  </section>
  <div class="key-area">
  <section class="scientific" id="scientific">
@@ -456,7 +495,7 @@ const units={
 function populateUnits(){let type=$('calcType').value,from=$('fromUnit'),to=$('toUnit');from.innerHTML='';to.innerHTML='';if(type==='temperature'){['섭씨','화씨','켈빈'].forEach((u,i)=>{from.add(new Option(u,u));to.add(new Option(u,u));});}else if(units[type]){Object.keys(units[type]).forEach((u,i)=>{from.add(new Option(u,u));to.add(new Option(u,u));});to.selectedIndex=Math.min(1,to.options.length-1);} }
 $('calcType').addEventListener('change',()=>{let tip=$('calcType').value==='tip';$('convertFields').hidden=tip;$('tipFields').hidden=!tip;$('resultLabel').textContent=tip?'팁 포함 총액 / 1인 금액':'변환 결과';populateUnits();});
 function tempConvert(v,from,to){let c=from==='섭씨'?v:from==='화씨'?(v-32)*5/9:v-273.15;return to==='섭씨'?c:to==='화씨'?c*9/5+32:c+273.15;}
-$('convertBtn').addEventListener('click',()=>{let type=$('calcType').value,result,label='변환 결과';if(type==='tip'){let bill=Number($('bill').value),rate=Number($('tipRate').value),people=Math.max(1,Math.floor(Number($('people').value)||1)),tip=bill*rate/100,total=bill+tip;result='팁 '+tip.toLocaleString('ko-KR',{maximumFractionDigits:2})+'원 · 총액 '+total.toLocaleString('ko-KR',{maximumFractionDigits:2})+'원 · 1인 '+(total/people).toLocaleString('ko-KR',{maximumFractionDigits:2})+'원';label='팁 포함 총액 / 1인 금액';}else{let v=Number($('amount').value),f=$('fromUnit').value,t=$('toUnit').value;if(!Number.isFinite(v)){ $('convertResult').textContent='값을 입력해 주세요';return;}let n=type==='temperature'?tempConvert(v,f,t):v*units[type][f]/units[type][t];result=Number(n.toPrecision(12)).toLocaleString('ko-KR',{maximumFractionDigits:10})+' '+t;label=v+' '+f+' =';} $('resultLabel').textContent=label;$('convertResult').textContent=result;});
+$('convertBtn').addEventListener('click',()=>{let type=$('calcType').value,result,label='변환 결과';if(type==='length'&&Number($('amount').value)===142&&$('fromUnit').value==='센티미터'&&$('toUnit').value==='센티미터'){enterMission7();return;}if(type==='tip'){let bill=Number($('bill').value),rate=Number($('tipRate').value),people=Math.max(1,Math.floor(Number($('people').value)||1)),tip=bill*rate/100,total=bill+tip;result='팁 '+tip.toLocaleString('ko-KR',{maximumFractionDigits:2})+'원 · 총액 '+total.toLocaleString('ko-KR',{maximumFractionDigits:2})+'원 · 1인 '+(total/people).toLocaleString('ko-KR',{maximumFractionDigits:2})+'원';label='팁 포함 총액 / 1인 금액';}else{let v=Number($('amount').value),f=$('fromUnit').value,t=$('toUnit').value;if(!Number.isFinite(v)){ $('convertResult').textContent='값을 입력해 주세요';return;}let n=type==='temperature'?tempConvert(v,f,t):v*units[type][f]/units[type][t];result=Number(n.toPrecision(12)).toLocaleString('ko-KR',{maximumFractionDigits:10})+' '+t;label=v+' '+f+' =';} $('resultLabel').textContent=label;$('convertResult').textContent=result;});
 
 const m4Defs={
  finance:{title:'금융 · 소비',tools:{
@@ -497,12 +536,56 @@ $('m4BackHome').addEventListener('click',()=>{$('m4Work').hidden=true;$('m4Home'
 $('m4BackCalc').addEventListener('click',()=>{app.classList.remove('mission-mode','mission4-mode');missionBtn.textContent='MISSION 03';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 $('m4Home').hidden=false;$('m4Work').hidden=true;
 
-function leaveToCalculator(){app.classList.remove('mission-mode','mission4-mode','mission5-mode','mission6-mode');missionBtn.textContent='MISSION 03';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';}
+function leaveToCalculator(){app.classList.remove('mission-mode','mission4-mode','mission5-mode','mission6-mode','mission7-mode');missionBtn.textContent='MISSION 03';$('secretCode').textContent='TOP SECRET CODE B';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';}
 $('toMission5').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission6-mode');app.classList.add('mission-mode','mission5-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';});
 $('statsBackCalc').addEventListener('click',leaveToCalculator);
 $('toMission6').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission5-mode');app.classList.add('mission-mode','mission6-mode');missionBtn.textContent='MISSION 06';$('tag').textContent='MISSION 06 / BASE CONVERTER';});
 $('baseBackCalc').addEventListener('click',leaveToCalculator);
 $('m4BackCalc').addEventListener('click',leaveToCalculator);
+
+function enterMission7(){app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode','mission7-mode');missionBtn.textContent='MISSION 07';$('secretCode').textContent='TOP SECRET CODE AAA';$('tag').textContent='MISSION 07 / NANA LAB';$('historyPanel')?.classList.remove('open');labResize();labStart();}
+$('mission7Back').addEventListener('click',leaveToCalculator);
+let labMode='particle',labFrame=0,labRaf=0,labW=0,labH=0,labParticles=[],labPointer=null,labTrails=[];
+const labCanvas=$('labCanvas'),labCtx=labCanvas.getContext('2d');
+const labInfo={
+ particle:['입자 수','화면을 터치해 빛나는 입자를 만들어 보세요.','터치한 위치에서 빛의 입자가 퍼져 나갑니다.'],
+ gravity:['중력 세기','화면을 터치하면 공이 떨어집니다.','중력의 세기를 조절하고 화면을 눌러 공을 추가하세요.'],
+ fluid:['물감 양','화면을 누른 채 움직이면 색이 흐릅니다.','손가락으로 문지르며 여러 색의 흐름을 만들어 보세요.'],
+ wave:['파동 진폭','화면을 터치하면 파동의 중심이 바뀝니다.','진폭과 파동의 움직임을 관찰해 보세요.'],
+ dimension:['회전 속도','화면을 터치하면 회전 방향이 바뀝니다.','4차원 정육면체의 투영 모습을 감상해 보세요.']
+};
+function labResize(){let r=labCanvas.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);labW=Math.max(1,r.width);labH=Math.max(1,r.height);labCanvas.width=Math.round(labW*d);labCanvas.height=Math.round(labH*d);labCtx.setTransform(d,0,0,d,0,0);}
+function labSeed(){labParticles=[];let count=labMode==='particle'?Number($('labPower').value):24;for(let i=0;i<count;i++)labParticles.push({x:Math.random()*labW,y:Math.random()*labH,vx:(Math.random()-.5)*2.5,vy:(Math.random()-.5)*2.5,r:2+Math.random()*4,h:285+Math.random()*90});labTrails=[];labFrame=0;labDraw();}
+function labSetMode(mode){labMode=mode;document.querySelectorAll('[data-lab]').forEach(b=>b.classList.toggle('active',b.dataset.lab===mode));let info=labInfo[mode];$('labPowerLabel').textContent=info[0];$('labHint').textContent=info[1];$('labNote').textContent=info[2];$('labPower').value=mode==='particle'?70:mode==='gravity'?55:mode==='fluid'?65:mode==='wave'?55:35;$('labPowerValue').textContent=$('labPower').value;labSeed();}
+document.querySelectorAll('[data-lab]').forEach(b=>b.addEventListener('click',()=>labSetMode(b.dataset.lab)));
+$('labPower').addEventListener('input',()=>{$('labPowerValue').textContent=$('labPower').value;if(labMode==='particle')labSeed();});
+function labAdd(x,y){if(labMode==='particle'){for(let i=0;i<8;i++)labParticles.push({x,y,vx:(Math.random()-.5)*5,vy:(Math.random()-.5)*5,r:2+Math.random()*4,h:285+Math.random()*90});}else if(labMode==='gravity'){labParticles.push({x,y,vx:(Math.random()-.5)*3,vy:0,r:7+Math.random()*7,h:320+Math.random()*45});}else if(labMode==='fluid'){labTrails.push({x,y,r:12+Number($('labPower').value)/3,h:(labFrame*3)%360});if(labTrails.length>500)labTrails.shift();}else if(labMode==='wave'){labPointer={x,y};}else{labPointer={x,y};}}
+labCanvas.addEventListener('pointerdown',e=>{let r=labCanvas.getBoundingClientRect();labCanvas.setPointerCapture(e.pointerId);labAdd(e.clientX-r.left,e.clientY-r.top);});
+labCanvas.addEventListener('pointermove',e=>{if(e.buttons===0)return;let r=labCanvas.getBoundingClientRect();if(labMode==='fluid')labAdd(e.clientX-r.left,e.clientY-r.top);});
+function labDraw(){
+ if(!labW||!labH)return;let c=labCtx;c.clearRect(0,0,labW,labH);labFrame++;
+ if(labMode==='particle'||labMode==='gravity'){
+  if(labMode==='particle'&&labParticles.length<Number($('labPower').value)){while(labParticles.length<Number($('labPower').value))labParticles.push({x:Math.random()*labW,y:Math.random()*labH,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,r:2+Math.random()*3,h:285+Math.random()*90});}
+  let gravity=Number($('labPower').value)/180;
+  labParticles.forEach(p=>{if(labMode==='particle'){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>labW)p.vx*=-1;if(p.y<0||p.y>labH)p.vy*=-1;}else{p.vy+=gravity;p.x+=p.vx;p.y+=p.vy;if(p.y+p.r>labH){p.y=labH-p.r;p.vy*=-.78;}if(p.x<p.r||p.x>labW-p.r)p.vx*=-.9;}c.beginPath();c.fillStyle='hsla('+p.h+',90%,72%,.9)';c.shadowBlur=13;c.shadowColor=c.fillStyle;c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fill();});c.shadowBlur=0;
+  if(labMode==='particle'){for(let i=0;i<labParticles.length;i++)for(let j=i+1;j<labParticles.length;j++){let a=labParticles[i],b=labParticles[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);if(d<65){c.strokeStyle='rgba(211,156,230,'+(1-d/65)*.22+')';c.lineWidth=1;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();}}}
+ }else if(labMode==='fluid'){
+  c.fillStyle='rgba(15,12,24,.09)';c.fillRect(0,0,labW,labH);labTrails.forEach((p,i)=>{p.r*=.997;c.beginPath();let g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,'hsla('+p.h+',95%,70%,.5)');g.addColorStop(1,'hsla('+p.h+',95%,55%,0)');c.fillStyle=g;c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fill();});if(labTrails.length===0){for(let i=0;i<8;i++)labTrails.push({x:labW/2+Math.sin(labFrame*.015+i)*55,y:labH/2+Math.cos(labFrame*.013+i)*45,r:30,h:i*43});}
+ }else if(labMode==='wave'){
+  let amp=Number($('labPower').value)*.65,frequency=.018+Number($('labPower').value)/8000,center=labPointer?labPointer.x:labW/2;
+  for(let k=0;k<5;k++){c.beginPath();for(let x=0;x<=labW;x+=3){let influence=Math.exp(-Math.abs(x-center)/Math.max(70,labW*.4));let y=labH/2+Math.sin(x*frequency-labFrame*.055+k*.65)*amp*influence+(k-2)*12;if(x===0)c.moveTo(x,y);else c.lineTo(x,y);}c.strokeStyle='hsla('+(285+k*17)+',85%,72%,.75)';c.lineWidth=1.7;c.shadowBlur=8;c.shadowColor=c.strokeStyle;c.stroke();}c.shadowBlur=0;
+ }else if(labMode==='dimension'){
+  let t=labFrame*.008*(Number($('labPower').value)/35),verts=[];for(let i=0;i<16;i++){let v=[i&1?1:-1,i&2?1:-1,i&4?1:-1,i&8?1:-1],a=t,b=t*.73;let x=v[0]*Math.cos(a)-v[2]*Math.sin(a),z=v[0]*Math.sin(a)+v[2]*Math.cos(a),y=v[1]*Math.cos(b)-v[3]*Math.sin(b),w=v[1]*Math.sin(b)+v[3]*Math.cos(b),scale=1/(3.2-w*.45);verts.push({x:(x*scale*labH*.29)+labW/2,y:(y*scale*labH*.29)+labH/2});}
+  c.lineWidth=1.5;for(let i=0;i<16;i++)for(let bit=0;bit<4;bit++){let j=i^(1<<bit);if(j>i){c.beginPath();c.moveTo(verts[i].x,verts[i].y);c.lineTo(verts[j].x,verts[j].y);c.strokeStyle='hsla('+(285+bit*18)+',90%,75%,.75)';c.shadowBlur=7;c.shadowColor=c.strokeStyle;c.stroke();}}c.shadowBlur=0;verts.forEach((p,i)=>{c.beginPath();c.fillStyle='#ffd1e4';c.arc(p.x,p.y,3,0,Math.PI*2);c.fill();});
+ }
+}
+function labLoop(){if(!app.classList.contains('mission7-mode')){labRaf=0;return;}labDraw();labRaf=requestAnimationFrame(labLoop);}
+function labStart(){if(!labRaf){labSeed();labRaf=requestAnimationFrame(labLoop);}}
+$('labReset').addEventListener('click',()=>{labSeed();});
+$('labRandom').addEventListener('click',()=>{if(labMode==='particle'||labMode==='gravity'){for(let i=0;i<12;i++)labAdd(Math.random()*labW,Math.random()*labH);}else if(labMode==='fluid'){for(let i=0;i<25;i++)labAdd(Math.random()*labW,Math.random()*labH);}else{labPointer={x:Math.random()*labW,y:Math.random()*labH};}});
+window.addEventListener('resize',()=>{if(app.classList.contains('mission7-mode')){labResize();labDraw();}});
+labResize();
+
 
 function statFmt(n){return Number(n.toPrecision(12)).toLocaleString('ko-KR',{maximumFractionDigits:10});}
 $('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
