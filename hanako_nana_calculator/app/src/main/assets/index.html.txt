@@ -545,7 +545,7 @@ $('m4BackCalc').addEventListener('click',leaveToCalculator);
 
 function enterMission7(){app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode','mission7-mode');missionBtn.textContent='MISSION 07';$('brandName').textContent='하나코 나나 실험실';$('secretCode').textContent='TOP SECRET CODE AAA';$('tag').textContent='MISSION 07 / NANA LAB';$('historyPanel')?.classList.remove('open');$('mission7').classList.remove('lab-enter');void $('mission7').offsetWidth;$('mission7').classList.add('lab-enter');$('labConsoleText').textContent='보안 등급 AAA 확인. 실험 코어를 가동합니다.';$('labStatus').textContent='SYSTEM ONLINE';labResize();labSeed();if(labRaf)cancelAnimationFrame(labRaf);labRaf=requestAnimationFrame(labLoop);}
 $('mission7Back').addEventListener('click',leaveToCalculator);
-let labMode='particle',labFrame=0,labRaf=0,labW=0,labH=0,labParticles=[],labPointer=null,labTrails=[],labSlow=false,labShock=0,labTick=0,labOrbs=[];,labAbilityA=0,labAbilityB=0;
+let labMode='particle',labFrame=0,labRaf=0,labW=0,labH=0,labParticles=[],labPointer=null,labTrails=[],labSlow=false,labShock=0,labTick=0,labOrbs=[],labAbilityA=0,labAbilityB=0;
 const labCanvas=$('labCanvas'),labCtx=labCanvas.getContext('2d');
 const labInfo={
  particle:['입자 수','화면을 터치해 빛나는 입자를 만들어 보세요.','터치한 위치에서 빛의 입자가 퍼져 나갑니다.'],
