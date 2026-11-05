@@ -416,7 +416,7 @@ body.sci .key-area .footer{
    <div class="lab-control-head"><label for="labPower" id="labPowerLabel">입자 수</label><strong id="labPowerValue">70</strong></div>
    <input id="labPower" type="range" min="20" max="140" value="70">
   </div>
-  <div class="lab-actions three"><button class="back-btn" id="labReset">초기화</button><button class="convert-btn" id="labRandom">연쇄 반응</button><button class="back-btn" id="labSlow">슬로 모션: 꺼짐</button></div>
+  <div class="lab-actions three"><button class="back-btn" id="labReset">초기화</button><button class="convert-btn" id="labRandom">연쇄 반응</button><button class="back-btn" id="labOverload">과부하</button></div>
   <div class="lab-note" id="labNote">손가락으로 화면을 터치하면 빛나는 입자가 생성됩니다.</div><div class="lab-actions"><button class="convert-btn" id="labPowerA">입자 대폭발</button><button class="back-btn" id="labPowerB">입자 군집화</button></div>
   <button class="back-btn" id="mission7Back">계산기로 돌아가기</button>
  </section>
