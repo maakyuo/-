@@ -40,6 +40,9 @@ jobs:
           cp hanako_nana_calculator/app/src/main/java/com/hanakonana/calculator/MainActivity.txt hanako_nana_calculator/app/src/main/java/com/hanakonana/calculator/MainActivity.java
           cp hanako_nana_calculator/app/src/main/assets/index.html.txt hanako_nana_calculator/app/src/main/assets/index.html
           cp hanako_nana_calculator/app/src/main/res/values/styles.xml.txt hanako_nana_calculator/app/src/main/res/values/styles.xml
+          rm hanako_nana_calculator/app/src/main/res/values/styles.xml.txt
+          rm hanako_nana_calculator/app/src/main/assets/index.html.txt
+          rm hanako_nana_calculator/app/src/main/java/com/hanakonana/calculator/MainActivity.txt
 
       - name: Build debug APK
         working-directory: hanako_nana_calculator
