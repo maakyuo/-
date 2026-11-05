@@ -142,6 +142,7 @@ body.sci .footer{flex:0 0 auto;line-height:9px;font-size:7px}
 /* Mission 02: compact key rows with natural spacing; Mission 01 untouched */
 .key-area{display:contents}
 body.sci .key-area{
+  transform:translateY(18px);
   display:flex;
   flex:1 1 0;
   min-height:0;
@@ -174,6 +175,7 @@ body.sci .key-area .footer{flex:0 0 auto}
 /* Mission 02: scientific keys align with the four numeric keypad columns.
    Numeric keypad placement and size remain unchanged. */
 body.sci .scientific{
+  transform:translateY(18px);
   grid-template-columns:repeat(4,minmax(0,1fr));
   grid-template-rows:repeat(4,minmax(0,1fr));
   grid-auto-flow:row;
