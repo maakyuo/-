@@ -323,7 +323,7 @@ body.sci .key-area .footer{
 .lab-controls input{width:100%;accent-color:var(--pink)}
 .lab-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .lab-actions button{min-height:38px}
-.lab-note{font-size:10px;color:#918895;line-height:1.45}
+.lab-note{font-size:10px;color:#b8a9bf;line-height:1.5}.lab-console{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 11px;border:1px solid #70485f;border-radius:10px;background:linear-gradient(110deg,#241b2d,#302039 55%,#1b1a27);box-shadow:inset 0 0 18px #d45b9820}.lab-console strong{font-size:11px;color:#ffd5e5;letter-spacing:.08em}.lab-console small{font-size:9px;color:#b9a8c0}.lab-status{color:#8ef0d2!important}.lab-actions.three{grid-template-columns:repeat(3,minmax(0,1fr))}.lab-actions button{font-size:10px;padding:7px 4px}.lab-stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(transparent 49.5%,#ffffff08 50%,transparent 50.5%);background-size:100% 7px;opacity:.2}.lab-enter{animation:labReveal .9s cubic-bezier(.2,.8,.2,1) both}@keyframes labReveal{0%{opacity:0;transform:scale(.96);filter:brightness(2) blur(8px)}55%{opacity:1;filter:brightness(1.5) blur(1px)}100%{opacity:1;transform:scale(1);filter:none}}
 @media(max-height:700px){.mission7{gap:7px;padding-top:4px}.lab-stage{height:clamp(165px,27vh,230px);min-height:155px}.lab-tab{padding:7px 1px;font-size:9px}}
 
 </style>
@@ -331,7 +331,7 @@ body.sci .key-area .footer{
 <body>
 <main class="app">
  <header class="top">
-  <div class="brand"><strong>하나코 나나 계산기</strong><small id="secretCode">TOP SECRET CODE B</small></div>
+  <div class="brand"><strong id="brandName">하나코 나나 계산기</strong><small id="secretCode">TOP SECRET CODE B</small></div>
   <div class="top-actions"><button class="history-btn" id="historyBtn">기록</button><button class="mission-btn" id="missionBtn">MISSION 03</button><button class="mode" id="mode">공학용 전환</button></div>
  </header>
  <section class="display" aria-live="polite">
@@ -402,7 +402,7 @@ body.sci .key-area .footer{
   <button class="back-btn" id="baseBackCalc">계산기로 돌아가기</button>
  </section>
  <section class="mission7" id="mission7" aria-label="나나 실험실">
-  <div class="mission-head"><span>MISSION 07 · NANA LAB</span><small>TOP SECRET EXPERIMENT</small></div>
+  <div class="mission-head"><span>MISSION 07 · NANA LAB</span><small class="lab-status" id="labStatus">SYSTEM ONLINE</small></div><div class="lab-console"><div><strong>HANAKO NANA // EXPERIMENT CORE</strong><br><small id="labConsoleText">실험 코어가 대기 중입니다.</small></div><small>CODE AAA</small></div>
   <div class="lab-intro">하나코 나나 실험실에 오신 것을 환영합니다. 실험을 선택하고 화면을 터치해 직접 반응을 만들어 보세요.</div>
   <div class="lab-tabs" role="group" aria-label="실험 선택">
    <button class="lab-tab active" data-lab="particle">입자</button><button class="lab-tab" data-lab="gravity">중력</button><button class="lab-tab" data-lab="fluid">유체</button><button class="lab-tab" data-lab="wave">파동</button><button class="lab-tab" data-lab="dimension">차원</button>
@@ -412,8 +412,8 @@ body.sci .key-area .footer{
    <div class="lab-control-head"><label for="labPower" id="labPowerLabel">입자 수</label><strong id="labPowerValue">70</strong></div>
    <input id="labPower" type="range" min="20" max="140" value="70">
   </div>
-  <div class="lab-actions"><button class="back-btn" id="labReset">실험 초기화</button><button class="convert-btn" id="labRandom">무작위 생성</button></div>
-  <div class="lab-note" id="labNote">손가락으로 화면을 터치하면 빛나는 입자가 생성됩니다.</div>
+  <div class="lab-actions three"><button class="back-btn" id="labReset">초기화</button><button class="convert-btn" id="labRandom">연쇄 반응</button><button class="back-btn" id="labSlow">슬로 모션: 꺼짐</button></div>
+  <div class="lab-note" id="labNote">손가락으로 화면을 터치하면 빛나는 입자가 생성됩니다.</div><div class="lab-actions"><button class="back-btn" id="labSave">현재 장면 저장</button><button class="back-btn" id="labRecall">저장 장면 불러오기</button></div>
   <button class="back-btn" id="mission7Back">계산기로 돌아가기</button>
  </section>
  <div class="key-area">
@@ -536,16 +536,16 @@ $('m4BackHome').addEventListener('click',()=>{$('m4Work').hidden=true;$('m4Home'
 $('m4BackCalc').addEventListener('click',()=>{app.classList.remove('mission-mode','mission4-mode');missionBtn.textContent='MISSION 03';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 $('m4Home').hidden=false;$('m4Work').hidden=true;
 
-function leaveToCalculator(){app.classList.remove('mission-mode','mission4-mode','mission5-mode','mission6-mode','mission7-mode');missionBtn.textContent='MISSION 03';$('secretCode').textContent='TOP SECRET CODE B';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';}
+function leaveToCalculator(){app.classList.remove('mission-mode','mission4-mode','mission5-mode','mission6-mode','mission7-mode');missionBtn.textContent='MISSION 03';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';}
 $('toMission5').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission6-mode');app.classList.add('mission-mode','mission5-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';});
 $('statsBackCalc').addEventListener('click',leaveToCalculator);
 $('toMission6').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission5-mode');app.classList.add('mission-mode','mission6-mode');missionBtn.textContent='MISSION 06';$('tag').textContent='MISSION 06 / BASE CONVERTER';});
 $('baseBackCalc').addEventListener('click',leaveToCalculator);
 $('m4BackCalc').addEventListener('click',leaveToCalculator);
 
-function enterMission7(){app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode','mission7-mode');missionBtn.textContent='MISSION 07';$('secretCode').textContent='TOP SECRET CODE AAA';$('tag').textContent='MISSION 07 / NANA LAB';$('historyPanel')?.classList.remove('open');labResize();labStart();}
+function enterMission7(){app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode','mission7-mode');missionBtn.textContent='MISSION 07';$('brandName').textContent='하나코 나나 실험실';$('secretCode').textContent='TOP SECRET CODE AAA';$('tag').textContent='MISSION 07 / NANA LAB';$('historyPanel')?.classList.remove('open');$('mission7').classList.remove('lab-enter');void $('mission7').offsetWidth;$('mission7').classList.add('lab-enter');$('labConsoleText').textContent='보안 등급 AAA 확인. 실험 코어를 가동합니다.';$('labStatus').textContent='SYSTEM ONLINE';labResize();labStart();}
 $('mission7Back').addEventListener('click',leaveToCalculator);
-let labMode='particle',labFrame=0,labRaf=0,labW=0,labH=0,labParticles=[],labPointer=null,labTrails=[];
+let labMode='particle',labFrame=0,labRaf=0,labW=0,labH=0,labParticles=[],labPointer=null,labTrails=[],labSlow=false,labShock=0,labSaved=null,labTick=0;
 const labCanvas=$('labCanvas'),labCtx=labCanvas.getContext('2d');
 const labInfo={
  particle:['입자 수','화면을 터치해 빛나는 입자를 만들어 보세요.','터치한 위치에서 빛의 입자가 퍼져 나갑니다.'],
@@ -559,7 +559,7 @@ function labSeed(){labParticles=[];let count=labMode==='particle'?Number($('labP
 function labSetMode(mode){labMode=mode;document.querySelectorAll('[data-lab]').forEach(b=>b.classList.toggle('active',b.dataset.lab===mode));let info=labInfo[mode];$('labPowerLabel').textContent=info[0];$('labHint').textContent=info[1];$('labNote').textContent=info[2];$('labPower').value=mode==='particle'?70:mode==='gravity'?55:mode==='fluid'?65:mode==='wave'?55:35;$('labPowerValue').textContent=$('labPower').value;labSeed();}
 document.querySelectorAll('[data-lab]').forEach(b=>b.addEventListener('click',()=>labSetMode(b.dataset.lab)));
 $('labPower').addEventListener('input',()=>{$('labPowerValue').textContent=$('labPower').value;if(labMode==='particle')labSeed();});
-function labAdd(x,y){if(labMode==='particle'){for(let i=0;i<8;i++)labParticles.push({x,y,vx:(Math.random()-.5)*5,vy:(Math.random()-.5)*5,r:2+Math.random()*4,h:285+Math.random()*90});}else if(labMode==='gravity'){labParticles.push({x,y,vx:(Math.random()-.5)*3,vy:0,r:7+Math.random()*7,h:320+Math.random()*45});}else if(labMode==='fluid'){labTrails.push({x,y,r:12+Number($('labPower').value)/3,h:(labFrame*3)%360});if(labTrails.length>500)labTrails.shift();}else if(labMode==='wave'){labPointer={x,y};}else{labPointer={x,y};}}
+function labAdd(x,y){labPointer={x,y};labShock=1;if(labMode==='particle'){for(let i=0;i<18;i++){let a=Math.random()*Math.PI*2,v=1+Math.random()*6;labParticles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:2+Math.random()*5,h:285+Math.random()*100});}else if(labMode==='gravity'){labParticles.push({x,y,vx:(Math.random()-.5)*3,vy:0,r:7+Math.random()*7,h:320+Math.random()*45});}else if(labMode==='fluid'){labTrails.push({x,y,r:12+Number($('labPower').value)/3,h:(labFrame*3)%360});if(labTrails.length>500)labTrails.shift();}else if(labMode==='wave'){labPointer={x,y};}else{labPointer={x,y};}}
 labCanvas.addEventListener('pointerdown',e=>{let r=labCanvas.getBoundingClientRect();labCanvas.setPointerCapture(e.pointerId);labAdd(e.clientX-r.left,e.clientY-r.top);});
 labCanvas.addEventListener('pointermove',e=>{if(e.buttons===0)return;let r=labCanvas.getBoundingClientRect();if(labMode==='fluid')labAdd(e.clientX-r.left,e.clientY-r.top);});
 function labDraw(){
@@ -579,11 +579,17 @@ function labDraw(){
   c.lineWidth=1.5;for(let i=0;i<16;i++)for(let bit=0;bit<4;bit++){let j=i^(1<<bit);if(j>i){c.beginPath();c.moveTo(verts[i].x,verts[i].y);c.lineTo(verts[j].x,verts[j].y);c.strokeStyle='hsla('+(285+bit*18)+',90%,75%,.75)';c.shadowBlur=7;c.shadowColor=c.strokeStyle;c.stroke();}}c.shadowBlur=0;verts.forEach((p,i)=>{c.beginPath();c.fillStyle='#ffd1e4';c.arc(p.x,p.y,3,0,Math.PI*2);c.fill();});
  }
 }
-function labLoop(){if(!app.classList.contains('mission7-mode')){labRaf=0;return;}labDraw();labRaf=requestAnimationFrame(labLoop);}
-function labStart(){if(!labRaf){labSeed();labRaf=requestAnimationFrame(labLoop);}}
-$('labReset').addEventListener('click',()=>{labSeed();});
+function labLoop(){if(!app.classList.contains('mission7-mode')){labRaf=0;return;}labTick++;if(!labSlow||labTick%3===0)labDraw();labExtraDraw();labRaf=requestAnimationFrame(labLoop);}
+function labExtraDraw(){if(!labW||!labH)return;const c=labCtx,t=labFrame*(labSlow?.45:1);
+ if(labMode==='particle'){if(labPointer){c.save();let g=c.createRadialGradient(labPointer.x,labPointer.y,2,labPointer.x,labPointer.y,100);g.addColorStop(0,'rgba(255,150,220,.16)');g.addColorStop(1,'rgba(255,150,220,0)');c.fillStyle=g;c.fillRect(0,0,labW,labH);c.restore();for(let p of labParticles){let dx=labPointer.x-p.x,dy=labPointer.y-p.y,d=Math.hypot(dx,dy)||1;if(d<145){p.vx+=dx/d*.018;p.vy+=dy/d*.018;}}}}
+ else if(labMode==='gravity'){let cx=labW*.5,cy=labH*.47;c.save();c.translate(cx,cy);for(let k=0;k<4;k++){let rr=28+k*23,a=t*.018/(k+1)+k*1.7;c.beginPath();c.ellipse(0,0,rr*1.5,rr*.55,-.25,0,Math.PI*2);c.strokeStyle='rgba(190,160,255,.19)';c.stroke();c.beginPath();c.fillStyle=['#ff9bc8','#8fe9ff','#c5a2ff','#ffe19a'][k];c.shadowBlur=12;c.shadowColor=c.fillStyle;c.arc(Math.cos(a)*rr*1.5,Math.sin(a)*rr*.55,3+k*.7,0,Math.PI*2);c.fill();}c.beginPath();c.fillStyle='#fff0c9';c.shadowBlur=22;c.shadowColor='#ff9bce';c.arc(0,0,7,0,Math.PI*2);c.fill();c.restore();}
+ else if(labMode==='fluid'){c.save();c.globalCompositeOperation='screen';for(let i=0;i<3;i++){let x=labW*(.25+.25*i)+Math.sin(t*.012+i)*35,y=labH*.5+Math.cos(t*.016+i*2)*25,g=c.createRadialGradient(x,y,0,x,y,70);g.addColorStop(0,'hsla('+(300+i*35)+',100%,70%,.12)');g.addColorStop(1,'transparent');c.fillStyle=g;c.fillRect(x-70,y-70,140,140);}c.restore();}
+ else if(labMode==='wave'){c.save();c.globalCompositeOperation='screen';for(let x=0;x<labW;x+=4){let a=Math.sin(x*.025-t*.055),b=Math.sin(x*.018+t*.043),v=a+b,y=labH*.5+v*22;c.fillStyle='hsla('+(285+(v+2)*28)+',95%,70%,.18)';c.fillRect(x,y,3,labH*.5-y);}c.restore();}
+ else if(labMode==='dimension'){c.save();c.translate(labW/2,labH/2);for(let i=0;i<24;i++){let a=t*.012+i*Math.PI*2/24,r=labH*(.34+.035*Math.sin(t*.02+i));c.beginPath();c.fillStyle='hsla('+(285+i*4)+',95%,75%,.85)';c.shadowBlur=10;c.shadowColor=c.fillStyle;c.arc(Math.cos(a)*r,Math.sin(a)*r*.48,1.5,0,Math.PI*2);c.fill();}c.restore();}
+ if(labShock>0){c.save();c.beginPath();c.arc(labPointer?labPointer.x:labW/2,labPointer?labPointer.y:labH/2,labShock*95,0,Math.PI*2);c.strokeStyle='rgba(255,190,230,'+(1-labShock)*.7+')';c.lineWidth=2;c.stroke();c.restore();labShock=Math.max(0,labShock-.025);}}
+$('labReset').addEventListener('click',()=>{labPointer=null;labShock=0;labSeed();$('labConsoleText').textContent='실험 장면을 초기 상태로 되돌렸습니다.';});$('labSlow').addEventListener('click',()=>{labSlow=!labSlow;$('labSlow').textContent='슬로 모션: '+(labSlow?'켜짐':'꺼짐');$('labConsoleText').textContent=labSlow?'시간 흐름을 느리게 조정했습니다.':'실험 속도를 정상으로 복구했습니다.';});$('labSave').addEventListener('click',()=>{labSaved={mode:labMode,particles:labParticles.map(p=>({...p})),trails:labTrails.map(p=>({...p})),pointer:labPointer?{...labPointer}:null,power:$('labPower').value};$('labConsoleText').textContent='현재 실험 장면을 메모리에 저장했습니다.';$('labStatus').textContent='SNAPSHOT SAVED';});$('labRecall').addEventListener('click',()=>{if(!labSaved){$('labConsoleText').textContent='저장된 장면이 없습니다. 먼저 장면을 저장해 주세요.';return;}labSetMode(labSaved.mode);labParticles=labSaved.particles.map(p=>({...p}));labTrails=labSaved.trails.map(p=>({...p}));labPointer=labSaved.pointer?{...labSaved.pointer}:null;$('labPower').value=labSaved.power;$('labPowerValue').textContent=labSaved.power;$('labConsoleText').textContent='저장했던 실험 장면을 복원했습니다.';$('labStatus').textContent='SNAPSHOT LOADED';});
 $('labRandom').addEventListener('click',()=>{if(labMode==='particle'||labMode==='gravity'){for(let i=0;i<12;i++)labAdd(Math.random()*labW,Math.random()*labH);}else if(labMode==='fluid'){for(let i=0;i<25;i++)labAdd(Math.random()*labW,Math.random()*labH);}else{labPointer={x:Math.random()*labW,y:Math.random()*labH};}});
-window.addEventListener('resize',()=>{if(app.classList.contains('mission7-mode')){labResize();labDraw();}});
+window.addEventListener('resize',()=>{if(app.classList.contains('mission7-mode')){labResize();labDraw();labExtraDraw();}});
 labResize();
 
 
