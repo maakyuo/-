@@ -273,6 +273,11 @@ body.sci .key-area .footer{
   body.sci .key-area .footer{font-size:8px}
 }
 
+
+/* Mission 03: hide the complete keypad wrapper on entry from either mode. */
+.app.mission-mode .key-area{display:none !important;}
+.app.mission-mode .display{display:none !important;}
+.app.mission-mode .mission3{display:flex !important;}
 </style>
 </head>
 <body>
@@ -391,15 +396,3 @@ panel.addEventListener('click',e=>{if(e.target.id==='historyClose')panel.classLi
 })();
 </script>
 </body></html>
-
-/* Mission 03: hide the entire calculator keypad region, including scientific keys. */
-.app.mission-mode .key-area{
-  display:none !important;
-}
-.app.mission-mode .display{
-  display:none !important;
-}
-.app.mission-mode .mission3.active,
-.app.mission-mode .mission3{
-  display:flex !important;
-}
