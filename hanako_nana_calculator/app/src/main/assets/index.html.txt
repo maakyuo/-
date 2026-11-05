@@ -409,9 +409,10 @@ document.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
  if(a==='clear')clear();else if(a==='delete')del();else if(a==='sign')sign();else if(a==='equals')equals();else if(v!==undefined)append(v);
 }));
 mode.addEventListener('click',()=>{document.body.classList.toggle('sci');let on=document.body.classList.contains('sci');mode.textContent=on?'일반으로 전환':'공학용 전환';tag.textContent=on?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
-document.addEventListener('keydown',e=>{if(/^[0-9.+\-*/()%]$/.test(e.key))append(e.key);else if(e.key==='Enter'||e.key==='=')equals();else if(e.key==='Backspace')del();else if(e.key==='Escape')clear()});
+document.addEventListener('keydown',e=>{if(appIsInMissionMode()||e.target.closest('input,select,textarea,[contenteditable="true"]'))return;if(/^[0-9.+\-*/()%]$/.test(e.key))append(e.key);else if(e.key==='Enter'||e.key==='=')equals();else if(e.key==='Backspace')del();else if(e.key==='Escape')clear()});
 render();
 const app=document.querySelector('.app'),missionBtn=$('missionBtn'),historyBtn=$('historyBtn');
+function appIsInMissionMode(){return app.classList.contains('mission-mode');}
 missionBtn.addEventListener('click',()=>{app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
 $('backBtn').addEventListener('click',()=>{app.classList.remove('mission-mode');$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 const units={
