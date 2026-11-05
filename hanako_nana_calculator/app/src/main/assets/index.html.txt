@@ -190,7 +190,7 @@ body.sci .scientific .key{
 
 /* Mission 02: move both key groups downward together */
 body.sci .scientific,
-body.sci .key-area{transform:translateY(8vh) !important;}
+body.sci .key-area{transform:translateY(32vh) !important;}
 </style>
 </head>
 <body>
