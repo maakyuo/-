@@ -283,7 +283,7 @@ body.sci .key-area .footer{
 <body>
 <main class="app">
  <header class="top">
-  <div class="brand"><strong>하나코 나나 계산기</strong><small>TOP SECRET · LEVEL 07</small></div>
+  <div class="brand"><strong>하나코 나나 계산기</strong><small>TOP SECRET • LEVEL B</small></div>
   <div class="top-actions"><button class="history-btn" id="historyBtn">기록</button><button class="mission-btn" id="missionBtn">MISSION 03</button><button class="mode" id="mode">공학용 전환</button></div>
  </header>
  <section class="display" aria-live="polite">
