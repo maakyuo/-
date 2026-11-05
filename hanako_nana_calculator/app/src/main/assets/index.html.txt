@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#111116">
+<title>하나코 나나 계산기</title>
+<style>
+:root{--bg:#111116;--panel:#1b1a22;--panel2:#24222c;--pink:#e87991;--pink2:#f4a8b7;--white:#f8f4f4;--muted:#aaa2ad;--line:#393440;--blue:#8ca9c8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--white);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;overflow:hidden}
+body{display:flex;justify-content:center}
+.app{width:100%;max-width:520px;height:100dvh;display:flex;flex-direction:column;padding:16px 17px max(14px,env(safe-area-inset-bottom));gap:12px;background:radial-gradient(ellipse at 85% 0%,rgba(232,121,145,.12),transparent 42%),var(--bg)}
+.top{display:flex;align-items:center;justify-content:space-between;min-height:42px}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand strong{font-size:15px;letter-spacing:.04em}
+.brand small{font-size:9px;letter-spacing:.18em;color:var(--pink2)}
+.mode{border:1px solid var(--pink);color:var(--pink2);background:#281b24;border-radius:9px;padding:10px 13px;font-size:12px;font-weight:750}
+.display{flex:1;min-height:130px;max-height:32%;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;padding:18px 5px 20px;border-bottom:1px solid var(--line);overflow:hidden}
+.tag{align-self:flex-start;color:var(--pink2);font-size:9px;letter-spacing:.2em;border:1px solid #75404f;border-radius:5px;padding:4px 7px;margin-bottom:auto}
+.expression{width:100%;text-align:right;color:var(--muted);font-size:clamp(17px,4vw,23px);min-height:32px;overflow-wrap:anywhere}
+.result{width:100%;text-align:right;font-size:clamp(42px,10vw,62px);line-height:1.12;font-weight:650;letter-spacing:-.045em;overflow-wrap:anywhere}
+.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(54px,1fr);gap:9px;flex:1;min-height:0}
+.key{border:1px solid #393440;background:linear-gradient(180deg,#292631,#211f28);color:var(--white);border-radius:13px;font-size:clamp(18px,5vw,24px);font-weight:600;box-shadow:0 4px 0 #111015;touch-action:manipulation;user-select:none}
+.key:active{transform:translateY(3px) scale(.97);box-shadow:0 1px 0 #111015;background:#39313d}
+.key.fn{color:var(--pink2);background:linear-gradient(180deg,#33232d,#281e27);border-color:#69404e}
+.key.op{background:linear-gradient(180deg,#34303d,#292531);color:#f2b1bf}
+.key.equal{background:linear-gradient(180deg,#f19aae,#d96783);color:#20151a;border-color:#f5b5c3;font-size:27px}
+.key.wide{grid-column:span 2}
+.scientific{display:none;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:minmax(43px,1fr);gap:7px;flex:0 0 35%;min-height:140px}
+.scientific .key{font-size:clamp(13px,3.5vw,17px);border-radius:10px}
+body.sci .scientific{display:grid}
+body.sci .keys{grid-auto-rows:minmax(48px,1fr)}
+body.sci .display{max-height:24%}
+.footer{font-size:9px;color:#817984;letter-spacing:.12em;text-align:center;padding-top:2px}
+@media(max-height:680px){.app{gap:8px;padding-top:10px}.keys{gap:6px;grid-auto-rows:minmax(43px,1fr)}.key{border-radius:10px}.display{min-height:95px;padding-bottom:12px}.scientific{gap:5px;grid-auto-rows:minmax(35px,1fr)}}
+</style>
+</head>
+<body>
+<main class="app">
+ <header class="top">
+  <div class="brand"><strong>하나코 나나 계산기</strong><small>TOP SECRET · LEVEL 07</small></div>
+  <button class="mode" id="mode">공학용 전환</button>
+ </header>
+ <section class="display" aria-live="polite">
+  <div class="tag" id="tag">MISSION 01 / BASIC</div>
+  <div class="expression" id="expression"></div>
+  <div class="result" id="result">0</div>
+ </section>
+ <section class="scientific" id="scientific">
+  <button class="key fn" data-value="sin(">sin</button><button class="key fn" data-value="cos(">cos</button><button class="key fn" data-value="tan(">tan</button><button class="key fn" data-value="log(">log</button><button class="key fn" data-value="ln(">ln</button>
+  <button class="key fn" data-value="sqrt(">√</button><button class="key fn" data-value="^2">x²</button><button class="key fn" data-value="^">xʸ</button><button class="key fn" data-value="(">(</button><button class="key fn" data-value=")">)</button>
+  <button class="key fn" data-value="pi">π</button><button class="key fn" data-value="e">e</button><button class="key fn" data-value="!">n!</button><button class="key fn" data-value="ans">ANS</button><button class="key fn" data-value="deg">DEG</button>
+ </section>
+ <section class="keys" id="keys">
+  <button class="key fn" data-action="clear">AC</button><button class="key fn" data-action="delete">⌫</button><button class="key fn" data-value="%">%</button><button class="key op" data-value="/">÷</button>
+  <button class="key" data-value="7">7</button><button class="key" data-value="8">8</button><button class="key" data-value="9">9</button><button class="key op" data-value="*">×</button>
+  <button class="key" data-value="4">4</button><button class="key" data-value="5">5</button><button class="key" data-value="6">6</button><button class="key op" data-value="-">−</button>
+  <button class="key" data-value="1">1</button><button class="key" data-value="2">2</button><button class="key" data-value="3">3</button><button class="key op" data-value="+">+</button>
+  <button class="key fn" data-action="sign">+/−</button><button class="key" data-value="0">0</button><button class="key" data-value=".">.</button><button class="key equal" data-action="equals">=</button>
+ </section>
+ <div class="footer">NANA EDITION · CALCULATION SYSTEM</div>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id), expr=$('expression'), out=$('result'), mode=$('mode'), tag=$('tag');
+let input='',shown='0',ans=0,degrees=true,justSolved=false;
+const pretty=s=>s.replace(/\*/g,'×').replace(/\//g,'÷').replace(/-/g,'−');
+function render(){expr.textContent=pretty(input);out.textContent=shown;}
+function append(v){
+ if(v==='deg'){degrees=!degrees;tag.textContent='MISSION 02 / '+(degrees?'DEGREE':'RADIAN');document.querySelector('[data-value=\"deg\"]').textContent=degrees?'DEG':'RAD';return}
+ if(justSolved && /[0-9.]|pi|e|ans/.test(v)){input='';shown='0'}
+ justSolved=false;
+ if(v==='^2') input+='^2'; else if(v==='!') input+='!'; else input+=v;
+ shown=input||'0';render();
+}
+function clear(){input='';shown='0';justSolved=false;render()}
+function del(){input=input.slice(0,-1);shown=input||'0';render()}
+function sign(){if(!input){input='-';}else if(input[0]==='-')input=input.slice(1);else input='-'+input;shown=input;render()}
+function tokenize(s){
+ const re=/\s*(?:(\d+(?:\.\d*)?|\.\d+)|(sin|cos|tan|log|ln|sqrt|pi|ans|e)|([+\-*/^()%!]))/gy;
+ let t=[],i=0;
+ while(i<s.length){re.lastIndex=i;let m=re.exec(s);if(!m)throw Error('수식을 확인해 주세요');t.push(m[1]||m[2]||m[3]);i=re.lastIndex}
+ return t;
+}
+function calculate(s){
+ let t=tokenize(s),p=0;
+ const peek=()=>t[p],take=()=>t[p++];
+ function primary(){
+  let x=take(); if(x===undefined)throw Error('수식을 완성해 주세요');
+  if(x==='+'||x==='-'){let v=primary();return x==='-'?-v:v}
+  if(x==='('){let v=add();if(take()!==')')throw Error('괄호를 확인해 주세요');return v}
+  if(['sin','cos','tan','log','ln','sqrt'].includes(x)){let v=primary();if(x==='sin')return Math.sin(degrees?v*Math.PI/180:v);if(x==='cos')return Math.cos(degrees?v*Math.PI/180:v);if(x==='tan')return Math.tan(degrees?v*Math.PI/180:v);if(x==='log')return Math.log10(v);if(x==='ln')return Math.log(v);return Math.sqrt(v)}
+  if(x==='pi')return Math.PI;if(x==='e')return Math.E;if(x==='ans')return ans;
+  let n=Number(x);if(!Number.isFinite(n))throw Error('잘못된 숫자');return n;
+ }
+ function postfix(){let v=primary();while(peek()==='!'||peek()==='%'){let op=take();if(op==='!'){if(v<0||v>170||!Number.isInteger(v))throw Error('팩토리얼 범위 오류');let r=1;for(let i=2;i<=v;i++)r*=i;v=r}else v/=100}return v}
+ function power(){let v=postfix();if(peek()==='^'){take();v=Math.pow(v,power())}return v}
+ function mul(){let v=power();while(peek()==='*'||peek()==='/'){let op=take(),r=power();v=op==='*'?v*r:v/r}return v}
+ function add(){let v=mul();while(peek()==='+'||peek()==='-'){let op=take(),r=mul();v=op==='+'?v+r:v-r}return v}
+ let v=add();if(p<t.length)throw Error('수식을 확인해 주세요');if(!Number.isFinite(v))throw Error('계산할 수 없는 값');return v;
+}
+function equals(){if(!input)return;try{let v=calculate(input);ans=v;shown=Number(v.toPrecision(12)).toString();expr.textContent=pretty(input)+' =';input=shown;justSolved=true;out.textContent=shown}catch(e){out.textContent=e.message}}
+document.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+ const a=b.dataset.action,v=b.dataset.value;
+ if(a==='clear')clear();else if(a==='delete')del();else if(a==='sign')sign();else if(a==='equals')equals();else if(v!==undefined)append(v);
+}));
+mode.addEventListener('click',()=>{document.body.classList.toggle('sci');let on=document.body.classList.contains('sci');mode.textContent=on?'일반으로 전환':'공학용 전환';tag.textContent=on?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
+document.addEventListener('keydown',e=>{if(/^[0-9.+\-*/()%]$/.test(e.key))append(e.key);else if(e.key==='Enter'||e.key==='=')equals();else if(e.key==='Backspace')del();else if(e.key==='Escape')clear()});
+render();
+})();
+</script>
+</body></html>
