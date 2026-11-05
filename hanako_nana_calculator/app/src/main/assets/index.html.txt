@@ -412,7 +412,7 @@ mode.addEventListener('click',()=>{document.body.classList.toggle('sci');let on=
 document.addEventListener('keydown',e=>{if(/^[0-9.+\-*/()%]$/.test(e.key))append(e.key);else if(e.key==='Enter'||e.key==='=')equals();else if(e.key==='Backspace')del();else if(e.key==='Escape')clear()});
 render();
 const app=document.querySelector('.app'),missionBtn=$('missionBtn'),historyBtn=$('historyBtn');
-missionBtn.addEventListener('click',()=>{app.classList.add('mission-mode');$('tag').textContent='MISSION 03 / CONVERTER';});
+missionBtn.addEventListener('click',()=>{app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
 $('backBtn').addEventListener('click',()=>{app.classList.remove('mission-mode');$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 const units={
  area:{'제곱밀리미터':1e-6,'제곱센티미터':1e-4,'제곱미터':1,'제곱킬로미터':1e6,'헥타르':1e4,'평':3.305785},
@@ -430,26 +430,26 @@ $('convertBtn').addEventListener('click',()=>{let type=$('calcType').value,resul
 
 const m4Defs={
  finance:{title:'금융 · 소비',tools:{
-  discount:{name:'할인율 · 할인 가격',fields:[['price','원래 가격'],['rate','할인율 (%)']],calc:v=>{let d=v.price*v.rate/100;return '할인 금액: '+fmt(d)+'원\\n최종 가격: '+fmt(v.price-d)+'원';}},
-  installment:{name:'할부금 계산',fields:[['price','결제 금액'],['months','할부 개월 수'],['rate','연 이자율 (%)']],calc:v=>{let r=v.rate/1200,n=Math.max(1,Math.floor(v.months));let p=r===0?v.price/n:v.price*r/(1-Math.pow(1+r,-n));return '월 납부액: '+fmt(p)+'원\\n총 납부액: '+fmt(p*n)+'원\\n총 이자: '+fmt(p*n-v.price)+'원';}},
-  interest:{name:'이자 계산',fields:[['principal','원금'],['rate','연 이자율 (%)'],['months','기간 (개월)']],calc:v=>{let i=v.principal*v.rate/100*v.months/12;return '이자: '+fmt(i)+'원\\n원리금 합계: '+fmt(v.principal+i)+'원';}},
-  vat:{name:'부가세 계산',fields:[['price','공급가액'],['rate','부가세율 (%)']],calc:v=>{let tax=v.price*v.rate/100;return '공급가액: '+fmt(v.price)+'원\\n부가세: '+fmt(tax)+'원\\n합계 금액: '+fmt(v.price+tax)+'원';}}
+  discount:{name:'할인율 · 할인 가격',fields:[['price','원래 가격'],['rate','할인율 (%)']],calc:v=>{let d=v.price*v.rate/100;return '할인 금액: '+fmt(d)+'원\n최종 가격: '+fmt(v.price-d)+'원';}},
+  installment:{name:'할부금 계산',fields:[['price','결제 금액'],['months','할부 개월 수'],['rate','연 이자율 (%)']],calc:v=>{let r=v.rate/1200,n=Math.max(1,Math.floor(v.months));let p=r===0?v.price/n:v.price*r/(1-Math.pow(1+r,-n));return '월 납부액: '+fmt(p)+'원\n총 납부액: '+fmt(p*n)+'원\n총 이자: '+fmt(p*n-v.price)+'원';}},
+  interest:{name:'이자 계산',fields:[['principal','원금'],['rate','연 이자율 (%)'],['months','기간 (개월)']],calc:v=>{let i=v.principal*v.rate/100*v.months/12;return '이자: '+fmt(i)+'원\n원리금 합계: '+fmt(v.principal+i)+'원';}},
+  vat:{name:'부가세 계산',fields:[['price','공급가액'],['rate','부가세율 (%)']],calc:v=>{let tax=v.price*v.rate/100;return '공급가액: '+fmt(v.price)+'원\n부가세: '+fmt(tax)+'원\n합계 금액: '+fmt(v.price+tax)+'원';}}
  }},
  date:{title:'날짜 · 시간',tools:{
-  days:{name:'날짜 사이 일수',fields:[['start','시작 날짜','date'],['end','종료 날짜','date']],calc:v=>{let a=new Date(v.start+'T00:00:00'),b=new Date(v.end+'T00:00:00');return '날짜 차이: '+Math.abs(Math.round((b-a)/86400000))+'일\\n시작일 포함: '+(Math.abs(Math.round((b-a)/86400000))+1)+'일';}},
+  days:{name:'날짜 사이 일수',fields:[['start','시작 날짜','date'],['end','종료 날짜','date']],calc:v=>{let a=new Date(v.start+'T00:00:00'),b=new Date(v.end+'T00:00:00');return '날짜 차이: '+Math.abs(Math.round((b-a)/86400000))+'일\n시작일 포함: '+(Math.abs(Math.round((b-a)/86400000))+1)+'일';}},
   weekday:{name:'날짜의 요일',fields:[['date','날짜','date']],calc:v=>{let d=new Date(v.date+'T12:00:00');return ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'][d.getDay()];}},
-  work:{name:'근무시간 계산',fields:[['start','출근 시간','time'],['end','퇴근 시간','time'],['break','휴게시간 (분)']],calc:v=>{let [sh,sm]=v.start.split(':').map(Number),[eh,em]=v.end.split(':').map(Number);let m=eh*60+em-(sh*60+sm);if(m<0)m+=1440;m=Math.max(0,m-v.break);return '실근무 시간: '+Math.floor(m/60)+'시간 '+(m%60)+'분\\n총 '+m+'분';}},
+  work:{name:'근무시간 계산',fields:[['start','출근 시간','time'],['end','퇴근 시간','time'],['break','휴게시간 (분)']],calc:v=>{let [sh,sm]=v.start.split(':').map(Number),[eh,em]=v.end.split(':').map(Number);let m=eh*60+em-(sh*60+sm);if(m<0)m+=1440;m=Math.max(0,m-v.break);return '실근무 시간: '+Math.floor(m/60)+'시간 '+(m%60)+'분\n총 '+m+'분';}},
   addtime:{name:'시간 더하기 · 빼기',fields:[['time','기준 시간','time'],['hours','시간'],['minutes','분'],['direction','계산 방향','select']],calc:v=>{let [h,m]=v.time.split(':').map(Number),delta=v.hours*60+v.minutes;let n=(h*60+m+(v.direction==='빼기'?-delta:delta)+1440*10)%(1440);return '계산 결과: '+String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}}
  }},
  cooking:{title:'요리 계산',tools:{
   scale:{name:'인분별 재료량 환산',fields:[['qty','기존 재료량'],['from','기존 인분 수'],['to','변경할 인분 수']],calc:v=>'필요한 재료량: '+fmt(v.qty*v.to/v.from)+' (기존 단위와 동일)'},
   cost:{name:'재료 원가 계산',fields:[['unit','단위당 가격 (원)'],['qty','사용량']],calc:v=>'재료 원가: '+fmt(v.unit*v.qty)+'원'},
-  rate:{name:'음식 원가율 계산',fields:[['cost','음식 원가 (원)'],['selling','판매 가격 (원)']],calc:v=>'원가율: '+fmt(v.cost/v.selling*100)+'%\\n이익: '+fmt(v.selling-v.cost)+'원'},
+  rate:{name:'음식 원가율 계산',fields:[['cost','음식 원가 (원)'],['selling','판매 가격 (원)']],calc:v=>'원가율: '+fmt(v.cost/v.selling*100)+'%\n이익: '+fmt(v.selling-v.cost)+'원'},
   selling:{name:'목표 원가율 판매가',fields:[['cost','음식 원가 (원)'],['rate','목표 원가율 (%)']],calc:v=>'권장 판매가: '+fmt(v.cost/(v.rate/100))+'원'}
  }},
  math:{title:'생활 · 수학',tools:{
   ratio:{name:'비율 계산',fields:[['a','기준값 A'],['b','기준값 B'],['c','비교값 C']],calc:v=>'비례값 D: '+fmt(v.b*v.c/v.a)},
-  average:{name:'평균 계산',fields:[['values','숫자 입력 (쉼표로 구분)','text']],calc:v=>{let a=v.values.split(',').map(x=>Number(x.trim()));if(!a.length||a.some(x=>!Number.isFinite(x)))throw Error('쉼표로 구분된 숫자를 입력해 주세요.');return '평균: '+fmt(a.reduce((x,y)=>x+y,0)/a.length)+'\\n합계: '+fmt(a.reduce((x,y)=>x+y,0))+'\\n개수: '+a.length;}},
+  average:{name:'평균 계산',fields:[['values','숫자 입력 (쉼표로 구분)','text']],calc:v=>{let a=v.values.split(',').map(x=>Number(x.trim()));if(!a.length||a.some(x=>!Number.isFinite(x)))throw Error('쉼표로 구분된 숫자를 입력해 주세요.');return '평균: '+fmt(a.reduce((x,y)=>x+y,0)/a.length)+'\n합계: '+fmt(a.reduce((x,y)=>x+y,0))+'\n개수: '+a.length;}},
   equation:{name:'일차방정식 ax + b = c',fields:[['a','계수 a'],['b','상수 b'],['c','결과 c']],calc:v=>{if(v.a===0)throw Error('a에는 0을 입력할 수 없습니다.');return 'x = '+fmt((v.c-v.b)/v.a);}},
   area:{name:'넓이 계산',fields:[['shape','도형','select'],['a','가로 또는 밑변 (m)'],['b','세로 (m)']],calc:v=>{let n=v.shape==='원'?Math.PI*v.a*v.a:v.shape==='삼각형'?v.a*v.b/2:v.a*v.b;return '넓이: '+fmt(n)+'㎡';}},
   volume:{name:'부피 계산',fields:[['shape','입체','select'],['a','가로 또는 반지름 (m)'],['b','세로 (m)'],['c','높이 (m)']],calc:v=>{let n=v.shape==='원기둥'?Math.PI*v.a*v.a*v.c:v.a*v.b*v.c;return '부피: '+fmt(n)+'㎥';}}
@@ -462,9 +462,9 @@ function m4RenderFields(){let tool=m4Defs[m4Category].tools[$('m4Tool').value],h
 $('m4Tool').addEventListener('change',m4RenderFields);
 document.querySelectorAll('[data-m4cat]').forEach(b=>b.addEventListener('click',()=>m4ShowCategory(b.dataset.m4cat)));
 $('m4Calculate').addEventListener('click',()=>{try{let tool=m4Defs[m4Category].tools[$('m4Tool').value],v={};tool.fields.forEach(([id])=>{let el=$('m4_'+id);v[id]=el.type==='select'||el.type==='date'||el.type==='time'||el.type==='text'?el.value:Number(el.value);});if(tool.fields.some(([id,,type])=>!['text','date','time','select'].includes(type)&&(!Number.isFinite(v[id])||v[id]==='')))throw Error('모든 값을 올바르게 입력해 주세요.');if($('m4Tool').value==='scale'&&v.from<=0)throw Error('기존 인분 수는 0보다 커야 합니다.');if($('m4Tool').value==='selling'&&(v.rate<=0||v.rate>100))throw Error('목표 원가율은 0 초과 100 이하로 입력해 주세요.');if($('m4Tool').value==='rate'&&v.selling<=0)throw Error('판매 가격은 0보다 커야 합니다.');if($('m4Tool').value==='installment'&&v.months<=0)throw Error('할부 개월 수는 0보다 커야 합니다.');$('m4Result').textContent=tool.calc(v);}catch(e){$('m4Result').textContent=e.message||'입력값을 확인해 주세요.';}});
-$('toMission4').addEventListener('click',()=>{app.classList.add('mission4-mode');$('tag').textContent='MISSION 04 / DAILY TOOLS';});
+$('toMission4').addEventListener('click',()=>{app.classList.add('mission4-mode');missionBtn.textContent='MISSION 04';$('tag').textContent='MISSION 04 / DAILY TOOLS';});
 $('m4BackHome').addEventListener('click',()=>{$('m4Work').hidden=true;$('m4Home').hidden=false;});
-$('m4BackCalc').addEventListener('click',()=>{app.classList.remove('mission-mode','mission4-mode');$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
+$('m4BackCalc').addEventListener('click',()=>{app.classList.remove('mission-mode','mission4-mode');missionBtn.textContent='MISSION 03';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 $('m4Home').hidden=false;$('m4Work').hidden=true;
 
 populateUnits();
