@@ -35,36 +35,11 @@ jobs:
 
       - name: Restore Android project
         run: |
-          python3 - <<'PY'
-          import base64, io, zipfile
-          raw = ''.join(open('project-source.zip.b64').read().split())
-          def valid(data):
-              try:
-                  with zipfile.ZipFile(io.BytesIO(data)) as z:
-                      return z.testzip() is None
-              except Exception:
-                  return False
-          data = None
-          try:
-              candidate = base64.b64decode(raw, validate=True)
-              if valid(candidate):
-                  data = candidate
-          except Exception:
-              pass
-          if data is None:
-              for i in range(len(raw) - 1):
-                  try:
-                      candidate = base64.b64decode(raw[:i] + raw[i+2:], validate=True)
-                      if valid(candidate):
-                          data = candidate
-                          break
-                  except Exception:
-                      continue
-          if data is None:
-              raise SystemExit('Could not reconstruct the source ZIP')
-          with zipfile.ZipFile(io.BytesIO(data)) as archive:
-              archive.extractall('.')
-          PY
+          mkdir -p hanako_nana_calculator/app/src/main/assets
+          mkdir -p hanako_nana_calculator/app/src/main/res/values
+          cp hanako_nana_calculator/app/src/main/java/com/hanakonana/calculator/MainActivity.txt hanako_nana_calculator/app/src/main/java/com/hanakonana/calculator/MainActivity.java
+          cp hanako_nana_calculator/app/src/main/assets/index.html.txt hanako_nana_calculator/app/src/main/assets/index.html
+          cp hanako_nana_calculator/app/src/main/res/values/styles.xml.txt hanako_nana_calculator/app/src/main/res/values/styles.xml
 
       - name: Build debug APK
         working-directory: hanako_nana_calculator
