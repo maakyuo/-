@@ -294,6 +294,14 @@ body.sci .key-area .footer{
 .m4-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .m4-subtitle{font-size:11px;color:var(--muted);line-height:1.5}
 
+/* Mission 05 and 06 */
+.mission5,.mission6{display:none;flex:1;min-height:0;overflow:auto;padding:10px 2px;flex-direction:column;gap:10px}
+.app.mission-mode.mission5-mode .mission3,.app.mission-mode.mission5-mode .mission4,
+.app.mission-mode.mission6-mode .mission3,.app.mission-mode.mission6-mode .mission4,
+.app.mission-mode.mission6-mode .mission5{display:none !important}
+.app.mission-mode.mission5-mode .mission5,.app.mission-mode.mission6-mode .mission6{display:flex !important}
+.mission-output{white-space:pre-line;line-height:1.65;overflow-wrap:anywhere}
+
 </style>
 </head>
 <body>
@@ -346,7 +354,28 @@ body.sci .key-area .footer{
    <button class="back-btn" id="m4BackHome">분야 선택으로</button>
   </div>
   <button class="back-btn" id="m4BackCalc">계산기로 돌아가기</button>
+  <button class="convert-btn" id="toMission5">MISSION 05 · 통계 계산기</button>
  </section>
+ <section class="mission5" id="mission5" aria-label="통계 계산기">
+  <div class="mission-head"><span>MISSION 05</span><small>STATISTICS CALCULATOR</small></div>
+  <div class="m4-subtitle">숫자를 쉼표, 공백 또는 줄바꿈으로 구분해 입력해 주세요.</div>
+  <label class="field-label" for="statsValues">분석할 숫자</label>
+  <textarea class="field" id="statsValues" rows="4" placeholder="예: 10, 20, 20, 30, 40"></textarea>
+  <label class="field-label" for="statsType">분석 항목</label>
+  <select class="field" id="statsType"><option value="all">전체 통계</option><option value="mean">평균</option><option value="median">중앙값</option><option value="mode">최빈값</option><option value="range">최댓값 · 최솟값 · 범위</option><option value="std">표준편차</option></select>
+  <button class="convert-btn" id="statsCalculate">분석하기</button>
+  <div class="conversion-result"><small>분석 결과</small><strong class="mission-output" id="statsResult">숫자를 입력해 주세요.</strong></div>
+  <button class="back-btn" id="statsBackCalc">계산기로 돌아가기</button>
+  <button class="convert-btn" id="toMission6">MISSION 06 · 진법 변환 계산기</button>
+ </section>
+ <section class="mission6" id="mission6" aria-label="진법 변환 계산기">
+  <div class="mission-head"><span>MISSION 06</span><small>NUMBER BASE CONVERTER</small></div>
+  <div class="m4-subtitle">정수 값을 입력하면 2진법, 8진법, 10진법, 16진법으로 변환해 줍니다.</div>
+  <label class="field-label" for="baseInput">변환할 숫자</label><input class="field" id="baseInput" type="text" value="25" placeholder="숫자 입력">
+  <label class="field-label" for="baseFrom">입력한 숫자의 진법</label><select class="field" id="baseFrom"><option value="10">10진법</option><option value="2">2진법</option><option value="8">8진법</option><option value="16">16진법</option></select>
+  <button class="convert-btn" id="baseCalculate">전체 진법으로 변환</button>
+  <div class="conversion-result"><small>변환 결과</small><strong class="mission-output" id="baseResult">값을 입력해 주세요.</strong></div>
+  <button class="back-btn" id="baseBackCalc">계산기로 돌아가기</button>
  </section>
  <div class="key-area">
  <section class="scientific" id="scientific">
@@ -468,6 +497,16 @@ $('m4BackHome').addEventListener('click',()=>{$('m4Work').hidden=true;$('m4Home'
 $('m4BackCalc').addEventListener('click',()=>{app.classList.remove('mission-mode','mission4-mode');missionBtn.textContent='MISSION 03';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 $('m4Home').hidden=false;$('m4Work').hidden=true;
 
+function leaveToCalculator(){app.classList.remove('mission-mode','mission4-mode','mission5-mode','mission6-mode');missionBtn.textContent='MISSION 03';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';}
+$('toMission5').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission6-mode');app.classList.add('mission-mode','mission5-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';});
+$('statsBackCalc').addEventListener('click',leaveToCalculator);
+$('toMission6').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission5-mode');app.classList.add('mission-mode','mission6-mode');missionBtn.textContent='MISSION 06';$('tag').textContent='MISSION 06 / BASE CONVERTER';});
+$('baseBackCalc').addEventListener('click',leaveToCalculator);
+$('m4BackCalc').addEventListener('click',leaveToCalculator);
+
+function statFmt(n){return Number(n.toPrecision(12)).toLocaleString('ko-KR',{maximumFractionDigits:10});}
+$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
+$('baseCalculate').addEventListener('click',()=>{try{let raw=$('baseInput').value.trim().replace(/\s+/g,''),base=Number($('baseFrom').value);if(!raw)throw Error();let n=BigInt(raw.startsWith('-')?'-'+BigInt(parseInt(raw.slice(1),base)).toString():parseInt(raw,base));let digits=raw.replace(/^[+-]/,'').toLowerCase(),parsed=parseInt(digits,base);if(!Number.isFinite(parsed)||parsed.toString(base)!==digits)throw Error();$('baseResult').textContent='2진법: '+n.toString(2)+'\n8진법: '+n.toString(8)+'\n10진법: '+n.toString(10)+'\n16진법: '+n.toString(16).toUpperCase();}catch(e){$('baseResult').textContent='올바른 정수를 입력해 주세요. (음수 가능)';}});
 populateUnits();
 const panel=document.createElement('div');panel.className='history-panel';panel.id='historyPanel';panel.innerHTML='<div class="history-title"><span>CALCULATION LOG</span><button class="history-close" id="historyClose">닫기</button></div><div class="history-list" id="historyList"></div><button class="history-close" id="historyClear">기록 지우기</button>';app.appendChild(panel);
 historyBtn.addEventListener('click',()=>{let list=$('historyList');list.innerHTML=history.length?history.map(x=>'<div class="history-item"><small>'+x.q+'</small>'+x.a+'</div>').join(''):'<div class="history-item">아직 계산 기록이 없습니다.</div>';panel.classList.add('open');});
