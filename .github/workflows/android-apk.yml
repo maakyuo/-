@@ -81,6 +81,8 @@ jobs:
               local encoded proxy
               encoded="$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1],safe=""))' "$url")"
               for proxy in \
+                "https://proxy.cors.dev/$url" \
+                "https://cors.tools/proxy?url=$encoded" \
                 "https://i0.wp.com/file.namu.moe/file/$hash?ssl=1" \
                 "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=$url" \
                 "https://cors.isomorphic-git.org/$url" \
