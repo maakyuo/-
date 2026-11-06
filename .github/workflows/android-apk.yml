@@ -93,6 +93,17 @@ jobs:
             if [ "$ok" -ne 1 ]; then
               local encoded proxy
               encoded="$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1],safe=""))' "$url")"
+              proxy="https://corsproxy.io/?key=webdemo1&url=$encoded&reqHeaders=Referer%3Ahttps%3A%2F%2Fd.namu.moe%2F"
+              if curl -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0" -e "https://console.corsproxy.io/playground?preset=image" -H "Origin: https://console.corsproxy.io" "$proxy" -o "$out"; then
+                if [ "$(file --brief --mime-type "$out")" = "image/$ext" ]; then
+                  ok=1
+                fi
+              fi
+              if [ "$ok" -ne 1 ]; then rm -f "$out"; fi
+            fi
+            if [ "$ok" -ne 1 ]; then
+              local encoded proxy
+              encoded="$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1],safe=""))' "$url")"
               for proxy in \
                 "https://proxy.cors.dev/$url" \
                 "https://cors.tools/proxy?url=$encoded" \
