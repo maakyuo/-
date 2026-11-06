@@ -51,7 +51,7 @@ jobs:
           OUT="hanako_nana_calculator/app/src/main/assets/cards"
           mkdir -p "$OUT"
           fetch_card() {
-            local id="$1" hash="$2" ext="$3" filename="$4"
+            local id="$1" hash="$2" ext="$3" filename="$4" article="$5"
             local url="https://file.namu.moe/file/$hash"
             local out="$OUT/$id.$ext"
             local ok=0
@@ -65,6 +65,19 @@ jobs:
               rm -f "$out"
               sleep 2
             done
+            if [ "$ok" -ne 1 ]; then
+              local cookie="/tmp/namu-$id.cookies"
+              curl -fLsS --connect-timeout 8 --max-time 20 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36" -c "$cookie" -b "$cookie" "$article" -o "/tmp/namu-$id.html" || true
+              for ref in "$article" "https://namu.moe/" "https://d.namu.moe/"; do
+                if curl --http1.1 -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36" -b "$cookie" -c "$cookie" -e "$ref" -H "Sec-Fetch-Dest: image" -H "Sec-Fetch-Mode: no-cors" -H "Sec-Fetch-Site: cross-site" -H "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8" "$url" -o "$out"; then
+                  if [ "$(file --brief --mime-type "$out")" = "image/$ext" ]; then
+                    ok=1
+                    break
+                  fi
+                fi
+                rm -f "$out"
+              done
+            fi
             if [ "$ok" -ne 1 ]; then
               local base
               for base in "https://namu.wiki/file/$hash" "https://namu.moe/file/$hash" "https://d.namu.moe/file/$hash" "https://m.namu.moe/file/$hash" "https://dark.namu.moe/file/$hash"; do
@@ -153,17 +166,17 @@ jobs:
             fi
             echo "$id: $(stat -c%s "$out") bytes ($mime)"
           }
-          fetch_card yuni f84a734831cf838bf2a83b96648a58743151259cf1bad327a4206978c0bd879a00e95e1d5510dd4cefd9ad50a7fbe8f559f94fd1a359dc73d332831bbb0693e1 png "아야츠노 유니 프로필_배경제거.png"
-          fetch_card huya 823d076ce6f6331b17d1801583d8ec0554a0cbd5c915a8ced715b7543bd85e1b019587b76b6221109edd3b50c3bb027c png "사키하네 후야 프로필.png"
-          fetch_card hina ff5574b04a725914e19f6a4c0de05612c9ea31a84873cd4dc4e1a75dd9c78be41674d9b9857479b7a3845892a201553c6314da0c63c58648e1e8bda0507b3759 png "시라유키 히나 프로필 고화질_배경제거.png"
-          fetch_card mashiro e990a5d5aacf035e891e577e75ec8e36ad75be062dfff318d165440beacebc09a29a67ce278cc335edb0d2ef5f9b8ac13cb302492b1bdc13cbf777b55f895b63 png "네네코 마시로 프로필 고화질_배경제거.png"
-          fetch_card lize 2f50cf78232e284d9db33490c13e026072a1fe8af00d5b102300cb2414fcd02d png "akane lize2.png"
-          fetch_card tabi 022ca0d829ba3f4d66e82e76ef29403e5ed0639c9f878a0beeeeb119a7bed01443d8c6d78470ebdfe882e3491281d48466d86047d1b649f8b0c3deb17650b09a png "아라하시 타비 프로필 고화질_배경제거.png"
-          fetch_card shibuki 1f4342ce520468afaec3c04466568953dce982fa73afdd98465f8a8452bd208bd58c7bd8af0f0f13f5cd907ace8a9adb png "텐코 시부키 프로필_고화질.png"
-          fetch_card rin 5067c7ac12e6dd85a86747dcad75175b7cd14cd7ea8f5237baa931411c4ced73caa83bca9a34e63ca2ba1b8d3988cccf webp "아오쿠모 린 프로필.webp"
-          fetch_card nana b013e71705f48aeee925df087afcb4c237e941c35acb67e52865924df755f8552b6a8f8ea7e4577924abba0f2f6b53c2 webp "하나코 나나 프로필.webp"
-          fetch_card riko 4f8dd999dafc643e59ba30a4331eb13e302901fc625ea1d3a06fbe683ae745a3d727a87b62a48a408447a59f9b2764b7 webp "유즈하 리코 프로필.webp"
-          fetch_card kanna 57812127deb97dddcc110ae370ab9612da74ad84a81b4e70f5ef954408c24961cf6802477d26bac67a33a53ea890ebc499302f975a7ca264287eb69a9c453bc7 png "아이리 칸나 공식 프로필_배경제거.png"
+          fetch_card yuni f84a734831cf838bf2a83b96648a58743151259cf1bad327a4206978c0bd879a00e95e1d5510dd4cefd9ad50a7fbe8f559f94fd1a359dc73d332831bbb0693e1 png "아야츠노 유니 프로필_배경제거.png" "https://d.namu.moe/w/%EC%95%84%EC%95%BC%EC%B8%A0%EB%85%B8%20%EC%9C%A0%EB%8B%88"
+          fetch_card huya 823d076ce6f6331b17d1801583d8ec0554a0cbd5c915a8ced715b7543bd85e1b019587b76b6221109edd3b50c3bb027c png "사키하네 후야 프로필.png" "https://d.namu.moe/w/%EC%82%AC%ED%82%A4%ED%95%98%EB%84%A4%20%ED%9B%84%EC%95%BC"
+          fetch_card hina ff5574b04a725914e19f6a4c0de05612c9ea31a84873cd4dc4e1a75dd9c78be41674d9b9857479b7a3845892a201553c6314da0c63c58648e1e8bda0507b3759 png "시라유키 히나 프로필 고화질_배경제거.png" "https://dark.namu.moe/w/%EC%8B%9C%EB%9D%BC%EC%9C%A0%ED%82%A4%20%ED%9E%88%EB%82%98"
+          fetch_card mashiro e990a5d5aacf035e891e577e75ec8e36ad75be062dfff318d165440beacebc09a29a67ce278cc335edb0d2ef5f9b8ac13cb302492b1bdc13cbf777b55f895b63 png "네네코 마시로 프로필 고화질_배경제거.png" "https://dark.namu.moe/w/%EB%84%A4%EB%84%A4%EC%BD%94%20%EB%A7%88%EC%8B%9C%EB%A1%9C"
+          fetch_card lize 2f50cf78232e284d9db33490c13e026072a1fe8af00d5b102300cb2414fcd02d png "akane lize2.png" "https://dark.namu.moe/w/%EC%95%84%EC%B9%B4%EB%84%A4%20%EB%A6%AC%EC%A0%9C"
+          fetch_card tabi 022ca0d829ba3f4d66e82e76ef29403e5ed0639c9f878a0beeeeb119a7bed01443d8c6d78470ebdfe882e3491281d48466d86047d1b649f8b0c3deb17650b09a png "아라하시 타비 프로필 고화질_배경제거.png" "https://dark.namu.moe/w/%EC%95%84%EB%9D%BC%ED%95%98%EC%8B%9C%20%ED%83%80%EB%B9%84"
+          fetch_card shibuki 1f4342ce520468afaec3c04466568953dce982fa73afdd98465f8a8452bd208bd58c7bd8af0f0f13f5cd907ace8a9adb png "텐코 시부키 프로필_고화질.png" "https://dark.namu.moe/w/%ED%85%90%EC%BD%94%20%EC%8B%9C%EB%B6%80%ED%82%A4"
+          fetch_card rin 5067c7ac12e6dd85a86747dcad75175b7cd14cd7ea8f5237baa931411c4ced73caa83bca9a34e63ca2ba1b8d3988cccf webp "아오쿠모 린 프로필.webp" "https://dark.namu.moe/w/%EC%95%84%EC%98%A4%EC%BF%A0%EB%AA%A8%20%EB%A6%B0"
+          fetch_card nana b013e71705f48aeee925df087afcb4c237e941c35acb67e52865924df755f8552b6a8f8ea7e4577924abba0f2f6b53c2 webp "하나코 나나 프로필.webp" "https://dark.namu.moe/w/%ED%95%98%EB%82%98%EC%BD%94%20%EB%82%98%EB%82%98"
+          fetch_card riko 4f8dd999dafc643e59ba30a4331eb13e302901fc625ea1d3a06fbe683ae745a3d727a87b62a48a408447a59f9b2764b7 webp "유즈하 리코 프로필.webp" "https://dark.namu.moe/w/%EC%9C%A0%EC%A6%88%ED%95%98%20%EB%A6%AC%EC%BD%94"
+          fetch_card kanna 57812127deb97dddcc110ae370ab9612da74ad84a81b4e70f5ef954408c24961cf6802477d26bac67a33a53ea890ebc499302f975a7ca264287eb69a9c453bc7 png "아이리 칸나 공식 프로필_배경제거.png" "https://dark.namu.moe/w/%EC%95%84%EC%9D%B4%EB%A6%AC%20%EC%B9%B8%EB%82%98"
 
       - name: Build debug APK
         working-directory: hanako_nana_calculator
