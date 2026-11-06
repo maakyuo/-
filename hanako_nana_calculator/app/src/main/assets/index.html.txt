@@ -756,6 +756,7 @@ function selectMemberTheme(index){
  applyActiveTheme();renderThemeCards();
 }
 function enterKannaSecretScreen(){
+  if(activeThemeIndex!==1)return;
  app.classList.remove('theme-mode','mission4-mode','mission6-mode','mission7-mode');
  app.classList.add('mission-mode','mission5-mode','kanna-secret-mode');
  missionBtn.textContent='NULL';$('tag').textContent='NULL';
