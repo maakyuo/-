@@ -696,21 +696,15 @@ let activeThemeIndex=0;
 try{const saved=Number(localStorage.getItem('hanakoNanaThemeIndex'));if(Number.isInteger(saved)&&saved>=0&&saved<themeMembers.length)activeThemeIndex=saved;}catch(e){}
 function applyMemberName(){
  const member=themeMembers[activeThemeIndex];
- if(activeThemeIndex===0)return;
- const replaceText=value=>{
-  let next=value;
-  next=next.replace(/하나코\s*나나\s*실험실/g,member.ko+' 실험실');
-  next=next.replace(/하나코\s*나나\s*계산기/g,member.ko+' 계산기');
-  next=next.replace(/하나코\s*나나/g,member.ko);
-  next=next.replace(/하나코나나/g,member.ko);
-  next=next.replace(/하나코/g,member.ko);
-  next=next.replace(/나나/g,member.ko);
-  next=next.replace(/HANAKO\s+NANA/gi,member.en);
-  next=next.replace(/NANA\s+LAB/gi,member.en.toUpperCase()+' LAB');
-  next=next.replace(/\bHANAKO\b/gi,member.en);
-  next=next.replace(/\bNANA\b/gi,member.en);
-  return next;
- };
+ const aliases=themeMembers.flatMap(m=>[m.ko,m.en]);
+ aliases.push('하나코나나','하나코','나나','Hanako','Nana');
+ aliases.sort((a,b)=>b.length-a.length);
+ const escaped=aliases.map(a=>a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+ const aliasPattern=new RegExp(escaped.join('|'),'gi');
+ const replaceText=value=>value.replace(aliasPattern,match=>{
+  if(/[가-힣]/.test(match))return member.ko;
+  return match===match.toUpperCase()?member.en.toUpperCase():match===match.toLowerCase()?member.en.toLowerCase():member.en;
+ });
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
  nodes.forEach(node=>{if(node.parentElement?.closest('.theme-screen'))return;const next=replaceText(node.nodeValue);if(next!==node.nodeValue)node.nodeValue=next;});
