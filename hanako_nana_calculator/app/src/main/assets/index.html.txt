@@ -330,6 +330,36 @@ body.sci .key-area .footer{
 .blackhole-active #labReset{position:relative;z-index:100;pointer-events:auto!important;opacity:1!important;transform:none!important}
 .blackhole-active .lab-stage{box-shadow:0 0 18px #a34cff,0 0 42px #7020b8,inset 0 0 35px #000;animation:bhStagePulse .72s ease-in-out infinite alternate}
 @keyframes bhStagePulse{from{border-color:#7c39ad;filter:brightness(.88)}to{border-color:#f0b4ff;filter:brightness(1.35)}}
+
+/* NULL theme selector and member-wide color themes */
+.theme-screen{display:none;flex:1;min-height:0;overflow:auto;padding:10px 2px;flex-direction:column;gap:12px}
+.app.theme-mode .theme-screen{display:flex!important}
+.app.theme-mode .mission3,.app.theme-mode .mission4,.app.theme-mode .mission5,.app.theme-mode .mission6,.app.theme-mode .mission7{display:none!important}
+.app.theme-mode .display,.app.theme-mode .key-area,.app.theme-mode .footer{display:none!important}
+.theme-intro{font-size:11px;color:var(--muted);line-height:1.55}
+.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.theme-card{display:flex;align-items:center;gap:9px;min-height:62px;padding:9px;border:1px solid var(--theme-line,#514653);border-radius:11px;background:var(--theme-panel,#211e28);color:var(--white);text-align:left}
+.theme-card.selected{border:2px solid var(--theme-accent,var(--pink));background:var(--theme-soft,#30232d);box-shadow:0 0 14px var(--theme-glow,transparent)}
+.theme-chip{flex:0 0 27px;width:27px;height:27px;border-radius:50%;background:var(--theme-chip);border:2px solid #ffffff55;box-shadow:0 0 12px color-mix(in srgb,var(--theme-chip),transparent 45%)}
+.theme-card strong{font-size:11px;line-height:1.35}
+.theme-card small{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+.theme-screen .back-btn{margin-top:auto;min-height:43px}
+body.theme-active{background:var(--theme-bg)!important;color:var(--white)}
+body.theme-active .app{background:radial-gradient(ellipse at 85% 0%,var(--theme-glow),transparent 45%),var(--theme-bg)!important}
+body.theme-active .mode,body.theme-active .mission-btn{border-color:var(--theme-accent)!important;color:var(--theme-accent-2)!important;background:var(--theme-soft)!important}
+body.theme-active .tag,body.theme-active .mission-head,body.theme-active .swap,body.theme-active .history-title{color:var(--theme-accent-2)!important;border-color:var(--theme-accent)!important}
+body.theme-active .key.fn{color:var(--theme-accent-2)!important;background:linear-gradient(180deg,var(--theme-soft),var(--theme-panel))!important;border-color:var(--theme-accent)!important}
+body.theme-active .key.op{color:var(--theme-accent-2)!important;background:linear-gradient(180deg,var(--theme-panel2),var(--theme-panel))!important}
+body.theme-active .key.equal,body.theme-active .convert-btn{background:linear-gradient(180deg,var(--theme-accent-2),var(--theme-accent))!important;border-color:var(--theme-accent-2)!important;color:#17131a!important}
+body.theme-active .field,body.theme-active .history-panel,body.theme-active .lab-controls{background:var(--theme-panel)!important;border-color:var(--theme-line)!important}
+body.theme-active .field:focus{border-color:var(--theme-accent)!important}
+body.theme-active .conversion-result,body.theme-active .m4-category,body.theme-active .lab-console{background:var(--theme-soft)!important;border-color:var(--theme-accent)!important}
+body.theme-active .m4-category strong,body.theme-active .lab-control-head,body.theme-active .lab-console strong{color:var(--theme-accent-2)!important}
+body.theme-active .lab-tab.active{background:var(--theme-soft)!important;border-color:var(--theme-accent)!important;color:var(--theme-accent-2)!important}
+body.theme-active .lab-stage{border-color:var(--theme-accent)!important;box-shadow:inset 0 0 28px var(--theme-glow)}
+body.theme-active .lab-controls input{accent-color:var(--theme-accent)!important}
+body.theme-active .back-btn,body.theme-active .history-close{background:var(--theme-panel2)!important;border-color:var(--theme-line)!important}
+
 </style>
 </head>
 <body>
@@ -404,6 +434,12 @@ body.sci .key-area .footer{
   <button class="convert-btn" id="baseCalculate">전체 진법으로 변환</button>
   <div class="conversion-result"><small>변환 결과</small><strong class="mission-output" id="baseResult">값을 입력해 주세요.</strong></div>
   <button class="back-btn" id="baseBackCalc">계산기로 돌아가기</button>
+ </section>
+ <section class="theme-screen" id="themeScreen" aria-label="전체 테마 변경">
+  <div class="mission-head"><span>전체 테마 변경</span><small>NULL</small></div>
+  <div class="theme-intro">멤버를 선택하면 앱 전체의 색상과 이름 표기가 함께 변경됩니다. 선택한 테마는 다음 실행에도 유지됩니다.</div>
+  <div class="theme-grid" id="themeGrid"></div>
+  <button class="back-btn" id="themeBack">MISSION 05로 돌아가기</button>
  </section>
  <section class="mission7" id="mission7" aria-label="나나 실험실">
   <div class="mission-head"><span>MISSION 07 · NANA LAB</span><small class="lab-status" id="labStatus">SYSTEM ONLINE</small></div><div class="lab-console"><div><strong>HANAKO NANA // EXPERIMENT CORE</strong><br><small id="labConsoleText">실험 코어가 대기 중입니다.</small></div><small>CODE AAA</small></div>
@@ -484,7 +520,7 @@ document.addEventListener('keydown',e=>{if(appIsInMissionMode()||e.target.closes
 render();
 const app=document.querySelector('.app'),missionBtn=$('missionBtn'),historyBtn=$('historyBtn');
 function appIsInMissionMode(){return app.classList.contains('mission-mode');}
-missionBtn.addEventListener('click',()=>{app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
+missionBtn.addEventListener('click',()=>{if(app.classList.contains('theme-mode')){exitThemeScreen();return;}app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
 $('backBtn').addEventListener('click',()=>{app.classList.remove('mission-mode');$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 const units={
  area:{'제곱밀리미터':1e-6,'제곱센티미터':1e-4,'제곱미터':1,'제곱킬로미터':1e6,'헥타르':1e4,'평':3.305785},
@@ -539,7 +575,7 @@ $('m4BackHome').addEventListener('click',()=>{$('m4Work').hidden=true;$('m4Home'
 $('m4BackCalc').addEventListener('click',()=>{app.classList.remove('mission-mode','mission4-mode');missionBtn.textContent='MISSION 03';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 $('m4Home').hidden=false;$('m4Work').hidden=true;
 
-function leaveToCalculator(){app.classList.remove('mission-mode','mission4-mode','mission5-mode','mission6-mode','mission7-mode');missionBtn.textContent='MISSION 03';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';}
+function leaveToCalculator(){app.classList.remove('mission-mode','mission4-mode','mission5-mode','mission6-mode','mission7-mode','theme-mode');missionBtn.textContent='MISSION 03';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';}
 $('toMission5').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission6-mode');app.classList.add('mission-mode','mission5-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';});
 $('statsBackCalc').addEventListener('click',leaveToCalculator);
 $('toMission6').addEventListener('click',()=>{app.classList.remove('mission4-mode','mission5-mode');app.classList.add('mission-mode','mission6-mode');missionBtn.textContent='MISSION 06';$('tag').textContent='MISSION 06 / BASE CONVERTER';});
@@ -643,8 +679,88 @@ window.addEventListener('resize',()=>{if(app.classList.contains('mission7-mode')
 labResize();
 
 
+
+const themeMembers=[
+ {ko:'하나코 나나',en:'Hanako Nana',accent:'#E87991',accent2:'#F4A8B7',bg:'#111116',panel:'#1b1a22',panel2:'#24222c',line:'#393440',soft:'#281b24',glow:'rgba(232,121,145,.16)'},
+ {ko:'아야츠노 유니',en:'Ayatsuno Yuni',accent:'#B8C8E8',accent2:'#E7EDFF',bg:'#10141B',panel:'#1B2430',panel2:'#253243',line:'#405166',soft:'#263448',glow:'rgba(184,200,232,.16)'},
+ {ko:'사키하네 후야',en:'Sakihane Huya',accent:'#9A78D7',accent2:'#D0B7FF',bg:'#130F1B',panel:'#21192D',panel2:'#2B203B',line:'#4A3860',soft:'#30213F',glow:'rgba(154,120,215,.17)'},
+ {ko:'시라유키 히나',en:'Shirayuki Hina',accent:'#D77FA8',accent2:'#F2B5D0',bg:'#170F17',panel:'#281B27',panel2:'#362333',line:'#65445B',soft:'#3A2332',glow:'rgba(215,127,168,.17)'},
+ {ko:'네네코 마시로',en:'Neneko Mashiro',accent:'#A9BBD1',accent2:'#DCE8F4',bg:'#10151D',panel:'#1B2530',panel2:'#263341',line:'#425468',soft:'#263746',glow:'rgba(169,187,209,.16)'},
+ {ko:'아카네 리제',en:'Akane Lize',accent:'#B94655',accent2:'#F08A91',bg:'#180F12',panel:'#28191D',panel2:'#382127',line:'#61323D',soft:'#3A1F27',glow:'rgba(185,70,85,.18)'},
+ {ko:'아라하시 타비',en:'Arahashi Tabi',accent:'#648DC5',accent2:'#A8C8F2',bg:'#0F141C',panel:'#1B2430',panel2:'#253242',line:'#3C526B',soft:'#22364D',glow:'rgba(100,141,197,.17)'},
+ {ko:'텐코 시부키',en:'Tenko Shibuki',accent:'#C96B45',accent2:'#F0A07B',bg:'#18110F',panel:'#2A1E19',panel2:'#392720',line:'#624438',soft:'#3D281F',glow:'rgba(201,107,69,.18)'},
+ {ko:'아오쿠모 린',en:'Aokumo Rin',accent:'#5EAFCB',accent2:'#A2E1F2',bg:'#0E151A',panel:'#19262D',panel2:'#23343D',line:'#3B5C69',soft:'#203A45',glow:'rgba(94,175,203,.18)'},
+ {ko:'유즈하 리코',en:'Yuzuha Riko',accent:'#69B47D',accent2:'#A8E0B2',bg:'#101710',panel:'#1C281D',panel2:'#263728',line:'#405B42',soft:'#263C29',glow:'rgba(105,180,125,.17)'}
+];
+let activeThemeIndex=0;
+try{const saved=Number(localStorage.getItem('hanakoNanaThemeIndex'));if(Number.isInteger(saved)&&saved>=0&&saved<themeMembers.length)activeThemeIndex=saved;}catch(e){}
+function applyMemberName(){
+ const member=themeMembers[activeThemeIndex];
+ if(activeThemeIndex===0)return;
+ const replaceText=value=>{
+  let next=value;
+  next=next.replace(/하나코\s*나나\s*실험실/g,member.ko+' 실험실');
+  next=next.replace(/하나코\s*나나\s*계산기/g,member.ko+' 계산기');
+  next=next.replace(/하나코\s*나나/g,member.ko);
+  next=next.replace(/하나코나나/g,member.ko);
+  next=next.replace(/하나코/g,member.ko);
+  next=next.replace(/나나/g,member.ko);
+  next=next.replace(/HANAKO\s+NANA/gi,member.en);
+  next=next.replace(/NANA\s+LAB/gi,member.en.toUpperCase()+' LAB');
+  next=next.replace(/\bHANAKO\b/gi,member.en);
+  next=next.replace(/\bNANA\b/gi,member.en);
+  return next;
+ };
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+ const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ nodes.forEach(node=>{if(node.parentElement?.closest('.theme-screen'))return;const next=replaceText(node.nodeValue);if(next!==node.nodeValue)node.nodeValue=next;});
+ document.querySelectorAll('body *').forEach(el=>{
+  if(el.closest('.theme-screen'))return;
+  ['aria-label','title','placeholder','alt'].forEach(attr=>{const value=el.getAttribute(attr);if(value){const next=replaceText(value);if(next!==value)el.setAttribute(attr,next);}});
+ });
+ const nextTitle=replaceText(document.title);if(nextTitle!==document.title)document.title=nextTitle;
+}
+function applyActiveTheme(){
+ const m=themeMembers[activeThemeIndex],root=document.documentElement.style;
+ root.setProperty('--theme-accent',m.accent);root.setProperty('--theme-accent-2',m.accent2);
+ root.setProperty('--theme-bg',m.bg);root.setProperty('--theme-panel',m.panel);
+ root.setProperty('--theme-panel2',m.panel2);root.setProperty('--theme-line',m.line);
+ root.setProperty('--theme-soft',m.soft);root.setProperty('--theme-glow',m.glow);
+ document.body.classList.add('theme-active');
+ applyMemberName();
+}
+function renderThemeCards(){
+ const grid=$('themeGrid');
+ grid.innerHTML=themeMembers.map((m,i)=>'<button type="button" class="theme-card'+(i===activeThemeIndex?' selected':'')+'" data-theme-index="'+i+'" aria-pressed="'+(i===activeThemeIndex)+'" style="--theme-chip:'+m.accent+'"><span class="theme-chip"></span><span><strong>'+m.ko+'</strong><small>'+(i===0?'기본 테마':'멤버 테마')+'</small></span></button>').join('');
+}
+function selectMemberTheme(index){
+ if(!Number.isInteger(index)||index<0||index>=themeMembers.length)return;
+ activeThemeIndex=index;
+ try{localStorage.setItem('hanakoNanaThemeIndex',String(index));}catch(e){}
+ applyActiveTheme();renderThemeCards();
+}
+function enterThemeScreen(){
+ app.classList.remove('mission4-mode','mission6-mode','mission7-mode');
+ app.classList.add('mission-mode','mission5-mode','theme-mode');
+ missionBtn.textContent='NULL';$('tag').textContent='NULL';
+ $('brandName').textContent='전체 테마 변경';$('secretCode').textContent='THEME SELECT';
+ $('historyPanel')?.classList.remove('open');
+ renderThemeCards();
+}
+function exitThemeScreen(){
+ app.classList.remove('theme-mode');
+ missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';
+ $('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';
+}
+$('themeGrid').addEventListener('click',e=>{const card=e.target.closest('[data-theme-index]');if(card)selectMemberTheme(Number(card.dataset.themeIndex));});
+$('themeBack').addEventListener('click',exitThemeScreen);
+applyActiveTheme();
+renderThemeCards();
+const memberNameObserver=new MutationObserver(()=>applyMemberName());
+memberNameObserver.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['aria-label','title','placeholder','alt']});
+
 function statFmt(n){return Number(n.toPrecision(12)).toLocaleString('ko-KR',{maximumFractionDigits:10});}
-$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw.replace(/\s+/g,'')==='하나코나나'){if(window.AndroidBridge&&typeof window.AndroidBridge.openChzzk==='function'){window.AndroidBridge.openChzzk();}else{window.open('https://chzzk.naver.com/4d812b586ff63f8a2946e64fa860bbf5','_blank');}return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
+$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw.replace(/\\s+/g,'')==='테마변경'){enterThemeScreen();return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
 $('baseCalculate').addEventListener('click',()=>{try{let raw=$('baseInput').value.trim().replace(/\s+/g,''),base=Number($('baseFrom').value);if(!raw)throw Error();let negative=raw.startsWith('-'),digits=raw.replace(/^[+-]/,'').toLowerCase();if(!digits)throw Error();let alphabet='0123456789abcdefghijklmnopqrstuvwxyz',n=0n;for(const ch of digits){let d=alphabet.indexOf(ch);if(d<0||d>=base)throw Error();n=n*BigInt(base)+BigInt(d);}if(negative)n=-n;$('baseResult').textContent='2진법: '+n.toString(2)+'\n8진법: '+n.toString(8)+'\n10진법: '+n.toString(10)+'\n16진법: '+n.toString(16).toUpperCase();}catch(e){$('baseResult').textContent='올바른 정수를 입력해 주세요. (음수 가능)';}});
 populateUnits();
 const panel=document.createElement('div');panel.className='history-panel';panel.id='historyPanel';panel.innerHTML='<div class="history-title"><span>CALCULATION LOG</span><button class="history-close" id="historyClose">닫기</button></div><div class="history-list" id="historyList"></div><button class="history-close" id="historyClear">기록 지우기</button>';app.appendChild(panel);
