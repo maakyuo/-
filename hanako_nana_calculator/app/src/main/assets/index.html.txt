@@ -433,6 +433,14 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 @keyframes cbHitFlash{0%{filter:brightness(1)}25%{filter:brightness(2.4);box-shadow:0 0 18px #fff8;transform:translateX(-4px)}55%{transform:translateX(4px)}100%{filter:brightness(1);transform:translateX(0);box-shadow:none}}
 @keyframes cbCriticalHit{0%{filter:brightness(1)}18%{filter:brightness(3) saturate(1.8);box-shadow:0 0 0 3px #ffd45c,0 0 26px #ffb52e;transform:scale(1.07) rotate(-2deg)}42%{transform:scale(.97) rotate(2deg)}68%{transform:scale(1.03)}100%{filter:brightness(1);transform:scale(1);box-shadow:none}}
 
+/* Impact animation is applied to the actual opponent card */
+.cb-wild.cb-card-hit{animation:cbWildCardHit .48s ease-out;transform-origin:center}
+.cb-wild.cb-card-dodge{animation:cbWildCardDodge .42s ease-out;transform-origin:center}
+@keyframes cbWildCardHit{0%{transform:translateX(0) scale(1);filter:brightness(1)}18%{transform:translateX(-9px) rotate(-2deg) scale(1.04);filter:brightness(2.5);box-shadow:0 0 0 3px #ff625f,0 0 25px #ff3939}42%{transform:translateX(8px) rotate(2deg)}68%{transform:translateX(-4px)}100%{transform:translateX(0) scale(1);filter:brightness(1);box-shadow:none}}
+@keyframes cbWildCardDodge{0%{transform:translateX(0)}35%{transform:translateX(22px) rotate(5deg)}70%{transform:translateX(-5px) rotate(-1deg)}100%{transform:translateX(0)}}
+.cb-impact-label{position:absolute;left:50%;top:8px;z-index:5;transform:translateX(-50%);font-weight:900;font-size:18px;color:#ffdf62;text-shadow:0 2px 5px #000;pointer-events:none;animation:cbImpactRise .7s ease-out forwards}
+@keyframes cbImpactRise{0%{opacity:0;translate:0 8px}20%{opacity:1}100%{opacity:0;translate:0 -24px}}
+
 </style>
 </head>
 <body>
@@ -1067,11 +1075,14 @@ function cbSelectFighter(id){
  [...$('cbBattleDeck').children].forEach(el=>el.classList.toggle('selected',el.dataset.animalId===id));
 }
 function cbDamage(attacker,defender){
- const a=cbStats(attacker),d=cbStats(defender),raw=Math.max(1,a.attack-d.defense);
+ const a=cbStats(attacker),d=cbStats(defender);
+ const missed=Math.random()<0.10;
+ if(missed)return {damage:0,advantage:false,critical:false,missed:true};
+ const raw=Math.max(1,a.attack-d.defense);
  const advantage=(a.type==='공중'&&d.type==='지상')||(a.type==='지상'&&d.type==='해상')||(a.type==='해상'&&d.type==='공중');
  const critical=Math.random()<0.05;
  const damage=raw*(advantage?5:1)*(critical?3:1);
- return {damage,advantage,critical};
+ return {damage,advantage,critical,missed:false};
 }
 function cbUpdateDuel(){
  const mine=cbStats(cbSelected),wild=cbStats(cbWild);
@@ -1094,23 +1105,30 @@ function cbFinishBattle(win){
  }
  $('cbSummary').textContent='보유 동물 '+cbOwned.length+'종 · 덱 '+cbDeck.length+'/3';
 }
-function cbPlayAttackEffect(attackerId,defenderId,critical){
- const attacker=$(attackerId),defender=$(defenderId);
- [attacker,defender].forEach(el=>el.classList.remove('cb-attacking','cb-hit','cb-critical'));
- void attacker.offsetWidth;void defender.offsetWidth;
- attacker.classList.add('cb-attacking');
- defender.classList.add(critical?'cb-critical':'cb-hit');
- setTimeout(()=>{attacker.classList.remove('cb-attacking');defender.classList.remove('cb-hit','cb-critical');},650);
+function cbPlayAttackEffect(defenderId,critical,missed){
+ const holder=$(defenderId);
+ const target=defenderId==='cbWildCard'?holder.querySelector('.cb-wild'):holder;
+ if(!target)return;
+ target.classList.remove('cb-card-hit','cb-card-dodge');
+ void target.offsetWidth;
+ target.classList.add(missed?'cb-card-dodge':'cb-card-hit');
+ const label=document.createElement('span');
+ label.className='cb-impact-label';
+ label.textContent=missed?'회피!':(critical?'크리티컬!':'');
+ if(label.textContent){if(getComputedStyle(target).position==='static')target.style.position='relative';target.appendChild(label);}
+ setTimeout(()=>{target.classList.remove('cb-card-hit','cb-card-dodge');label.remove();},750);
 }
 function cbAttackTurn(){
  if(!cbSelected||cbBattleDone)return;
- const hit=cbDamage(cbSelected,cbWild);cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
- cbPlayAttackEffect('cbMineFighter','cbWildFighter',hit.critical);
- $('cbBattleLog').textContent=cbSelected.name+'의 공격! '+(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해';
+ const hit=cbDamage(cbSelected,cbWild);
+ if(!hit.missed)cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
+ cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
+ $('cbBattleLog').textContent=cbSelected.name+'의 공격! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
- const counter=cbDamage(cbWild,cbSelected);cbPlayerHp=Math.max(0,cbPlayerHp-counter.damage);
- cbPlayAttackEffect('cbWildFighter','cbMineFighter',counter.critical);
- $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counter.damage+' 피해';
+ const counter=cbDamage(cbWild,cbSelected);
+ if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counter.damage);
+ cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);
+ $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?'빗나갔다! 내 동물이 회피했다. ':(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counter.damage+' 피해');
  cbUpdateDuel();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbRetryBattle(){
