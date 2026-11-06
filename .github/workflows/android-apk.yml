@@ -66,6 +66,18 @@ jobs:
               sleep 2
             done
             if [ "$ok" -ne 1 ]; then
+              local base
+              for base in "https://namu.wiki/file/$hash" "https://namu.moe/file/$hash" "https://d.namu.moe/file/$hash" "https://m.namu.moe/file/$hash" "https://dark.namu.moe/file/$hash"; do
+                if curl -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0" "$base" -o "$out"; then
+                  if [ "$(file --brief --mime-type "$out")" = "image/$ext" ]; then
+                    ok=1
+                    break
+                  fi
+                fi
+                rm -f "$out"
+              done
+            fi
+            if [ "$ok" -ne 1 ]; then
               local filepage base
               filepage="$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote("파일:"+sys.argv[1],safe=""))' "$filename")"
               for base in "https://namu.wiki/file/$filepage" "https://namu.moe/file/$filepage" "https://d.namu.moe/file/$filepage" "https://m.namu.moe/file/$filepage"; do
