@@ -81,7 +81,7 @@ jobs:
             if [ "$ok" -ne 1 ]; then
               local ref
               for ref in "https://d.namu.moe/" "https://namu.moe/" "https://namu.wiki/"; do
-                if curl --http1.1 -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36" -e "$ref" -H "Origin: $ref" -H "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8" "$url" -o "$out"; then
+                if curl --http1.1 -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36" -e "$ref" -H "Sec-Fetch-Dest: image" -H "Sec-Fetch-Mode: no-cors" -H "Sec-Fetch-Site: cross-site" -H "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8" "$url" -o "$out"; then
                   if [ "$(file --brief --mime-type "$out")" = "image/$ext" ]; then
                     ok=1
                     break
