@@ -1029,7 +1029,9 @@ function cbRetryBattle(){
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();
 }
 $('cbBattleStart').addEventListener('click',cbStartEncounter);
-$('cbAttackButton').addEventListener('click',cbAttackTurn);\n$('cbRetryButton').addEventListener('click',cbRetryBattle);\n$('cbBattleDeck').addEventListener('click',e=>{const card=e.target.closest('.cb-card');if(card?.dataset.animalId)cbSelectFighter(card.dataset.animalId);});
+$('cbAttackButton').addEventListener('click',cbAttackTurn);
+$('cbRetryButton').addEventListener('click',cbRetryBattle);
+$('cbBattleDeck').addEventListener('click',e=>{const card=e.target.closest('.cb-card');if(card?.dataset.animalId)cbSelectFighter(card.dataset.animalId);});
 $('cbDeckOpen').addEventListener('click',cbOpenDeck);
 $('cbDexOpen').addEventListener('click',cbOpenDex);
 $('cbDexBack').addEventListener('click',cbShowHome);
