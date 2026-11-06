@@ -906,35 +906,94 @@ function cbStats(animal){
 }
 function cbPixelArt(animal,canvas){
  const ctx=canvas.getContext('2d');canvas.width=112;canvas.height=84;ctx.imageSmoothingEnabled=false;
- const seed=animal.seed,hash=[...animal.name].reduce((a,c)=>a+c.charCodeAt(0),0);let n=(seed*2654435761)>>>0;
- const rnd=()=>{n=(n*1664525+1013904223)>>>0;return n/4294967296;};
- const palettes=[['#d8b18a','#986b4c','#f0d8b7'],['#d9e1ee','#6f819d','#f5f6ff'],['#9b8bd0','#51436f','#d5c8ff'],['#e9bf55','#9a5e2e','#fff0a6']];
- const p=palettes[(hash+seed)%palettes.length],type=cbType(animal),pix=(x,y,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x/4)*4,Math.round(y/4)*4,4,4);};
- const bodyX=30+(seed%3)*2,bodyY=type==='공중'?38:40+(seed%3)*2,bw=25+(seed*3%7),bh=9+(seed*5%5),main=p[0],dark=p[1],light=p[2];
- ctx.fillStyle='#0008';ctx.fillRect(24,74,64,4);
- for(let y=bodyY-bh;y<=bodyY+bh;y+=4)for(let x=bodyX-bw;x<=bodyX+bw;x+=4){const dx=(x-bodyX)/bw,dy=(y-bodyY)/bh;if(dx*dx+dy*dy<1.12)pix(x,y,main);}
- const headX=type==='해상'?bodyX+bw-3:bodyX+bw-5-(seed%9),headY=bodyY-8-(seed%3)*2,hr=6+(seed%3)*2;
- for(let y=headY-hr;y<=headY+hr;y+=4)for(let x=headX-hr;x<=headX+hr;x+=4)if(((x-headX)/hr)**2+((y-headY)/hr)**2<1.15)pix(x,y,main);
- if(type==='해상'){
-  for(let k=0;k<3;k++)pix(bodyX-8+k*5,bodyY+bh-1+k%2*4,dark);
-  for(let k=0;k<3;k++)pix(bodyX+bw-4+k*4,bodyY-5+k*5,light);
-  pix(bodyX+bw+9,bodyY-2,dark);pix(bodyX+bw+13,bodyY-6,dark);
- }else if(type==='공중'){
-  for(let k=0;k<7;k++){pix(bodyX-12+k*5,bodyY-12-(k%2)*8,light);pix(bodyX-10+k*5,bodyY-8-(k%2)*8,dark);}
-  for(let k=0;k<2;k++)pix(headX+hr-1,headY-3+k*4,'#e6a34f');
+ const n=animal.name,seed=animal.seed;
+ const palettes={
+ '강아지':['#d8b18a','#79543c','#f4dfc5'],'고양이':['#b7b2bd','#55515f','#eeeaf4'],
+ '다람쥐':['#c98242','#713d24','#f5d39b'],'토끼':['#eee5d6','#8d8178','#fff8ed'],
+ '여우':['#d98235','#743b20','#fff0d2'],'늑대':['#9299a5','#424957','#e4e7ed'],
+ '곰':['#876047','#493020','#d4b28c'],'사슴':['#b98450','#65452d','#f4d8a8'],
+ '고슴도치':['#b68b62','#59402e','#f0d8b5'],'햄스터':['#d7a86c','#785237','#fff0d6'],
+ '수달':['#8a6651','#49372f','#d8b89a'],'판다':['#eee9df','#25252b','#ffffff'],
+ '코알라':['#a9aeb4','#555b64','#f2d8d9'],'캥거루':['#b8895e','#62452f','#e8c69c'],
+ '말':['#9c6645','#4c3025','#e9c9a0'],'양':['#e8e0d2','#71685d','#fff9ee'],
+ '염소':['#b8a28a','#665343','#f1dfc7'],'돼지':['#e6a2a0','#985f62','#ffe0dc'],
+ '소':['#eee5d5','#3d3535','#ffffff'],'기린':['#e9b84e','#9a592b','#ffdf8b'],
+ '코끼리':['#9ca1a8','#555d68','#d9dce0'],'하마':['#9b858b','#51434a','#e7c4c5'],
+ '코뿔소':['#858b8e','#44494d','#c8ccca'],'낙타':['#c89a60','#78502e','#f2d19c'],
+ '원숭이':['#a87955','#553b2c','#eac6a1'],'박쥐':['#65536f','#30283c','#c7a8d6'],
+ '고래':['#668da8','#294d68','#b9d5e4'],'돌고래':['#8caebb','#476c7d','#d9edf0'],
+ '펭귄':['#252d3a','#111722','#f5f4e9'],'오리':['#d7bd56','#78612b','#fff0a1'],
+ '공작':['#268b83','#164c59','#f0cf66'],'사자':['#d99a3e','#77451f','#f4d28c'],
+ '호랑이':['#e58a32','#4c3026','#ffe1a6'],'표범':['#d4ad64','#64452d','#f8e5b7'],
+ '악어':['#64845c','#344b37','#bed29a'],'상어':['#8babb8','#435e6b','#e2eef0'],
+ '독수리':['#8b6b4c','#443327','#e7d4ad'],'타조':['#b99a78','#67503c','#ead7bd'],
+ '티라노사우루스':['#78905d','#3b523c','#d0d99b'],'트리케라톱스':['#8d9c69','#4e5a3d','#e1d7a0'],
+ '스테고사우루스':['#6e9a83','#355b4d','#c6d9a6'],'브라키오사우루스':['#9ca66d','#59613e','#e5d99c'],
+ '유니콘':['#e7c7ed','#8c659e','#fff1ff'],'페가수스':['#e2e4ed','#7c8ba7','#ffffff'],
+ '드래곤':['#668b65','#304d3b','#d6c77d'],'피닉스':['#e66c35','#873d2c','#ffdf72']
+ };
+ const p=palettes[n]||(['#d8b18a','#76523c','#f1d8b7']);
+ const [main,dark,light]=p,px=(x,y,c=main,w=4,h=4)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x/4)*4,Math.round(y/4)*4,w,h);};
+ const aquatic=['고래','돌고래','수달','물개','바다사자','상어','백상아리','범고래','대왕오징어','모사사우루스','엘라스모사우루스'];
+ const bird=['펭귄','오리','거위','닭','공작','독수리','검독수리','매','콘도르','타조','도도새','프테라노돈','피닉스'];
+ const reptile=['악어','바다악어','코모도왕도마뱀','티라노사우루스','트리케라톱스','스테고사우루스','브라키오사우루스','벨로키랍토르','스피노사우루스','안킬로사우루스','파라사우롤로푸스','모사사우루스'];
+ const fish=aquatic.includes(n),fly=bird.includes(n)||n==='박쥐'||n==='페가수스'||n==='그리폰'||n==='드래곤'||n==='유니콘';
+ ctx.fillStyle='#0006';ctx.fillRect(22,75,70,3);
+ if(n==='고래'||n==='상어'||n==='백상아리'||n==='돌고래'||n==='범고래'||n==='모사사우루스'||n==='엘라스모사우루스'){
+  for(let y=32;y<57;y+=4)for(let x=18;x<88;x+=4){let dx=(x-52)/36,dy=(y-44)/13;if(dx*dx+dy*dy<1)px(x,y,main);}
+  for(let k=0;k<5;k++)px(12+k*4,42+(k%2)*4,dark);
+  px(52,27,dark);px(61,23,dark);px(70,27,dark);
+  if(n==='d')px(0,0);
+  if(n==='상어'||n==='백상아리'){px(48,28,dark);px(52,22,dark);px(82,42,dark);}
+  if(n==='고래'){px(26,28,light);px(30,22,light);px(34,18,light);}
+  if(n==='돌고래'){px(82,40,main,12,4);px(90,38,dark);}
+  if(n==='범고래'){px(40,40,light,16,8);px(66,45,light,12,4);}
+  if(n==='모사사우루스'||n==='엘라스모사우루스'){px(20,37,dark,12,4);px(20,53,dark,12,4);px(75,50,dark,8,8);}
+ }else if(fish){
+  for(let y=30;y<59;y+=4)for(let x=22;x<84;x+=4)if(((x-52)/31)**2+((y-44)/14)**2<1)px(x,y,main);
+  px(20,42,dark,12,12);px(44,24,dark,12,8);px(46,57,dark,12,8);px(82,40,dark,8,8);
+  if(n==='대왕오징어'){for(let k=0;k<8;k++)px(30+k*6,58+(k%3)*4,dark,4,14);}
+  if(n==='펭귄'){px(40,34,light,16,24);px(57,44,dark);px(65,44,dark);}
+ }else if(fly){
+  for(let y=34;y<55;y+=4)for(let x=36;x<76;x+=4)if(((x-56)/20)**2+((y-45)/11)**2<1)px(x,y,main);
+  px(70,34,main,14,14);px(78,40,dark,8,4);
+  if(n==='박쥐'||n==='드래곤'||n==='그리폰'||n==='페가수스'||n==='피닉스'){
+   for(let k=0;k<7;k++){px(35-k*4,33-k*2,dark);px(38-k*4,37-k*2,main);px(72+k*4,33-k*2,dark);px(69+k*4,37-k*2,main);}
+  }else{for(let k=0;k<7;k++){px(35-k*3,35-k*2,light);px(73+k*3,35-k*2,light);}px(78,47,'#e6a34f');}
+  if(n==='공작'){for(let k=0;k<5;k++){px(24+k*13,24-(k%2)*5,'#168b83',8,12);px(26+k*13,26-(k%2)*5,'#e9c65c');}}
+  if(n==='타조'){px(70,22,main,4,16);px(72,18,dark,8,4);px(48,54,dark,4,18);px(60,54,dark,4,18);}
  }else{
-  const legs=['뱀','코모도왕도마뱀'].includes(animal.name)?2:4;
-  for(let k=0;k<legs;k++){const x=bodyX-bw+8+k*(bw*2-12)/Math.max(1,legs-1);pix(x,bodyY+bh-1,dark);pix(x,bodyY+bh+5,dark);}
-  for(let k=0;k<4;k++)pix(bodyX-bw-8-k*4,bodyY-2+(k%2)*4,dark);
-  if(['토끼','여우','늑대','고양이','강아지','사자','호랑이','표범','재규어','치타','퓨마'].includes(animal.name)){pix(headX-3,headY-hr-4,light);pix(headX+5,headY-hr-4,light);}
+  const longNeck=['기린','브라키오사우루스','낙타','라마','알파카'].includes(n);
+  const heavy=['코끼리','코뿔소','하마','곰','큰곰','북극곰','불곰','판다','매머드','들소','아프리카물소'].includes(n);
+  const low=['악어','바다악어','돼지','멧돼지','거북'].includes(n);
+  const bx=longNeck?42:heavy?47:48,by=longNeck?52:low?55:48,bw=heavy?25:low?30:22,bh=heavy?17:low?10:13;
+  for(let y=by-bh;y<=by+bh;y+=4)for(let x=bx-bw;x<=bx+bw;x+=4)if(((x-bx)/bw)**2+((y-by)/bh)**2<1)px(x,y,main);
+  const hx=longNeck?66:bx+bw-5,hy=longNeck?22:by-13;
+  for(let y=hy-8;y<=hy+8;y+=4)for(let x=hx-8;x<=hx+8;x+=4)if(((x-hx)/8)**2+((y-hy)/8)**2<1.2)px(x,y,main);
+  if(longNeck)px(56,28,main,10,28);
+  const legs=['뱀'].includes(n)?0:heavy?4:4;
+  for(let k=0;k<legs;k++){let x=bx-bw+5+k*(bw*2-10)/3;px(x,by+bh-1,dark,5,13);}
+  px(bx-bw-10,by-2,dark,12,4);
+  if(['토끼','다람쥐','고양이','강아지','여우','늑대','사자','호랑이','표범','재규어','치타','퓨마','스라소니','페넥여우'].includes(n)){px(hx-7,hy-13,main,5,12);px(hx+3,hy-13,main,5,12);}
+  if(['코끼리','매머드']){px(hx+4,hy+2,main,5,24);px(hx-5,hy+8,light,4,12);if(n==='매머드'){px(hx-8,hy+4,light,8,14);px(hx+9,hy+4,light,8,14);}}
+  if(['사자','호랑이','검치호랑이']){for(let k=0;k<9;k++)px(hx-14+(k%3)*9,hy-12+Math.floor(k/3)*8,dark);if(n==='검치호랑이'){px(hx-4,hy+5,light,4,12);px(hx+5,hy+5,light,4,12);}}
+  if(['호랑이','얼룩말']){for(let k=0;k<6;k++)px(bx-18+k*7,by-10,dark,4,16);}
+  if(['표범','재규어','치타','기린']){for(let k=0;k<12;k++)px(bx-18+(k*13%35),by-12+(k*7%20),dark);}
+  if(['사슴','순록','무스','염소','소','물소','들소','아프리카물소']){px(hx-8,hy-15,light,4,15);px(hx+8,hy-15,light,4,15);px(hx-12,hy-22,dark,12,4);px(hx+8,hy-22,dark,12,4);}
+  if(['코뿔소']){px(hx+8,hy-2,light,12,5);px(hx+16,hy-7,light,7,4);}
+  if(['기린']){px(hx-5,hy-15,dark,4,9);px(hx+6,hy-15,dark,4,9);}
+  if(['거북','안킬로사우루스']){px(bx-19,by-18,dark,40,5);for(let k=0;k<5;k++)px(bx-16+k*8,by-14,light,4,12);}
+  if(['스테고사우루스']){for(let k=0;k<7;k++)px(bx-22+k*7,by-22+(k%2)*3,light,6,14);}
+  if(['트리케라톱스']){px(hx-13,hy-12,light,5,15);px(hx+9,hy-12,light,5,15);px(hx-2,hy-4,light,13,5);}
+  if(['티라노사우루스','벨로키랍토르','스피노사우루스']){px(bx+4,by+2,dark,12,5);px(bx+12,by+5,light,7,4);if(n==='스피노사우루스')for(let k=0;k<6;k++)px(bx-14+k*7,by-22,light,5,13);}
+  if(['기린','낙타'])px(hx+5,hy-11,light,4,4);
+  if(['유니콘']){px(hx+9,hy-13,light,4,18);}
+  if(['케르베로스']){px(hx-12,hy-13,main,10,10);px(hx+10,hy-13,main,10,10);}
+  if(['히드라']){for(let k=0;k<3;k++)px(63+k*9,hy-23,dark,6,24);}
+  if(['그리폰']){px(bx-17,by-20,light,26,9);px(hx+9,hy-4,light,8,4);}
  }
- if(animal.rarityId==='hero'||animal.rarityId==='legend'||['사슴','염소','소','물소','기린','코뿔소','순록','무스'].includes(animal.name))
-  for(let k=0;k<2+(seed%3);k++)pix(headX-3+k*5,headY-hr-5-k%2*4,light);
- if(['티라노사우루스','스테고사우루스','안킬로사우루스','트리케라톱스','스피노사우루스','브라키오사우루스'].includes(animal.name))
-  for(let k=0;k<7;k++)pix(bodyX-18+k*6,bodyY-bh-5-(k%2)*4,light);
- for(let k=0;k<2+(seed%7);k++){const x=bodyX-bw+7+((seed*3+k*11)%(bw*2-8)),y=bodyY-5+((seed*5+k*7)%(bh+5));pix(x,y,k%2?dark:light);}
- pix(headX+2,headY-1,'#17151d');pix(headX+6,headY-1,'#17151d');pix(headX+hr+1,headY+3,dark);
- if(animal.rarityId==='legend')for(let k=0;k<5;k++)pix(14+k*20,10+(k%2)*5,light);
+ px(72,34,'#17151d',4,4);px(80,41,dark,4,4);
+ if(animal.rarityId==='legend'){for(let k=0;k<5;k++)px(12+k*20,8+(k%2)*4,light);}
 }
 function cbCard(animal,small=false){
  const el=document.createElement('div');el.className='cb-card'+(small?' cb-small':'');el.style.setProperty('--rarity-color',animal.color);
@@ -980,13 +1039,13 @@ function cbStartEncounter(){
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
  $('cbBattleStatus').textContent='상대 동물이 나타났다. 덱에서 싸울 동물을 선택해.';
  $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
- cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbRenderDeck();
+ cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false;
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set();
 function cbSelectFighter(id){
- const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id))return;
+ const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id)||cbUsedFighters.has(id))return;
  const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
- cbSelected=animal;cbPlayerHp=cbStats(animal).hp;
+ if(continuing&&cbSelected)cbUsedFighters.add(cbSelected.id);cbSelected=animal;cbPlayerHp=cbStats(animal).hp;
  if(!continuing)cbEnemyHp=cbStats(cbWild).hp;
  cbBattleDone=false;cbCanContinue=false;
  $('cbDuelStage').hidden=false;$('cbAttackButton').hidden=false;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
@@ -1031,7 +1090,7 @@ function cbAttackTurn(){
  cbUpdateDuel();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbRetryBattle(){
- if(!cbSelected)return;cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;
+ if(!cbSelected)return;cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();
  $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=false;
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();
 }
