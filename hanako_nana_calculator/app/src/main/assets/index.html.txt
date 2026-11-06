@@ -411,6 +411,19 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-slot.empty{display:flex;align-items:center;justify-content:center;color:#aaa}
 .cb-wild{max-width:260px;margin:0 auto}
 
+
+/* Full-screen animal card game */
+.app.cardbattle-mode{position:fixed!important;inset:0!important;z-index:9999!important;width:100vw!important;max-width:none!important;height:100dvh!important;min-height:100dvh!important;margin:0!important;padding:max(12px,env(safe-area-inset-top)) 14px max(12px,env(safe-area-inset-bottom))!important;gap:0!important;overflow:hidden!important;border-radius:0!important}
+.app.cardbattle-mode>.top{display:none!important}
+.app.cardbattle-mode .cardbattle-screen{display:flex!important;flex:1 1 100%!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;padding:8px 2px!important;gap:14px!important}
+.app.cardbattle-mode #cbHome,.app.cardbattle-mode #cbDeckScreen:not([hidden]),.app.cardbattle-mode #cbEncounter:not([hidden]),.app.cardbattle-mode #cbDexScreen:not([hidden]){flex:1 1 auto;min-height:0}
+.app.cardbattle-mode #cbDeckScreen:not([hidden]),.app.cardbattle-mode #cbEncounter:not([hidden]),.app.cardbattle-mode #cbDexScreen:not([hidden]){display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.app.cardbattle-mode .cb-home{justify-content:center;gap:18px}
+.app.cardbattle-mode .cb-main-button{min-height:76px}
+.cb-unknown .cb-art{filter:grayscale(1) brightness(.28)}
+.cb-unknown .cb-meta strong{letter-spacing:.18em;color:#aaa}
+.cb-dex-progress{font-size:12px;text-align:center;color:#d4cbd6;padding:8px;border:1px solid #48404e;border-radius:9px;background:#211e28}
+
 </style>
 </head>
 <body>
@@ -493,6 +506,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
   <div id="cbHome" class="cb-home">
    <button type="button" class="cb-main-button" id="cbBattleStart">배틀 개시</button>
    <button type="button" class="cb-main-button" id="cbDeckOpen">덱 세팅</button>
+    <button type="button" class="cb-main-button" id="cbDexOpen">도감</button>
    <button type="button" class="back-btn" id="cbExit">나가기</button>
    <div class="cb-summary" id="cbSummary">첫 입장 보상: 일반 동물 카드 3장</div>
   </div>
@@ -503,6 +517,12 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
    <div class="cardbattle-grid" id="cbCollection"></div>
    <button class="back-btn" id="cbDeckBack">돌아가기</button>
   </div>
+  <div id="cbDexScreen" hidden>
+    <div class="mission-head"><span>동물 도감</span><small id="cbDexCount">0 / 102</small></div>
+    <div class="cb-dex-progress" id="cbDexProgress">획득한 동물을 도감에 등록합니다.</div>
+    <div class="cardbattle-grid" id="cbDexGrid"></div>
+    <button class="back-btn" id="cbDexBack">돌아가기</button>
+   </div>
   <div id="cbEncounter" hidden>
    <div class="mission-head"><span>야생 동물 출현</span><small>WILD ENCOUNTER</small></div>
    <div id="cbWildCard"></div>
@@ -921,11 +941,17 @@ function cbEnter(){
  app.classList.add('mission-mode','mission5-mode','cardbattle-mode');
  missionBtn.textContent='카드게임';$('tag').textContent='카드게임';
  $('brandName').textContent='동물 카드게임';$('secretCode').textContent='ANIMAL TAMING';
- $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;
+ $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;$('cbDexScreen').hidden=true;
  cbLoad();$('cbSummary').textContent='보유 동물 '+cbOwned.length+'종 · 덱 '+cbDeck.length+'/3';cbRenderDeck();
 }
 function cbBack(){app.classList.remove('cardbattle-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';}
-function cbShowHome(){ $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;}
+function cbShowHome(){ $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;$('cbDexScreen').hidden=true;}
+function cbOpenDex(){ $('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;$('cbDexScreen').hidden=false;cbRenderDex();}
+function cbRenderDex(){
+ const grid=$('cbDexGrid');grid.replaceChildren();
+ cbAll.forEach(animal=>{const owned=cbOwned.includes(animal.id);const card=cbCard(animal);if(!owned){card.classList.add('cb-unknown');const art=card.querySelector('.cb-art');art.replaceChildren();const canvas=document.createElement('canvas');canvas.width=96;canvas.height=76;const ctx=canvas.getContext('2d');ctx.fillStyle='#27242d';ctx.fillRect(0,0,96,76);ctx.fillStyle='#55515d';ctx.font='bold 38px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',48,38);art.appendChild(canvas);card.querySelector('.cb-meta strong').textContent='???';card.querySelector('.cb-meta small').textContent='미획득';card.querySelector('.cb-rarity').textContent='???';card.style.setProperty('--rarity-color','#55515d');}else{card.querySelector('.cb-meta small').textContent='도감 등록 완료';}grid.appendChild(card);});
+ const count=cbOwned.filter(id=>cbAll.some(a=>a.id===id)).length;$('cbDexCount').textContent=count+' / '+cbAll.length;$('cbDexProgress').textContent='수집 완료 '+count+'종 · 미발견 '+(cbAll.length-count)+'종';
+}
 function cbOpenDeck(){ $('cbHome').hidden=true;$('cbDeckScreen').hidden=false;$('cbEncounter').hidden=true;cbRenderCollection();}
 function cbStartEncounter(){
  cbWild=cbAll[Math.floor(Math.random()*cbAll.length)];
@@ -934,6 +960,8 @@ function cbStartEncounter(){
 }
 $('cbBattleStart').addEventListener('click',cbStartEncounter);
 $('cbDeckOpen').addEventListener('click',cbOpenDeck);
+$('cbDexOpen').addEventListener('click',cbOpenDex);
+$('cbDexBack').addEventListener('click',cbShowHome);
 $('cbDeckBack').addEventListener('click',cbShowHome);
 $('cbEncounterBack').addEventListener('click',cbShowHome);
 $('cbExit').addEventListener('click',cbBack);
