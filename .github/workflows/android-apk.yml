@@ -104,7 +104,7 @@ jobs:
                 "https://images.weserv.nl/?url=$encoded" \
                 "https://api.allorigins.win/raw?url=$encoded" \
                 "https://api.codetabs.com/v1/proxy?quest=$encoded" \
-                "https://corsproxy.io/?url=$encoded" \
+                "https://corsproxy.io/?key=webdemo1&url=$encoded&reqHeaders=Referer%3Ahttps%3A%2F%2Fd.namu.moe%2F" \
                 "https://wsrv.nl/?url=$encoded"; do
                 for attempt in 1; do
                   if curl -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0" "$proxy" -o "$out"; then
