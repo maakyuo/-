@@ -902,7 +902,10 @@ function cbType(animal){
 }
 function cbStats(animal){
  const r=cbRarities.findIndex(x=>x.id===animal.rarityId),seed=animal.seed,type=cbType(animal);
- return {attack:22+r*18+(seed*7%19)+(type==='공중'?5:0),defense:18+r*16+(seed*11%17)+(type==='지상'?5:0),hp:100+r*55+(seed*13%49)+(type==='해상'?15:0),maxHp:100+r*55+(seed*13%49)+(type==='해상'?15:0),type};
+ const attack=Math.max(1,Math.round((22+r*18+(seed*7%19)+(type==='공중'?5:0))/3));
+ const defense=Math.max(1,Math.round((18+r*16+(seed*11%17)+(type==='지상'?5:0))/4));
+ const hp=Math.max(8,Math.round((100+r*55+(seed*13%49)+(type==='해상'?15:0))/5));
+ return {attack,defense,hp,maxHp:hp,type};
 }
 function cbPixelArt(animal,canvas){
  const ctx=canvas.getContext('2d');canvas.width=112;canvas.height=84;ctx.imageSmoothingEnabled=false;
