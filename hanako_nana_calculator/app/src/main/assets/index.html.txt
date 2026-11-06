@@ -1028,7 +1028,8 @@ function cbRetryBattle(){
  $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=false;
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();
 }
-$('cbBattleStart').addEventListener('click',cbStartEncounter);\n$('cbAttackButton').addEventListener('click',cbAttackTurn);\n$('cbRetryButton').addEventListener('click',cbRetryBattle);\n$('cbBattleDeck').addEventListener('click',e=>{const card=e.target.closest('.cb-card');if(card?.dataset.animalId)cbSelectFighter(card.dataset.animalId);});
+$('cbBattleStart').addEventListener('click',cbStartEncounter);
+$('cbAttackButton').addEventListener('click',cbAttackTurn);\n$('cbRetryButton').addEventListener('click',cbRetryBattle);\n$('cbBattleDeck').addEventListener('click',e=>{const card=e.target.closest('.cb-card');if(card?.dataset.animalId)cbSelectFighter(card.dataset.animalId);});
 $('cbDeckOpen').addEventListener('click',cbOpenDeck);
 $('cbDexOpen').addEventListener('click',cbOpenDex);
 $('cbDexBack').addEventListener('click',cbShowHome);
