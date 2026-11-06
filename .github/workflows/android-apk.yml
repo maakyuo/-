@@ -55,13 +55,13 @@ jobs:
             local url="https://file.namu.moe/file/$hash"
             local out="$OUT/$id.$ext"
             local ok=0
-            for attempt in 1 2 3 4 5; do
-              if curl -fLsS --connect-timeout 20 --max-time 120 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36" "$url" -o "$out"; then
+            for attempt in 1 2 3; do
+              if curl -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36" "$url" -o "$out"; then
                 ok=1
                 break
               fi
               rm -f "$out"
-              sleep 4
+              sleep 2
             done
             if [ "$ok" -ne 1 ]; then
               local encoded proxy
@@ -72,13 +72,13 @@ jobs:
                 "https://api.codetabs.com/v1/proxy?quest=$encoded" \
                 "https://corsproxy.io/?url=$encoded" \
                 "https://wsrv.nl/?url=$encoded"; do
-                for attempt in 1 2 3; do
-                  if curl -fLsS --connect-timeout 20 --max-time 120 -A "Mozilla/5.0" "$proxy" -o "$out"; then
+                for attempt in 1; do
+                  if curl -fLsS --connect-timeout 8 --max-time 15 -A "Mozilla/5.0" "$proxy" -o "$out"; then
                     ok=1
                     break 2
                   fi
                   rm -f "$out"
-                  sleep 3
+                  sleep 2
                 done
               done
             fi
