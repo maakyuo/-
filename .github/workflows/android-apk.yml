@@ -44,6 +44,61 @@ jobs:
           rm hanako_nana_calculator/app/src/main/assets/index.html.txt
           rm hanako_nana_calculator/app/src/main/java/com/hanakonana/calculator/MainActivity.txt
 
+      - name: Download Namuwiki card images
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="hanako_nana_calculator/app/src/main/assets/cards"
+          mkdir -p "$OUT"
+          fetch_card() {
+            local id="$1" hash="$2" ext="$3"
+            local url="https://file.namu.moe/file/$hash"
+            local out="$OUT/$id.$ext"
+            local ok=0
+            for attempt in 1 2 3 4 5; do
+              if curl -fLsS --connect-timeout 20 --max-time 120 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36" "$url" -o "$out"; then
+                ok=1
+                break
+              fi
+              rm -f "$out"
+              sleep 4
+            done
+            if [ "$ok" -ne 1 ]; then
+              local proxy
+              proxy="$(python3 -c 'import urllib.parse,sys; print("https://wsrv.nl/?url="+urllib.parse.quote(sys.argv[1],safe=""))' "$url")"
+              for attempt in 1 2 3 4 5; do
+                if curl -fLsS --connect-timeout 20 --max-time 120 -A "Mozilla/5.0" "$proxy" -o "$out"; then
+                  ok=1
+                  break
+                fi
+                rm -f "$out"
+                sleep 4
+              done
+            fi
+            if [ "$ok" -ne 1 ] || [ ! -s "$out" ]; then
+              echo "Failed to retrieve Namuwiki profile image: $id" >&2
+              return 1
+            fi
+            local mime
+            mime="$(file --brief --mime-type "$out")"
+            if [ "$mime" != "image/$ext" ]; then
+              echo "Unexpected image type for $id: $mime" >&2
+              return 1
+            fi
+            echo "$id: $(stat -c%s "$out") bytes ($mime)"
+          }
+          fetch_card yuni f84a734831cf838bf2a83b96648a58743151259cf1bad327a4206978c0bd879a00e95e1d5510dd4cefd9ad50a7fbe8f559f94fd1a359dc73d332831bbb0693e1 png
+          fetch_card huya 823d076ce6f6331b17d1801583d8ec0554a0cbd5c915a8ced715b7543bd85e1b019587b76b6221109edd3b50c3bb027c png
+          fetch_card hina ff5574b04a725914e19f6a4c0de05612c9ea31a84873cd4dc4e1a75dd9c78be41674d9b9857479b7a3845892a201553c6314da0c63c58648e1e8bda0507b3759 png
+          fetch_card mashiro e990a5d5aacf035e891e577e75ec8e36ad75be062dfff318d165440beacebc09a29a67ce278cc335edb0d2ef5f9b8ac13cb302492b1bdc13cbf777b55f895b63 png
+          fetch_card lize 2f50cf78232e284d9db33490c13e026072a1fe8af00d5b102300cb2414fcd02d png
+          fetch_card tabi 022ca0d829ba3f4d66e82e76ef29403e5ed0639c9f878a0beeeeb119a7bed01443d8c6d78470ebdfe882e3491281d48466d86047d1b649f8b0c3deb17650b09a png
+          fetch_card shibuki 1f4342ce520468afaec3c04466568953dce982fa73afdd98465f8a8452bd208bd58c7bd8af0f0f13f5cd907ace8a9adb png
+          fetch_card rin 5067c7ac12e6dd85a86747dcad75175b7cd14cd7ea8f5237baa931411c4ced73caa83bca9a34e63ca2ba1b8d3988cccf webp
+          fetch_card nana b013e71705f48aeee925df087afcb4c237e941c35acb67e52865924df755f8552b6a8f8ea7e4577924abba0f2f6b53c2 webp
+          fetch_card riko 4f8dd999dafc643e59ba30a4331eb13e302901fc625ea1d3a06fbe683ae745a3d727a87b62a48a408447a59f9b2764b7 webp
+          fetch_card kanna 57812127deb97dddcc110ae370ab9612da74ad84a81b4e70f5ef954408c24961cf6802477d26bac67a33a53ea890ebc499302f975a7ca264287eb69a9c453bc7 png
+
       - name: Build debug APK
         working-directory: hanako_nana_calculator
         run: gradle --no-daemon assembleDebug
