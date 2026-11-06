@@ -389,6 +389,28 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-art img{width:100%;height:100%;object-fit:contain;object-position:center bottom;padding:4px 6px 0}#cbDuel[hidden],#cbMyChoices[hidden],#cbBattle[hidden],#cbHome[hidden]{display:none!important}.cb-meta{padding:8px}.cb-meta strong{display:block;font-size:12px}.cb-meta small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
 .cb-pill{display:inline-block;margin-top:5px;padding:2px 6px;border-radius:5px;background:#ffffff20;font-size:9px}
 .cb-row{display:flex;gap:7px}.cb-row>*{flex:1;min-width:0}.cb-note{font-size:11px;line-height:1.5;color:var(--muted)}.cb-deck{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.cb-slot{min-height:76px;border:1px dashed var(--theme-accent,var(--pink));border-radius:9px;background:var(--theme-panel);color:var(--white);font-size:10px;padding:5px}.cb-hidden{opacity:.55;filter:grayscale(1)}.cb-stage{border:1px solid var(--theme-line);border-radius:12px;padding:10px;background:var(--theme-panel);display:flex;flex-direction:column;gap:8px}.cb-versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}.cb-fighter{border:1px solid var(--theme-line);border-radius:9px;padding:8px;text-align:center;background:var(--theme-panel2)}.cb-fighter strong{display:block;font-size:12px}.cb-fighter small{font-size:10px;color:var(--muted)}.cb-result{font-weight:800;text-align:center;font-size:15px;padding:8px}
+ 
+/* Animal card game: pixel-art cards and rarity frames */
+.cardbattle-screen{display:none;flex:1;min-height:0;overflow:auto;padding:10px 2px;flex-direction:column;gap:12px}
+.app.cardbattle-mode .cardbattle-screen{display:flex!important}
+.app.cardbattle-mode .mission3,.app.cardbattle-mode .mission4,.app.cardbattle-mode .mission5,.app.cardbattle-mode .mission6,.app.cardbattle-mode .mission7,.app.cardbattle-mode .theme-screen,.app.cardbattle-mode .kanna-secret-screen,.app.cardbattle-mode .display,.app.cardbattle-mode .key-area,.app.cardbattle-mode .footer{display:none!important}
+#cbDeckScreen[hidden],#cbEncounter[hidden],#cbHome[hidden]{display:none!important}
+.cb-home{display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center}
+.cb-main-button{min-height:68px;border:1px solid #777;background:linear-gradient(145deg,#302d3a,#1c1a23);border-radius:13px;color:#fff;font-size:17px;font-weight:800;letter-spacing:.04em}
+.cb-summary,.cb-note{font-size:11px;color:var(--muted);line-height:1.55;text-align:center}
+.cardbattle-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.cb-card{min-width:0;border:3px solid var(--rarity-color,#888);border-radius:10px;background:#191820;color:#fff;overflow:hidden;text-align:left;padding:0;position:relative}
+.cb-card.selected{outline:2px solid #fff;outline-offset:2px}
+.cb-art{height:120px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 90%,#45404e,#17151d 75%);overflow:hidden}
+.cb-art canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+.cb-meta{padding:7px 8px 8px}.cb-meta strong{display:block;font-size:12px}.cb-meta small{display:block;color:#c2bdc8;font-size:10px;margin-top:4px}
+.cb-rarity{display:inline-block;margin-top:5px;padding:2px 6px;border-radius:4px;background:#ffffff18;font-size:9px}
+.cb-deck{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.cb-slot{min-width:0;min-height:95px;border:2px dashed #777;border-radius:9px;padding:5px;background:#211e28;text-align:center;font-size:10px;color:#fff}
+.cb-slot .cb-art{height:62px;border-radius:5px}.cb-slot .cb-meta{padding:4px 1px}.cb-slot .cb-meta strong{font-size:10px}
+.cb-slot.empty{display:flex;align-items:center;justify-content:center;color:#aaa}
+.cb-wild{max-width:260px;margin:0 auto}
+
 </style>
 </head>
 <body>
@@ -466,22 +488,29 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
  </section>
  <section class="kanna-secret-screen" id="kannaSecretScreen" aria-label="아이리 칸나 테마 선택"><div class="kanna-secret-button-wrap"><button type="button" class="kanna-secret-button" id="kannaThemeApply"><span class="kanna-secret-gem">💎</span><strong>아이리 칸나</strong><small>테마 적용</small></button></div><button class="back-btn" id="kannaSecretBack">기능 5로 돌아가기</button></section>
 
- <section class="cardbattle-screen" id="cardBattleScreen" aria-label="NULL">
-  <div class="mission-head"><span>NULL</span><small>STELLIVE CARD BATTLE</small></div>
-  <div id="cbHome">
-   <div class="cb-note">스텔라이브 1기생부터 3기생까지의 멤버 카드로 덱을 구성하세요. 카드 3장을 선택하면 대전을 시작할 수 있습니다.</div>
-   <div class="mission-head"><span>내 덱</span><small id="cbDeckCount">0 / 3</small></div><div class="cb-deck" id="cbDeckSlots"></div>
-   <div class="mission-head"><span>카드 목록</span><small>등급 · 일반</small></div><div class="cardbattle-grid" id="cbCollection"></div>
-   <div class="cb-row"><button class="convert-btn" id="cbStart" disabled>대전 시작</button><button class="back-btn" id="cbClear">덱 초기화</button></div>
+ <section class="cardbattle-screen" id="cardBattleScreen" aria-label="동물 카드게임">
+  <div class="mission-head"><span>동물 카드게임</span><small>ANIMAL TAMING</small></div>
+  <div id="cbHome" class="cb-home">
+   <button type="button" class="cb-main-button" id="cbBattleStart">배틀 개시</button>
+   <button type="button" class="cb-main-button" id="cbDeckOpen">덱 세팅</button>
+   <button type="button" class="back-btn" id="cbExit">나가기</button>
+   <div class="cb-summary" id="cbSummary">첫 입장 보상: 일반 동물 카드 3장</div>
   </div>
-  <div id="cbBattle" hidden>
-   <div class="cb-note">상대의 카드 3장을 확인하고 상성을 고려해 출전할 카드 한 장을 고르세요.</div>
-   <div class="mission-head"><span>상대 덱</span><small>3장 공개</small></div><div class="cardbattle-grid" id="cbEnemy"></div>
-   <div class="mission-head"><span>내 출전 카드 선택</span><small>한 장 선택</small></div><div class="cardbattle-grid" id="cbMyChoices"></div>
-   <div class="cb-stage" id="cbDuel" hidden><div class="cb-versus"><div class="cb-fighter" id="cbMine"></div><strong>VS</strong><div class="cb-fighter" id="cbTheirs"></div></div><div class="cb-result" id="cbOutcome"></div><div class="cb-note" id="cbEffect"></div><button class="convert-btn" id="cbNext">다음 대전</button></div>
-   <button class="back-btn" id="cbReturn">덱 편성으로</button>
+  <div id="cbDeckScreen" hidden>
+   <div class="mission-head"><span>내 덱</span><small id="cbDeckCount">3 / 3</small></div>
+   <div class="cb-deck" id="cbDeckSlots"></div>
+   <div class="mission-head"><span>보유 카드</span><small id="cbOwnedCount"></small></div>
+   <div class="cardbattle-grid" id="cbCollection"></div>
+   <button class="back-btn" id="cbDeckBack">돌아가기</button>
   </div>
-  <button class="back-btn" id="cbExit">기능 5로 돌아가기</button>
+  <div id="cbEncounter" hidden>
+   <div class="mission-head"><span>야생 동물 출현</span><small>WILD ENCOUNTER</small></div>
+   <div id="cbWildCard"></div>
+   <div class="mission-head"><span>도전할 덱</span><small>보유 카드 3장</small></div>
+   <div class="cb-deck" id="cbBattleDeck"></div>
+   <div class="cb-note">야생 동물을 쓰러뜨리면 테이밍할 수 있습니다.</div>
+   <button class="back-btn" id="cbEncounterBack">돌아가기</button>
+  </div>
  </section>
  <section class="theme-screen" id="themeScreen" aria-label="전체 테마 변경">
   <div class="mission-head"><span>전체 테마 변경</span><small>NULL</small></div>
@@ -821,32 +850,101 @@ memberNameObserver.observe(document.body,{subtree:true,childList:true,characterD
 
 function statFmt(n){return Number(n.toPrecision(12)).toLocaleString('ko-KR',{maximumFractionDigits:10});}
 
-// NULL card battle game
-const cbMembers=[
- {id:'yuni',name:'아야츠노 유니',gen:'1기생',color:'#8da9e8',type:0,style:'푸른 별빛',image:'cards/yuni.png'},
- {id:'huya',name:'사키하네 후야',gen:'1기생',color:'#7443B8',type:1,style:'보랏빛 잔상',image:'cards/huya.png'},
- {id:'hina',name:'시라유키 히나',gen:'2기생',color:'#AA866B',type:2,style:'부드러운 파동',image:'cards/hina.png'},
- {id:'mashiro',name:'네네코 마시로',gen:'2기생',color:'#969BA3',type:0,style:'은빛 궤적',image:'cards/mashiro.png'},
- {id:'lize',name:'아카네 리제',gen:'2기생',color:'#B94655',type:1,style:'붉은 섬광',image:'cards/lize.png'},
- {id:'tabi',name:'아라하시 타비',gen:'2기생',color:'#5EAFCB',type:2,style:'청록 바람',image:'cards/tabi.png'},
- {id:'shibuki',name:'텐코 시부키',gen:'3기생',color:'#B79AEF',type:0,style:'보랏빛 부적',image:'cards/shibuki.png'},
- {id:'rin',name:'아오쿠모 린',gen:'3기생',color:'#648DC5',type:1,style:'푸른 잔상',image:'cards/rin.webp'},
- {id:'nana',name:'하나코 나나',gen:'3기생',color:'#E87991',type:2,style:'분홍 별가루',image:'cards/nana.webp'},
- {id:'riko',name:'유즈하 리코',gen:'3기생',color:'#69B47D',type:0,style:'초록 잎바람',image:'cards/riko.webp'},
- {id:'kanna',name:'아이리 칸나',gen:'졸업생',color:'#4F5186',type:1,style:'남보랏빛 울림',image:'cards/kanna.png',locked:true}
+// Animal taming card game
+const cbRarities=[
+ {id:'common',name:'일반',color:'#929292',count:50},
+ {id:'rare',name:'희귀',color:'#438be8',count:30},
+ {id:'hero',name:'영웅',color:'#9854d6',count:15},
+ {id:'legend',name:'전설',color:'#e8c83e',count:7}
 ];
-let cbDeck=[],cbEnemy=[],cbRound=0,cbMy=null,cbOpponent=null;
-function cbKannaUnlocked(){try{return localStorage.getItem('cbKannaUnlocked')==='1'||localStorage.getItem('hanakoNanaThemeIndex')==='10';}catch(e){return false;}}
-function cbArt(m){return '<div class="cb-art" style="--card-color:'+m.color+'"><img src="'+m.image+'" alt="'+m.name+'"></div>';}
-function cbCard(m){let locked=m.id==='kanna'&&!cbKannaUnlocked();return '<button type="button" class="cb-card'+(locked?' cb-hidden':'')+(cbDeck.includes(m.id)?' selected':'')+'" data-cb-id="'+m.id+'" '+(locked?'disabled':'')+'>'+cbArt(m)+'<div class="cb-meta"><strong>'+m.name+'</strong><small>'+m.gen+' · 일반</small><span class="cb-pill">'+(locked?'조건 미충족':m.style)+'</span></div></button>';}
-function cbRender(){const list=cbMembers.filter(m=>m.id!=='kanna'||cbKannaUnlocked());$('cbCollection').innerHTML=list.map(cbCard).join('')+(cbKannaUnlocked()?'':'<div class="cb-note">아이리 칸나 카드는 칸나 테마를 한 번 이상 적용하면 해금됩니다.</div>');$('cbDeckCount').textContent=cbDeck.length+' / 3';$('cbDeckSlots').innerHTML=[0,1,2].map(i=>{let m=cbMembers.find(x=>x.id===cbDeck[i]);return '<div class="cb-slot">'+(m?'<strong>'+m.name+'</strong><br>일반':'카드 '+(i+1))+'</div>';}).join('');$('cbStart').disabled=cbDeck.length!==3;}
-function cbEnter(){app.classList.remove('theme-mode','kanna-secret-mode','mission4-mode','mission6-mode','mission7-mode');app.classList.add('mission-mode','mission5-mode','cardbattle-mode');missionBtn.textContent='NULL';$('tag').textContent='NULL';$('brandName').textContent='카드 배틀';$('secretCode').textContent='STELLIVE';$('cbHome').hidden=false;$('cbBattle').hidden=true;cbRender();}
+const cbSpecies=[
+ ['강아지','고양이','다람쥐','토끼','여우','늑대','곰','사슴','고슴도치','햄스터','기니피그','페럿','수달','너구리','판다','코알라','캥거루','말','당나귀','양','염소','돼지','소','물소','얼룩말','기린','코끼리','하마','코뿔소','낙타','라마','알파카','원숭이','침팬지','오랑우탄','미어캣','몽구스','스컹크','오소리','족제비','박쥐','고래','돌고래','물개','바다사자','펭귄','오리','거위','닭','공작'],
+ ['사자','호랑이','표범','재규어','치타','퓨마','하이에나','고릴라','큰곰','북극곰','불곰','코모도왕도마뱀','악어','바다악어','상어','백상아리','범고래','대왕오징어','독수리','검독수리','매','콘도르','타조','들소','아프리카물소','멧돼지','순록','무스','들개','울버린'],
+ ['티라노사우루스','트리케라톱스','스테고사우루스','브라키오사우루스','벨로키랍토르','스피노사우루스','안킬로사우루스','파라사우롤로푸스','프테라노돈','모사사우루스','검치호랑이','매머드','다이어울프','도도새','엘라스모사우루스'],
+ ['유니콘','페가수스','드래곤','그리폰','케르베로스','피닉스','히드라']
+];
+const cbAll=[];
+cbSpecies.forEach((names,ri)=>names.forEach((name,i)=>cbAll.push({id:'animal-'+ri+'-'+i,name,rarity:cbRarities[ri].name,color:cbRarities[ri].color,rarityId:cbRarities[ri].id,seed:ri*101+i+7})));
+let cbOwned=[],cbDeck=[],cbWild=null;
+const cbStoreKey='nanaAnimalCardsV1';
+function cbSave(){try{localStorage.setItem(cbStoreKey,JSON.stringify({owned:cbOwned,deck:cbDeck}));}catch(e){}}
+function cbLoad(){
+ try{const v=JSON.parse(localStorage.getItem(cbStoreKey)||'null');if(v&&Array.isArray(v.owned)&&Array.isArray(v.deck)){cbOwned=v.owned.filter(id=>cbAll.some(a=>a.id===id));cbDeck=v.deck.filter(id=>cbOwned.includes(id)).slice(0,3);}}catch(e){}
+ if(!cbOwned.length){const commons=cbAll.filter(a=>a.rarityId==='common');cbOwned=[];while(cbOwned.length<3){const a=commons[Math.floor(Math.random()*commons.length)];if(!cbOwned.includes(a.id))cbOwned.push(a.id);}cbDeck=[...cbOwned];cbSave();}
+ if(cbDeck.length!==3){const fill=cbOwned.filter(id=>!cbDeck.includes(id));while(cbDeck.length<3&&fill.length)cbDeck.push(fill.shift());}
+}
+function cbPixelArt(animal,canvas){
+ const ctx=canvas.getContext('2d');const w=96,h=76;canvas.width=w;canvas.height=h;ctx.imageSmoothingEnabled=false;
+ const seed=animal.seed;let n=seed;const rnd=()=>{n=(n*1664525+1013904223)>>>0;return n/4294967296;};
+ const palettes=[['#d8b18a','#986b4c','#f0d8b7'],['#d9e1ee','#6f819d','#f5f6ff'],['#9b8bd0','#51436f','#d5c8ff'],['#e9bf55','#9a5e2e','#fff0a6']];
+ const p=palettes[animal.rarityId==='common'?0:animal.rarityId==='rare'?1:animal.rarityId==='hero'?2:3];
+ const pix=(x,y,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,4,4);};
+ // Pixel-art animal silhouette: species-specific seed changes ears, horns, wings, tail and markings.
+ const bodyY=37+Math.floor(rnd()*5),bodyX=28+Math.floor(rnd()*5);
+ for(let y=bodyY;y<bodyY+20;y+=4)for(let x=bodyX;x<bodyX+40;x+=4){const dx=(x-(bodyX+20))/20,dy=(y-(bodyY+10))/10;if(dx*dx+dy*dy<1.08)pix(x,y,p[0]);}
+ for(let y=bodyY+8;y<bodyY+20;y+=4)for(let x=bodyX-8;x<bodyX+4;x+=4)pix(x,y,p[1]);
+ for(let x=bodyX+5;x<bodyY+0;x+=4){} 
+ const headX=bodyX+30,headY=bodyY-9;
+ for(let y=headY;y<headY+16;y+=4)for(let x=headX;x<headX+16;x+=4)if((x-headX-8)**2+(y-headY-8)**2<75)pix(x,y,p[0]);
+ for(let x of [bodyX+5,bodyX+29])for(let y=bodyY+16;y<bodyY+32;y+=4)pix(x,y,p[1]);
+ for(let x=bodyX+40;x<bodyX+56;x+=4)pix(x,bodyY+10+(Math.floor((x-bodyX)/4)%3)*4,p[1]);
+ // Ears / horns / wings / spikes vary by rarity and seed.
+ if(animal.rarityId==='legend'||seed%4===0){for(let k=0;k<3;k++)pix(headX+4+k*4,headY-8+k*4,p[2]);}
+ if(animal.rarityId==='legend'||animal.rarityId==='hero'){for(let k=0;k<5;k++){pix(bodyX+8+k*4,bodyY-8-k%2*4,p[2]);pix(bodyX+24+k*4,bodyY-8-(k+1)%2*4,p[2]);}}
+ if(seed%3===0){pix(headX+8,headY+4,'#191923');pix(headX+12,headY+4,'#191923');}
+ pix(headX+8,headY+12,p[1]);
+ // Ground shadow and small sparkles for high ranks.
+ ctx.fillStyle='#0008';ctx.fillRect(23,67,52,4);
+ if(animal.rarityId==='hero'||animal.rarityId==='legend')for(let i=0;i<9;i++){const x=Math.floor(rnd()*88),y=Math.floor(rnd()*30);pix(x,y,p[2]);}
+}
+function cbCard(animal,small=false){
+ const el=document.createElement('div');el.className='cb-card'+(small?' cb-small':'');el.style.setProperty('--rarity-color',animal.color);
+ const art=document.createElement('div');art.className='cb-art';const canvas=document.createElement('canvas');cbPixelArt(animal,canvas);art.appendChild(canvas);
+ const meta=document.createElement('div');meta.className='cb-meta';meta.innerHTML='<strong></strong><small></small><span class="cb-rarity"></span>';meta.querySelector('strong').textContent=animal.name;meta.querySelector('small').textContent='동물 카드';meta.querySelector('.cb-rarity').textContent=animal.rarity;
+ el.append(art,meta);return el;
+}
+function cbOwnedAnimals(){return cbOwned.map(id=>cbAll.find(a=>a.id===id)).filter(Boolean);}
+function cbRenderDeck(){
+ $('cbDeckCount').textContent=cbDeck.length+' / 3';
+ $('cbDeckSlots').replaceChildren();
+ for(let i=0;i<3;i++){const id=cbDeck[i],animal=cbAll.find(a=>a.id===id),slot=document.createElement('div');slot.className='cb-slot'+(animal?'':' empty');slot.style.borderColor=animal?animal.color:'#777';if(animal)slot.appendChild(cbCard(animal,true));else slot.textContent='빈 슬롯';$('cbDeckSlots').appendChild(slot);}
+ $('cbBattleDeck').replaceChildren();cbDeck.forEach(id=>{const a=cbAll.find(x=>x.id===id);if(a)$('cbBattleDeck').appendChild(cbCard(a,true));});
+}
+function cbRenderCollection(){
+ const grid=$('cbCollection');grid.replaceChildren();
+ cbOwnedAnimals().forEach(a=>grid.appendChild(cbCard(a)));
+ $('cbOwnedCount').textContent=cbOwned.length+'장 보유';
+ cbRenderDeck();
+}
+function cbEnter(){
+ app.classList.remove('theme-mode','kanna-secret-mode','mission4-mode','mission6-mode','mission7-mode');
+ app.classList.add('mission-mode','mission5-mode','cardbattle-mode');
+ missionBtn.textContent='카드게임';$('tag').textContent='카드게임';
+ $('brandName').textContent='동물 카드게임';$('secretCode').textContent='ANIMAL TAMING';
+ $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;
+ cbLoad();$('cbSummary').textContent='보유 동물 '+cbOwned.length+'종 · 덱 '+cbDeck.length+'/3';cbRenderDeck();
+}
 function cbBack(){app.classList.remove('cardbattle-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';}
-function cbStart(){cbEnemy=[...cbMembers.filter(m=>m.id!=='kanna'||cbKannaUnlocked()).sort(()=>Math.random()-.5)].slice(0,3);cbHome.hidden=true;$('cbBattle').hidden=false;$('cbDuel').hidden=true;$('cbMyChoices').hidden=false;$('cbEnemy').innerHTML=cbEnemy.map(m=>'<div class="cb-card">'+cbArt(m)+'<div class="cb-meta"><strong>'+m.name+'</strong><small>'+m.gen+' · 일반</small><span class="cb-pill">'+m.style+'</span></div></div>').join('');$('cbMyChoices').innerHTML=cbDeck.map(id=>{let m=cbMembers.find(x=>x.id===id);return '<button class="cb-card" data-cb-fight="'+id+'">'+cbArt(m)+'<div class="cb-meta"><strong>'+m.name+'</strong><small>일반 · 출전 선택</small></div></button>';}).join('');}
-function cbFight(id){cbMy=cbMembers.find(m=>m.id===id);let mineType=cbMy.type;let weighted=cbEnemy.map(m=>({m,score:(m.type===(mineType+1)%3?0:m.type===mineType?1:2)+Math.random()*.7})).sort((a,b)=>a.score-b.score);cbOpponent=weighted[0].m;let win=mineType===(cbOpponent.type+1)%3,tie=mineType===cbOpponent.type;let result=tie?'무승부':win?'승리':'패배';$('cbMine').innerHTML=cbArt(cbMy)+'<strong>'+cbMy.name+'</strong><small>'+cbMy.style+'</small>'; $('cbTheirs').innerHTML=cbArt(cbOpponent)+'<strong>'+cbOpponent.name+'</strong><small>'+cbOpponent.style+'</small>';$('cbOutcome').textContent=result;$('cbOutcome').style.color=tie?'var(--white)':win?'#8ee2b0':'#e99aab';$('cbEffect').textContent=cbMy.style+'의 절제된 공격 연출이 '+cbOpponent.name+'에게 적중합니다.';$('cbDuel').hidden=false;$('cbMyChoices').hidden=true;}
-$('cbCollection').addEventListener('click',e=>{let b=e.target.closest('[data-cb-id]');if(!b)return;let id=b.dataset.cbId;if(cbDeck.includes(id))cbDeck=cbDeck.filter(x=>x!==id);else if(cbDeck.length<3)cbDeck.push(id);cbRender();});$('cbClear').addEventListener('click',()=>{cbDeck=[];cbRender();});$('cbStart').addEventListener('click',cbStart);$('cbMyChoices').addEventListener('click',e=>{let b=e.target.closest('[data-cb-fight]');if(b)cbFight(b.dataset.cbFight);});$('cbNext').addEventListener('click',()=>{cbRound++;cbStart();});$('cbReturn').addEventListener('click',()=>{$('cbBattle').hidden=true;$('cbHome').hidden=false;cbRender();});$('cbExit').addEventListener('click',cbBack);
-
-$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw.replace(/\\s+/g,'')==='테마변경'){enterThemeScreen();return;}if(raw.replace(/\\s+/g,'')==='칸나'){enterKannaSecretScreen();return;}if(raw.replace(/\\s+/g,'')==='카드배틀'){cbEnter();return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
+function cbShowHome(){ $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;}
+function cbOpenDeck(){ $('cbHome').hidden=true;$('cbDeckScreen').hidden=false;$('cbEncounter').hidden=true;cbRenderCollection();}
+function cbStartEncounter(){
+ cbWild=cbAll[Math.floor(Math.random()*cbAll.length)];
+ $('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=false;
+ const wild=$('cbWildCard');wild.replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');wild.appendChild(card);cbRenderDeck();
+}
+$('cbBattleStart').addEventListener('click',cbStartEncounter);
+$('cbDeckOpen').addEventListener('click',cbOpenDeck);
+$('cbDeckBack').addEventListener('click',cbShowHome);
+$('cbEncounterBack').addEventListener('click',cbShowHome);
+$('cbExit').addEventListener('click',cbBack);
+$('cbCollection').addEventListener('click',e=>{
+ const card=e.target.closest('.cb-card');if(!card)return;
+ const cards=[...$('cbCollection').children],index=cards.indexOf(card),animal=cbOwnedAnimals()[index];if(!animal)return;
+ if(cbDeck.includes(animal.id))cbDeck=cbDeck.filter(id=>id!==animal.id);
+ else if(cbDeck.length<3)cbDeck.push(animal.id);
+ cbSave();cbRenderCollection();
+});
+$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw.replace(/\\s+/g,'')==='테마변경'){enterThemeScreen();return;}if(raw.replace(/\\s+/g,'')==='칸나'){enterKannaSecretScreen();return;}if(raw.replace(/\\s+/g,'')==='카드게임'){cbEnter();return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
 $('baseCalculate').addEventListener('click',()=>{try{let raw=$('baseInput').value.trim().replace(/\s+/g,''),base=Number($('baseFrom').value);if(!raw)throw Error();let negative=raw.startsWith('-'),digits=raw.replace(/^[+-]/,'').toLowerCase();if(!digits)throw Error();let alphabet='0123456789abcdefghijklmnopqrstuvwxyz',n=0n;for(const ch of digits){let d=alphabet.indexOf(ch);if(d<0||d>=base)throw Error();n=n*BigInt(base)+BigInt(d);}if(negative)n=-n;$('baseResult').textContent='2진법: '+n.toString(2)+'\n8진법: '+n.toString(8)+'\n10진법: '+n.toString(10)+'\n16진법: '+n.toString(16).toUpperCase();}catch(e){$('baseResult').textContent='올바른 정수를 입력해 주세요. (음수 가능)';}});
 populateUnits();
 const panel=document.createElement('div');panel.className='history-panel';panel.id='historyPanel';panel.innerHTML='<div class="history-title"><span>CALCULATION LOG</span><button class="history-close" id="historyClose">닫기</button></div><div class="history-list" id="historyList"></div><button class="history-close" id="historyClear">기록 지우기</button>';app.appendChild(panel);
