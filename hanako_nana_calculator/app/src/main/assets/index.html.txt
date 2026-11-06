@@ -359,6 +359,14 @@ body.theme-active .lab-tab.active{background:var(--theme-soft)!important;border-
 body.theme-active .lab-stage{border-color:var(--theme-accent)!important;box-shadow:inset 0 0 28px var(--theme-glow)}
 body.theme-active .lab-controls input{accent-color:var(--theme-accent)!important}
 body.theme-active .back-btn,body.theme-active .history-close{background:var(--theme-panel2)!important;border-color:var(--theme-line)!important}
+body.theme-active .app :is(.brand small,.tag,.mission-head,.swap,.history-title,.field-label,.m4-category strong,.lab-control-head,.lab-console strong,.lab-tab.active){color:var(--theme-accent-2)!important}
+body.theme-active .app :is(.expression,.footer,.history-item small,.m4-category small,.m4-subtitle,.lab-intro,.lab-hint,.lab-note,.lab-console small,.theme-intro,.theme-card small,.mission-head small){color:var(--muted)!important}
+body.theme-active .app :is(.history-btn,.history-close,.back-btn,.field,.lab-tab,.theme-card,.m4-category){color:var(--white)!important}
+body.theme-active .app .key{color:var(--white)}
+body.theme-active .app .key.fn,body.theme-active .app .key.op{color:var(--theme-accent-2)!important}
+body.theme-active .app :is(.field,.history-panel,.lab-controls,.conversion-result,.m4-category,.lab-console,.lab-tab,.history-btn,.history-close,.back-btn){border-color:var(--theme-line)!important}
+body.theme-active .app :is(.field,.history-panel,.lab-controls,.lab-tab,.history-btn,.history-close,.back-btn){background-color:var(--theme-panel)!important}
+body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 
 </style>
 </head>
@@ -582,7 +590,7 @@ $('toMission6').addEventListener('click',()=>{app.classList.remove('mission4-mod
 $('baseBackCalc').addEventListener('click',leaveToCalculator);
 $('m4BackCalc').addEventListener('click',leaveToCalculator);
 
-function enterMission7(){app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode','mission7-mode');missionBtn.textContent='MISSION 07';$('brandName').textContent='하나코 나나 실험실';$('secretCode').textContent='TOP SECRET CODE AAA';$('tag').textContent='MISSION 07 / NANA LAB';$('historyPanel')?.classList.remove('open');$('mission7').classList.remove('lab-enter');void $('mission7').offsetWidth;$('mission7').classList.add('lab-enter');$('labConsoleText').textContent='보안 등급 AAA 확인. 실험 코어를 가동합니다.';$('labStatus').textContent='SYSTEM ONLINE';labResize();labSeed();if(labRaf)cancelAnimationFrame(labRaf);labRaf=requestAnimationFrame(labLoop);}
+function enterMission7(){if(activeThemeIndex!==0){leaveToCalculator();return;}app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode','mission7-mode');missionBtn.textContent='MISSION 07';$('brandName').textContent='하나코 나나 실험실';$('secretCode').textContent='TOP SECRET CODE AAA';$('tag').textContent='MISSION 07 / NANA LAB';$('historyPanel')?.classList.remove('open');$('mission7').classList.remove('lab-enter');void $('mission7').offsetWidth;$('mission7').classList.add('lab-enter');$('labConsoleText').textContent='보안 등급 AAA 확인. 실험 코어를 가동합니다.';$('labStatus').textContent='SYSTEM ONLINE';labResize();labSeed();if(labRaf)cancelAnimationFrame(labRaf);labRaf=requestAnimationFrame(labLoop);}
 $('mission7Back').addEventListener('click',leaveToCalculator);
 let labMode='particle',labFrame=0,labRaf=0,labW=0,labH=0,labParticles=[],labPointer=null,labTrails=[],labShock=0,labTick=0,labOrbs=[],labAbilityA=0,labAbilityB=0,labFluidDrops=[],labWaveMode=0,labDimensionMode=0,labBlackhole=0,labReverse=0,labUiDust=[],labSuckAnimations=[],labCluster=0,labDistortions=[],labCreatures=[],labOverload=0,labStorm=0,labLastTouch=null;
 const labCanvas=$('labCanvas'),labCtx=labCanvas.getContext('2d');
@@ -685,15 +693,17 @@ const themeMembers=[
  {ko:'아야츠노 유니',en:'Ayatsuno Yuni',accent:'#B8C8E8',accent2:'#E7EDFF',bg:'#10141B',panel:'#1B2430',panel2:'#253243',line:'#405166',soft:'#263448',glow:'rgba(184,200,232,.16)'},
  {ko:'사키하네 후야',en:'Sakihane Huya',accent:'#9A78D7',accent2:'#D0B7FF',bg:'#130F1B',panel:'#21192D',panel2:'#2B203B',line:'#4A3860',soft:'#30213F',glow:'rgba(154,120,215,.17)'},
  {ko:'시라유키 히나',en:'Shirayuki Hina',accent:'#D77FA8',accent2:'#F2B5D0',bg:'#170F17',panel:'#281B27',panel2:'#362333',line:'#65445B',soft:'#3A2332',glow:'rgba(215,127,168,.17)'},
- {ko:'네네코 마시로',en:'Neneko Mashiro',accent:'#A9BBD1',accent2:'#DCE8F4',bg:'#10151D',panel:'#1B2530',panel2:'#263341',line:'#425468',soft:'#263746',glow:'rgba(169,187,209,.16)'},
+ {ko:'네네코 마시로',en:'Neneko Mashiro',accent:'#969BA3',accent2:'#D5D8DD',bg:'#121316',panel:'#202226',panel2:'#2B2E33',line:'#494D54',soft:'#30343A',glow:'rgba(190,196,205,.13)'},
  {ko:'아카네 리제',en:'Akane Lize',accent:'#B94655',accent2:'#F08A91',bg:'#180F12',panel:'#28191D',panel2:'#382127',line:'#61323D',soft:'#3A1F27',glow:'rgba(185,70,85,.18)'},
  {ko:'아라하시 타비',en:'Arahashi Tabi',accent:'#648DC5',accent2:'#A8C8F2',bg:'#0F141C',panel:'#1B2430',panel2:'#253242',line:'#3C526B',soft:'#22364D',glow:'rgba(100,141,197,.17)'},
- {ko:'텐코 시부키',en:'Tenko Shibuki',accent:'#C96B45',accent2:'#F0A07B',bg:'#18110F',panel:'#2A1E19',panel2:'#392720',line:'#624438',soft:'#3D281F',glow:'rgba(201,107,69,.18)'},
+ {ko:'텐코 시부키',en:'Tenko Shibuki',accent:'#6574D8',accent2:'#AAB4FF',bg:'#10111D',panel:'#1B1D31',panel2:'#272A42',line:'#44496D',soft:'#292D4B',glow:'rgba(101,116,216,.18)'},
  {ko:'아오쿠모 린',en:'Aokumo Rin',accent:'#5EAFCB',accent2:'#A2E1F2',bg:'#0E151A',panel:'#19262D',panel2:'#23343D',line:'#3B5C69',soft:'#203A45',glow:'rgba(94,175,203,.18)'},
  {ko:'유즈하 리코',en:'Yuzuha Riko',accent:'#69B47D',accent2:'#A8E0B2',bg:'#101710',panel:'#1C281D',panel2:'#263728',line:'#405B42',soft:'#263C29',glow:'rgba(105,180,125,.17)'}
 ];
 let activeThemeIndex=0;
 try{const saved=Number(localStorage.getItem('hanakoNanaThemeIndex'));if(Number.isInteger(saved)&&saved>=0&&saved<themeMembers.length)activeThemeIndex=saved;}catch(e){}
+const originalTextNodes=new WeakMap(),renderedTextNodes=new WeakMap();
+function normalizeNonNanaLanguage(value){return value.replace(/TOP\s*SECRET\s*CODE(?:\s*[A-Z]+)?/gi,'계산 도구').replace(/TOP\s*SECRET/gi,'안내').replace(/\bMISSION\b|미션/gi,'기능').replace(/\bEXPERIMENT(?:S)?\b|실험실|실험/gi,'기능').replace(/\bLAB\b/gi,'도구').replace(/\bCODE\b|코드/gi,'안내').replace(/\bAGENT\b|요원/gi,'사용자').replace(/기밀|보안 등급/gi,'안내').replace(/\bSYSTEM ONLINE\b/gi,'정상 작동').replace(/\bSYSTEM\b/gi,'상태');}
 function applyMemberName(){
  const member=themeMembers[activeThemeIndex];
  const aliases=themeMembers.flatMap(m=>[m.ko,m.en]);
@@ -707,7 +717,7 @@ function applyMemberName(){
  });
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
- nodes.forEach(node=>{if(node.parentElement?.closest('.theme-screen'))return;const next=replaceText(node.nodeValue);if(next!==node.nodeValue)node.nodeValue=next;});
+ nodes.forEach(node=>{if(node.parentElement?.closest('.theme-screen'))return;const current=node.nodeValue;if(renderedTextNodes.get(node)!==current)originalTextNodes.set(node,current);const source=originalTextNodes.get(node)??current;let next=replaceText(source);if(activeThemeIndex!==0)next=normalizeNonNanaLanguage(next);if(next!==current)node.nodeValue=next;renderedTextNodes.set(node,next);});
  document.querySelectorAll('body *').forEach(el=>{
   if(el.closest('.theme-screen'))return;
   ['aria-label','title','placeholder','alt'].forEach(attr=>{const value=el.getAttribute(attr);if(value){const next=replaceText(value);if(next!==value)el.setAttribute(attr,next);}});
@@ -716,7 +726,7 @@ function applyMemberName(){
 }
 function applyActiveTheme(){
  const m=themeMembers[activeThemeIndex],root=document.documentElement.style;
- root.setProperty('--theme-accent',m.accent);root.setProperty('--theme-accent-2',m.accent2);
+ root.setProperty('--theme-accent',m.accent);root.setProperty('--theme-accent-2',m.accent2);root.setProperty('--pink',m.accent);root.setProperty('--pink2',m.accent2);root.setProperty('--white','#F5F4F7');root.setProperty('--muted','#AAA9B2');root.setProperty('--line',m.line);
  root.setProperty('--theme-bg',m.bg);root.setProperty('--theme-panel',m.panel);
  root.setProperty('--theme-panel2',m.panel2);root.setProperty('--theme-line',m.line);
  root.setProperty('--theme-soft',m.soft);root.setProperty('--theme-glow',m.glow);
