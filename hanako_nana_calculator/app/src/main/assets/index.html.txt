@@ -893,34 +893,52 @@ function cbLoad(){
  if(!cbOwned.length){const commons=cbAll.filter(a=>a.rarityId==='common');cbOwned=[];while(cbOwned.length<3){const a=commons[Math.floor(Math.random()*commons.length)];if(!cbOwned.includes(a.id))cbOwned.push(a.id);}cbDeck=[...cbOwned];cbSave();}
  if(cbDeck.length!==3){const fill=cbOwned.filter(id=>!cbDeck.includes(id));while(cbDeck.length<3&&fill.length)cbDeck.push(fill.shift());}
 }
+function cbType(animal){
+ const sea=new Set(['수달','고래','돌고래','물개','바다사자','펭귄','하마','악어','바다악어','상어','백상아리','범고래','대왕오징어','모사사우루스','엘라스모사우루스']);
+ const air=new Set(['박쥐','오리','거위','닭','공작','독수리','검독수리','매','콘도르','타조','프테라노돈','페가수스','그리폰','피닉스','드래곤']);
+ return sea.has(animal.name)?'해상':air.has(animal.name)?'공중':'지상';
+}
+function cbStats(animal){
+ const r=cbRarities.findIndex(x=>x.id===animal.rarityId),seed=animal.seed,type=cbType(animal);
+ return {attack:22+r*18+(seed*7%19)+(type==='공중'?5:0),defense:18+r*16+(seed*11%17)+(type==='지상'?5:0),hp:100+r*55+(seed*13%49)+(type==='해상'?15:0),maxHp:100+r*55+(seed*13%49)+(type==='해상'?15:0),type};
+}
 function cbPixelArt(animal,canvas){
- const ctx=canvas.getContext('2d');const w=96,h=76;canvas.width=w;canvas.height=h;ctx.imageSmoothingEnabled=false;
- const seed=animal.seed;let n=seed;const rnd=()=>{n=(n*1664525+1013904223)>>>0;return n/4294967296;};
+ const ctx=canvas.getContext('2d');canvas.width=112;canvas.height=84;ctx.imageSmoothingEnabled=false;
+ const seed=animal.seed,hash=[...animal.name].reduce((a,c)=>a+c.charCodeAt(0),0);let n=(seed*2654435761)>>>0;
+ const rnd=()=>{n=(n*1664525+1013904223)>>>0;return n/4294967296;};
  const palettes=[['#d8b18a','#986b4c','#f0d8b7'],['#d9e1ee','#6f819d','#f5f6ff'],['#9b8bd0','#51436f','#d5c8ff'],['#e9bf55','#9a5e2e','#fff0a6']];
- const p=palettes[animal.rarityId==='common'?0:animal.rarityId==='rare'?1:animal.rarityId==='hero'?2:3];
- const pix=(x,y,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,4,4);};
- // Pixel-art animal silhouette: species-specific seed changes ears, horns, wings, tail and markings.
- const bodyY=37+Math.floor(rnd()*5),bodyX=28+Math.floor(rnd()*5);
- for(let y=bodyY;y<bodyY+20;y+=4)for(let x=bodyX;x<bodyX+40;x+=4){const dx=(x-(bodyX+20))/20,dy=(y-(bodyY+10))/10;if(dx*dx+dy*dy<1.08)pix(x,y,p[0]);}
- for(let y=bodyY+8;y<bodyY+20;y+=4)for(let x=bodyX-8;x<bodyX+4;x+=4)pix(x,y,p[1]);
- for(let x=bodyX+5;x<bodyY+0;x+=4){} 
- const headX=bodyX+30,headY=bodyY-9;
- for(let y=headY;y<headY+16;y+=4)for(let x=headX;x<headX+16;x+=4)if((x-headX-8)**2+(y-headY-8)**2<75)pix(x,y,p[0]);
- for(let x of [bodyX+5,bodyX+29])for(let y=bodyY+16;y<bodyY+32;y+=4)pix(x,y,p[1]);
- for(let x=bodyX+40;x<bodyX+56;x+=4)pix(x,bodyY+10+(Math.floor((x-bodyX)/4)%3)*4,p[1]);
- // Ears / horns / wings / spikes vary by rarity and seed.
- if(animal.rarityId==='legend'||seed%4===0){for(let k=0;k<3;k++)pix(headX+4+k*4,headY-8+k*4,p[2]);}
- if(animal.rarityId==='legend'||animal.rarityId==='hero'){for(let k=0;k<5;k++){pix(bodyX+8+k*4,bodyY-8-k%2*4,p[2]);pix(bodyX+24+k*4,bodyY-8-(k+1)%2*4,p[2]);}}
- if(seed%3===0){pix(headX+8,headY+4,'#191923');pix(headX+12,headY+4,'#191923');}
- pix(headX+8,headY+12,p[1]);
- // Ground shadow and small sparkles for high ranks.
- ctx.fillStyle='#0008';ctx.fillRect(23,67,52,4);
- if(animal.rarityId==='hero'||animal.rarityId==='legend')for(let i=0;i<9;i++){const x=Math.floor(rnd()*88),y=Math.floor(rnd()*30);pix(x,y,p[2]);}
+ const p=palettes[(hash+seed)%palettes.length],type=cbType(animal),pix=(x,y,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x/4)*4,Math.round(y/4)*4,4,4);};
+ const bodyX=30+(seed%3)*2,bodyY=type==='공중'?38:40+(seed%3)*2,bw=25+(seed*3%7),bh=9+(seed*5%5),main=p[0],dark=p[1],light=p[2];
+ ctx.fillStyle='#0008';ctx.fillRect(24,74,64,4);
+ for(let y=bodyY-bh;y<=bodyY+bh;y+=4)for(let x=bodyX-bw;x<=bodyX+bw;x+=4){const dx=(x-bodyX)/bw,dy=(y-bodyY)/bh;if(dx*dx+dy*dy<1.12)pix(x,y,main);}
+ const headX=type==='해상'?bodyX+bw-3:bodyX+bw-5-(seed%9),headY=bodyY-8-(seed%3)*2,hr=6+(seed%3)*2;
+ for(let y=headY-hr;y<=headY+hr;y+=4)for(let x=headX-hr;x<=headX+hr;x+=4)if(((x-headX)/hr)**2+((y-headY)/hr)**2<1.15)pix(x,y,main);
+ if(type==='해상'){
+  for(let k=0;k<3;k++)pix(bodyX-8+k*5,bodyY+bh-1+k%2*4,dark);
+  for(let k=0;k<3;k++)pix(bodyX+bw-4+k*4,bodyY-5+k*5,light);
+  pix(bodyX+bw+9,bodyY-2,dark);pix(bodyX+bw+13,bodyY-6,dark);
+ }else if(type==='공중'){
+  for(let k=0;k<7;k++){pix(bodyX-12+k*5,bodyY-12-(k%2)*8,light);pix(bodyX-10+k*5,bodyY-8-(k%2)*8,dark);}
+  for(let k=0;k<2;k++)pix(headX+hr-1,headY-3+k*4,'#e6a34f');
+ }else{
+  const legs=['뱀','코모도왕도마뱀'].includes(animal.name)?2:4;
+  for(let k=0;k<legs;k++){const x=bodyX-bw+8+k*(bw*2-12)/Math.max(1,legs-1);pix(x,bodyY+bh-1,dark);pix(x,bodyY+bh+5,dark);}
+  for(let k=0;k<4;k++)pix(bodyX-bw-8-k*4,bodyY-2+(k%2)*4,dark);
+  if(['토끼','여우','늑대','고양이','강아지','사자','호랑이','표범','재규어','치타','퓨마'].includes(animal.name)){pix(headX-3,headY-hr-4,light);pix(headX+5,headY-hr-4,light);}
+ }
+ if(animal.rarityId==='hero'||animal.rarityId==='legend'||['사슴','염소','소','물소','기린','코뿔소','순록','무스'].includes(animal.name))
+  for(let k=0;k<2+(seed%3);k++)pix(headX-3+k*5,headY-hr-5-k%2*4,light);
+ if(['티라노사우루스','스테고사우루스','안킬로사우루스','트리케라톱스','스피노사우루스','브라키오사우루스'].includes(animal.name))
+  for(let k=0;k<7;k++)pix(bodyX-18+k*6,bodyY-bh-5-(k%2)*4,light);
+ for(let k=0;k<2+(seed%7);k++){const x=bodyX-bw+7+((seed*3+k*11)%(bw*2-8)),y=bodyY-5+((seed*5+k*7)%(bh+5));pix(x,y,k%2?dark:light);}
+ pix(headX+2,headY-1,'#17151d');pix(headX+6,headY-1,'#17151d');pix(headX+hr+1,headY+3,dark);
+ if(animal.rarityId==='legend')for(let k=0;k<5;k++)pix(14+k*20,10+(k%2)*5,light);
 }
 function cbCard(animal,small=false){
  const el=document.createElement('div');el.className='cb-card'+(small?' cb-small':'');el.style.setProperty('--rarity-color',animal.color);
  const art=document.createElement('div');art.className='cb-art';const canvas=document.createElement('canvas');cbPixelArt(animal,canvas);art.appendChild(canvas);
- const meta=document.createElement('div');meta.className='cb-meta';meta.innerHTML='<strong></strong><small></small><span class="cb-rarity"></span>';meta.querySelector('strong').textContent=animal.name;meta.querySelector('small').textContent='동물 카드';meta.querySelector('.cb-rarity').textContent=animal.rarity;
+ const st=cbStats(animal),meta=document.createElement('div');meta.className='cb-meta';meta.innerHTML='<strong></strong><small></small><span class="cb-rarity"></span><div class="cb-stats"></div>';
+ meta.querySelector('strong').textContent=animal.name;meta.querySelector('small').textContent='유형 · '+st.type;meta.querySelector('.cb-rarity').textContent=animal.rarity;meta.querySelector('.cb-stats').textContent='공격 '+st.attack+' · 방어 '+st.defense+' · 체력 '+st.hp;
  el.append(art,meta);return el;
 }
 function cbOwnedAnimals(){return cbOwned.map(id=>cbAll.find(a=>a.id===id)).filter(Boolean);}
