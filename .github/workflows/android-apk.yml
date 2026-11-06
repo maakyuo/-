@@ -64,15 +64,22 @@ jobs:
               sleep 4
             done
             if [ "$ok" -ne 1 ]; then
-              local proxy
-              proxy="$(python3 -c 'import urllib.parse,sys; print("https://wsrv.nl/?url="+urllib.parse.quote(sys.argv[1],safe=""))' "$url")"
-              for attempt in 1 2 3 4 5; do
-                if curl -fLsS --connect-timeout 20 --max-time 120 -A "Mozilla/5.0" "$proxy" -o "$out"; then
-                  ok=1
-                  break
-                fi
-                rm -f "$out"
-                sleep 4
+              local encoded proxy
+              encoded="$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1],safe=""))' "$url")"
+              for proxy in \
+                "https://images.weserv.nl/?url=$encoded" \
+                "https://api.allorigins.win/raw?url=$encoded" \
+                "https://api.codetabs.com/v1/proxy?quest=$encoded" \
+                "https://corsproxy.io/?url=$encoded" \
+                "https://wsrv.nl/?url=$encoded"; do
+                for attempt in 1 2 3; do
+                  if curl -fLsS --connect-timeout 20 --max-time 120 -A "Mozilla/5.0" "$proxy" -o "$out"; then
+                    ok=1
+                    break 2
+                  fi
+                  rm -f "$out"
+                  sleep 3
+                done
               done
             fi
             if [ "$ok" -ne 1 ] || [ ! -s "$out" ]; then
