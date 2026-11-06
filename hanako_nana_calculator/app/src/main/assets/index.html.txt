@@ -980,14 +980,19 @@ function cbStartEncounter(){
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
  $('cbBattleStatus').textContent='상대 동물이 나타났다. 덱에서 싸울 동물을 선택해.';
  $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
- cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbRenderDeck();
+ cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false;
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false;
 function cbSelectFighter(id){
  const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id))return;
- cbSelected=animal;cbPlayerHp=cbStats(animal).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;
+ const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
+ cbSelected=animal;cbPlayerHp=cbStats(animal).hp;
+ if(!continuing)cbEnemyHp=cbStats(cbWild).hp;
+ cbBattleDone=false;cbCanContinue=false;
  $('cbDuelStage').hidden=false;$('cbAttackButton').hidden=false;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
- $('cbBattleStatus').textContent=animal.name+' 선택! 공격 버튼을 눌러 전투를 진행해.';cbUpdateDuel();
+ $('cbBattleStatus').textContent=continuing?animal.name+' 출전! 상대의 남은 체력 '+cbEnemyHp+'을(를) 이어받아 전투를 계속한다.':animal.name+' 선택! 공격 버튼을 눌러 전투를 진행해.';
+ $('cbBattleLog').textContent=continuing?'새 동물이 전투에 합류했다. 상대의 체력은 유지된다.':'전투가 시작됐다.';
+ cbUpdateDuel();
  [...$('cbBattleDeck').children].forEach(el=>el.classList.toggle('selected',el.dataset.animalId===id));
 }
 function cbDamage(attacker,defender){
@@ -1005,12 +1010,14 @@ function cbUpdateDuel(){
 function cbFinishBattle(win){
  cbBattleDone=true;$('cbAttackButton').hidden=true;$('cbBattleResult').hidden=false;
  if(win){
+  cbCanContinue=false;
   const fresh=!cbOwned.includes(cbWild.id);if(fresh){cbOwned.push(cbWild.id);cbSave();}
   $('cbBattleResult').textContent=fresh?'승리! '+cbWild.name+'을(를) 테이밍했다. 도감에 등록 완료!':'승리! 이미 보유한 동물이다.';
   $('cbBattleStatus').textContent='야생 동물 제압 성공';
  }else{
-  $('cbBattleResult').textContent='패배했다. 다시 도전하거나 다른 동물을 선택할 수 있다.';
-  $('cbBattleStatus').textContent='내 동물의 체력이 모두 소진됐다.';$('cbRetryButton').hidden=false;
+  cbCanContinue=cbEnemyHp>0;
+  $('cbBattleResult').textContent=cbCanContinue?'패배했다. 덱의 다른 동물을 선택하면 상대의 남은 체력 그대로 이어서 싸울 수 있다.':'패배했다. 다시 도전할 수 있다.';
+  $('cbBattleStatus').textContent=cbCanContinue?'동물이 쓰러졌다. 아래 덱에서 다음 동물을 선택해!':'내 동물의 체력이 모두 소진됐다.';$('cbRetryButton').hidden=false;
  }
  $('cbSummary').textContent='보유 동물 '+cbOwned.length+'종 · 덱 '+cbDeck.length+'/3';
 }
@@ -1024,7 +1031,7 @@ function cbAttackTurn(){
  cbUpdateDuel();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbRetryBattle(){
- if(!cbSelected)return;cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;
+ if(!cbSelected)return;cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;
  $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=false;
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();
 }
