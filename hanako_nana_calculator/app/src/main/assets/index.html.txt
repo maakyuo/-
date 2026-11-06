@@ -943,7 +943,7 @@ function cbPixelArt(animal,canvas){
   for(let y=32;y<57;y+=4)for(let x=18;x<88;x+=4){let dx=(x-52)/36,dy=(y-44)/13;if(dx*dx+dy*dy<1)px(x,y,main);}
   for(let k=0;k<5;k++)px(12+k*4,42+(k%2)*4,dark);
   px(52,27,dark);px(61,23,dark);px(70,27,dark);
-  if(n==='d')px(0,0);
+  
   if(n==='상어'||n==='백상아리'){px(48,28,dark);px(52,22,dark);px(82,42,dark);}
   if(n==='고래'){px(26,28,light);px(30,22,light);px(34,18,light);}
   if(n==='돌고래'){px(82,40,main,12,4);px(90,38,dark);}
@@ -975,22 +975,22 @@ function cbPixelArt(animal,canvas){
   for(let k=0;k<legs;k++){let x=bx-bw+5+k*(bw*2-10)/3;px(x,by+bh-1,dark,5,13);}
   px(bx-bw-10,by-2,dark,12,4);
   if(['토끼','다람쥐','고양이','강아지','여우','늑대','사자','호랑이','표범','재규어','치타','퓨마','스라소니','페넥여우'].includes(n)){px(hx-7,hy-13,main,5,12);px(hx+3,hy-13,main,5,12);}
-  if(['코끼리','매머드']){px(hx+4,hy+2,main,5,24);px(hx-5,hy+8,light,4,12);if(n==='매머드'){px(hx-8,hy+4,light,8,14);px(hx+9,hy+4,light,8,14);}}
-  if(['사자','호랑이','검치호랑이']){for(let k=0;k<9;k++)px(hx-14+(k%3)*9,hy-12+Math.floor(k/3)*8,dark);if(n==='검치호랑이'){px(hx-4,hy+5,light,4,12);px(hx+5,hy+5,light,4,12);}}
-  if(['호랑이','얼룩말']){for(let k=0;k<6;k++)px(bx-18+k*7,by-10,dark,4,16);}
-  if(['표범','재규어','치타','기린']){for(let k=0;k<12;k++)px(bx-18+(k*13%35),by-12+(k*7%20),dark);}
-  if(['사슴','순록','무스','염소','소','물소','들소','아프리카물소']){px(hx-8,hy-15,light,4,15);px(hx+8,hy-15,light,4,15);px(hx-12,hy-22,dark,12,4);px(hx+8,hy-22,dark,12,4);}
-  if(['코뿔소']){px(hx+8,hy-2,light,12,5);px(hx+16,hy-7,light,7,4);}
-  if(['기린']){px(hx-5,hy-15,dark,4,9);px(hx+6,hy-15,dark,4,9);}
-  if(['거북','안킬로사우루스']){px(bx-19,by-18,dark,40,5);for(let k=0;k<5;k++)px(bx-16+k*8,by-14,light,4,12);}
-  if(['스테고사우루스']){for(let k=0;k<7;k++)px(bx-22+k*7,by-22+(k%2)*3,light,6,14);}
-  if(['트리케라톱스']){px(hx-13,hy-12,light,5,15);px(hx+9,hy-12,light,5,15);px(hx-2,hy-4,light,13,5);}
-  if(['티라노사우루스','벨로키랍토르','스피노사우루스']){px(bx+4,by+2,dark,12,5);px(bx+12,by+5,light,7,4);if(n==='스피노사우루스')for(let k=0;k<6;k++)px(bx-14+k*7,by-22,light,5,13);}
-  if(['기린','낙타'])px(hx+5,hy-11,light,4,4);
-  if(['유니콘']){px(hx+9,hy-13,light,4,18);}
-  if(['케르베로스']){px(hx-12,hy-13,main,10,10);px(hx+10,hy-13,main,10,10);}
-  if(['히드라']){for(let k=0;k<3;k++)px(63+k*9,hy-23,dark,6,24);}
-  if(['그리폰']){px(bx-17,by-20,light,26,9);px(hx+9,hy-4,light,8,4);}
+  if(['코끼리','매머드'].includes(n)){px(hx+4,hy+2,main,5,24);px(hx-5,hy+8,light,4,12);if(n==='매머드'){px(hx-8,hy+4,light,8,14);px(hx+9,hy+4,light,8,14);}}
+  if(['사자','호랑이','검치호랑이'].includes(n)){for(let k=0;k<9;k++)px(hx-14+(k%3)*9,hy-12+Math.floor(k/3)*8,dark);if(n==='검치호랑이'){px(hx-4,hy+5,light,4,12);px(hx+5,hy+5,light,4,12);}}
+  if(['호랑이','얼룩말'].includes(n)){for(let k=0;k<6;k++)px(bx-18+k*7,by-10,dark,4,16);}
+  if(['표범','재규어','치타','기린'].includes(n)){for(let k=0;k<12;k++)px(bx-18+(k*13%35),by-12+(k*7%20),dark);}
+  if(['사슴','순록','무스','염소','소','물소','들소','아프리카물소'].includes(n)){px(hx-8,hy-15,light,4,15);px(hx+8,hy-15,light,4,15);px(hx-12,hy-22,dark,12,4);px(hx+8,hy-22,dark,12,4);}
+  if(['코뿔소'].includes(n)){px(hx+8,hy-2,light,12,5);px(hx+16,hy-7,light,7,4);}
+  if(['기린'].includes(n)){px(hx-5,hy-15,dark,4,9);px(hx+6,hy-15,dark,4,9);}
+  if(['거북','안킬로사우루스'].includes(n)){px(bx-19,by-18,dark,40,5);for(let k=0;k<5;k++)px(bx-16+k*8,by-14,light,4,12);}
+  if(['스테고사우루스'].includes(n)){for(let k=0;k<7;k++)px(bx-22+k*7,by-22+(k%2)*3,light,6,14);}
+  if(['트리케라톱스'].includes(n)){px(hx-13,hy-12,light,5,15);px(hx+9,hy-12,light,5,15);px(hx-2,hy-4,light,13,5);}
+  if(['티라노사우루스','벨로키랍토르','스피노사우루스'].includes(n)){px(bx+4,by+2,dark,12,5);px(bx+12,by+5,light,7,4);if(n==='스피노사우루스')for(let k=0;k<6;k++)px(bx-14+k*7,by-22,light,5,13);}
+  if(['기린','낙타'].includes(n))px(hx+5,hy-11,light,4,4);
+  if(['유니콘'].includes(n)){px(hx+9,hy-13,light,4,18);}
+  if(['케르베로스'].includes(n)){px(hx-12,hy-13,main,10,10);px(hx+10,hy-13,main,10,10);}
+  if(['히드라'].includes(n)){for(let k=0;k<3;k++)px(63+k*9,hy-23,dark,6,24);}
+  if(['그리폰'].includes(n)){px(bx-17,by-20,light,26,9);px(hx+9,hy-4,light,8,4);}
  }
  px(72,34,'#17151d',4,4);px(80,41,dark,4,4);
  if(animal.rarityId==='legend'){for(let k=0;k<5;k++)px(12+k*20,8+(k%2)*4,light);}
