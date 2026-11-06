@@ -692,7 +692,7 @@ const themeMembers=[
  {ko:'하나코 나나',en:'Hanako Nana',accent:'#E87991',accent2:'#F4A8B7',bg:'#111116',panel:'#1b1a22',panel2:'#24222c',line:'#393440',soft:'#281b24',glow:'rgba(232,121,145,.16)'},
  {ko:'아야츠노 유니',en:'Ayatsuno Yuni',accent:'#B8C8E8',accent2:'#E7EDFF',bg:'#10141B',panel:'#1B2430',panel2:'#253243',line:'#405166',soft:'#263448',glow:'rgba(184,200,232,.16)'},
  {ko:'사키하네 후야',en:'Sakihane Huya',accent:'#7443B8',accent2:'#B99AEF',bg:'#100B18',panel:'#1B1328',panel2:'#281B3A',line:'#493263',soft:'#2C1D40',glow:'rgba(116,67,184,.22)'},
- {ko:'시라유키 히나',en:'Shirayuki Hina',accent:'#D77FA8',accent2:'#F2B5D0',bg:'#170F17',panel:'#281B27',panel2:'#362333',line:'#65445B',soft:'#3A2332',glow:'rgba(215,127,168,.17)'},
+ {ko:'시라유키 히나',en:'Shirayuki Hina',accent:'#AA866B',accent2:'#D7A999',bg:'#171310',panel:'#28211D',panel2:'#382D27',line:'#665044',soft:'#3B2D25',glow:'rgba(170,134,107,.19)'},
  {ko:'네네코 마시로',en:'Neneko Mashiro',accent:'#969BA3',accent2:'#D5D8DD',bg:'#121316',panel:'#202226',panel2:'#2B2E33',line:'#494D54',soft:'#30343A',glow:'rgba(190,196,205,.13)'},
  {ko:'아카네 리제',en:'Akane Lize',accent:'#B94655',accent2:'#F08A91',bg:'#180F12',panel:'#28191D',panel2:'#382127',line:'#61323D',soft:'#3A1F27',glow:'rgba(185,70,85,.18)'},
  {ko:'아오쿠모 린',en:'Aokumo Rin',accent:'#648DC5',accent2:'#A8C8F2',bg:'#0F141C',panel:'#1B2430',panel2:'#253242',line:'#3C526B',soft:'#22364D',glow:'rgba(100,141,197,.17)'},
