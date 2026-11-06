@@ -424,6 +424,15 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-unknown .cb-meta strong{letter-spacing:.18em;color:#aaa}
 .cb-dex-progress{font-size:12px;text-align:center;color:#d4cbd6;padding:8px;border:1px solid #48404e;border-radius:9px;background:#211e28}
 
+/* Battle attack and hit effects */
+.cb-fighter{position:relative;overflow:hidden;transform-origin:center}
+.cb-fighter.cb-attacking{animation:cbAttackLunge .28s ease-out}
+.cb-fighter.cb-hit{animation:cbHitFlash .38s ease-out}
+.cb-fighter.cb-critical{animation:cbCriticalHit .58s ease-out}
+@keyframes cbAttackLunge{0%{transform:translateX(0)}45%{transform:translateX(9px) scale(1.04)}100%{transform:translateX(0)}}
+@keyframes cbHitFlash{0%{filter:brightness(1)}25%{filter:brightness(2.4);box-shadow:0 0 18px #fff8;transform:translateX(-4px)}55%{transform:translateX(4px)}100%{filter:brightness(1);transform:translateX(0);box-shadow:none}}
+@keyframes cbCriticalHit{0%{filter:brightness(1)}18%{filter:brightness(3) saturate(1.8);box-shadow:0 0 0 3px #ffd45c,0 0 26px #ffb52e;transform:scale(1.07) rotate(-2deg)}42%{transform:scale(.97) rotate(2deg)}68%{transform:scale(1.03)}100%{filter:brightness(1);transform:scale(1);box-shadow:none}}
+
 </style>
 </head>
 <body>
@@ -529,7 +538,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
    <div class="mission-head"><span>도전할 덱</span><small>보유 카드 3장</small></div>
    <div class="cb-deck" id="cbBattleDeck"></div>
    <div class="cb-note" id="cbBattleStatus">야생 동물을 쓰러뜨리면 테이밍할 수 있습니다.</div>
-   <div class="cb-stage" id="cbDuelStage" hidden><div class="cb-versus"><div class="cb-fighter"><strong id="cbDuelMine">내 동물</strong><small id="cbDuelMineStats"></small></div><b>VS</b><div class="cb-fighter"><strong id="cbDuelWild">야생 동물</strong><small id="cbDuelWildStats"></small></div></div><div class="cb-note" id="cbBattleLog">전투 준비 완료</div></div>
+   <div class="cb-stage" id="cbDuelStage" hidden><div class="cb-versus"><div class="cb-fighter" id="cbMineFighter"><strong id="cbDuelMine">내 동물</strong><small id="cbDuelMineStats"></small></div><b>VS</b><div class="cb-fighter" id="cbWildFighter"><strong id="cbDuelWild">야생 동물</strong><small id="cbDuelWildStats"></small></div></div><div class="cb-note" id="cbBattleLog">전투 준비 완료</div></div>
    <button class="convert-btn" id="cbAttackButton" hidden>공격하기</button><div class="cb-result" id="cbBattleResult" hidden></div><button class="back-btn" id="cbRetryButton" hidden>다시 도전</button>
    <button class="back-btn" id="cbEncounterBack">돌아가기</button>
   </div>
@@ -1060,7 +1069,9 @@ function cbSelectFighter(id){
 function cbDamage(attacker,defender){
  const a=cbStats(attacker),d=cbStats(defender),raw=Math.max(1,a.attack-d.defense);
  const advantage=(a.type==='공중'&&d.type==='지상')||(a.type==='지상'&&d.type==='해상')||(a.type==='해상'&&d.type==='공중');
- return {damage:raw*(advantage?5:1),advantage};
+ const critical=Math.random()<0.05;
+ const damage=raw*(advantage?5:1)*(critical?3:1);
+ return {damage,advantage,critical};
 }
 function cbUpdateDuel(){
  const mine=cbStats(cbSelected),wild=cbStats(cbWild);
@@ -1083,13 +1094,23 @@ function cbFinishBattle(win){
  }
  $('cbSummary').textContent='보유 동물 '+cbOwned.length+'종 · 덱 '+cbDeck.length+'/3';
 }
+function cbPlayAttackEffect(attackerId,defenderId,critical){
+ const attacker=$(attackerId),defender=$(defenderId);
+ [attacker,defender].forEach(el=>el.classList.remove('cb-attacking','cb-hit','cb-critical'));
+ void attacker.offsetWidth;void defender.offsetWidth;
+ attacker.classList.add('cb-attacking');
+ defender.classList.add(critical?'cb-critical':'cb-hit');
+ setTimeout(()=>{attacker.classList.remove('cb-attacking');defender.classList.remove('cb-hit','cb-critical');},650);
+}
 function cbAttackTurn(){
  if(!cbSelected||cbBattleDone)return;
  const hit=cbDamage(cbSelected,cbWild);cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
- $('cbBattleLog').textContent=cbSelected.name+'의 공격! '+(hit.advantage?'상성 우위! ':'')+hit.damage+' 피해';
+ cbPlayAttackEffect('cbMineFighter','cbWildFighter',hit.critical);
+ $('cbBattleLog').textContent=cbSelected.name+'의 공격! '+(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해';
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
  const counter=cbDamage(cbWild,cbSelected);cbPlayerHp=Math.max(0,cbPlayerHp-counter.damage);
- $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.advantage?'상성 우위! ':'')+counter.damage+' 피해';
+ cbPlayAttackEffect('cbWildFighter','cbMineFighter',counter.critical);
+ $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counter.damage+' 피해';
  cbUpdateDuel();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbRetryBattle(){
