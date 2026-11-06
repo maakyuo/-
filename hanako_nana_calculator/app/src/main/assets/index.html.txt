@@ -1060,7 +1060,7 @@ function cbSelectFighter(id){
 function cbDamage(attacker,defender){
  const a=cbStats(attacker),d=cbStats(defender),raw=Math.max(1,a.attack-d.defense);
  const advantage=(a.type==='공중'&&d.type==='지상')||(a.type==='지상'&&d.type==='해상')||(a.type==='해상'&&d.type==='공중');
- return {damage:raw*(advantage?2:1),advantage};
+ return {damage:raw*(advantage?5:1),advantage};
 }
 function cbUpdateDuel(){
  const mine=cbStats(cbSelected),wild=cbStats(cbWild);
