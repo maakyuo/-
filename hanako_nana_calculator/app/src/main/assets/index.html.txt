@@ -390,12 +390,16 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-art img{width:100%;height:100%;object-fit:contain;object-position:center bottom;padding:4px 6px 0}#cbDuel[hidden],#cbMyChoices[hidden],#cbBattle[hidden],#cbHome[hidden]{display:none!important}.cb-meta{padding:8px}.cb-meta strong{display:block;font-size:12px}.cb-meta small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
 .cb-pill{display:inline-block;margin-top:5px;padding:2px 6px;border-radius:5px;background:#ffffff20;font-size:9px}
 .cb-row{display:flex;gap:7px}.cb-row>*{flex:1;min-width:0}.cb-note{font-size:11px;line-height:1.5;color:var(--muted)}.cb-deck{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.cb-slot{min-height:76px;border:1px dashed var(--theme-accent,var(--pink));border-radius:9px;background:var(--theme-panel);color:var(--white);font-size:10px;padding:5px}.cb-hidden{opacity:.55;filter:grayscale(1)}.cb-stage{border:1px solid var(--theme-line);border-radius:12px;padding:10px;background:var(--theme-panel);display:flex;flex-direction:column;gap:8px}.cb-versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}.cb-fighter{position:relative;isolation:isolate;border:1px solid var(--theme-line);border-radius:9px;padding:8px;text-align:center;background:var(--theme-panel2)}.cb-fighter strong{display:block;font-size:12px}
-.cb-fighter.cb-cerberus-active::after,.cb-fighter.cb-phoenix-active::after,.cb-fighter.cb-griffon-active::after{content:'';position:absolute;inset:-3px;border-radius:12px;pointer-events:none;z-index:-1}
+.cb-fighter.cb-cerberus-active::after,.cb-fighter.cb-phoenix-active::after,.cb-fighter.cb-griffon-active::after,.cb-fighter.cb-unicorn-active::after,.cb-fighter.cb-pegasus-active::after{content:'';position:absolute;inset:-3px;border-radius:12px;pointer-events:none;z-index:-1}
 .cb-fighter.cb-cerberus-active::after{border:2px solid #a855f7;box-shadow:0 0 7px #a855f7,0 0 16px #7e22ce,inset 0 0 9px #a855f7;animation:cbPurpleAura 1.05s ease-in-out infinite alternate}
 .cb-fighter.cb-phoenix-active::after{border:2px solid #ff8a24;box-shadow:0 0 8px #ff7a18,0 0 17px #ef4444,inset 0 0 10px #ff8a24;animation:cbFlameAura .7s ease-in-out infinite alternate}
 .cb-fighter.cb-griffon-active::after{border:2px dashed #4ade80;box-shadow:0 0 8px #22c55e,0 0 17px #16a34a,inset 0 0 8px #4ade80;animation:cbWindAura 1.6s linear infinite}
 @keyframes cbPurpleAura{from{opacity:.55;filter:brightness(.9);transform:scale(1)}to{opacity:1;filter:brightness(1.7);transform:scale(1.012)}}
 @keyframes cbFlameAura{from{opacity:.65;filter:brightness(1);transform:scale(1)}to{opacity:1;filter:brightness(1.8);transform:scale(1.018)}}
+ .cb-fighter.cb-unicorn-active::after{border:2px solid #fff;box-shadow:0 0 8px #fff,0 0 18px #e5e7eb,inset 0 0 12px #fff;animation:cbUnicornWave 1.35s ease-in-out infinite}
+.cb-fighter.cb-pegasus-active::after{border:2px solid #fff;box-shadow:0 0 9px #fff,0 0 19px #f8fafc,inset 0 0 8px #fff;animation:cbPegasusPulse .16s steps(2,end) infinite}
+@keyframes cbUnicornWave{0%{opacity:.45;transform:scale(.985);box-shadow:0 0 4px #fff,0 0 8px #e5e7eb,inset 0 0 5px #fff}50%{opacity:1;transform:scale(1.025);box-shadow:0 0 12px #fff,0 0 25px #e5e7eb,inset 0 0 16px #fff}100%{opacity:.55;transform:scale(.99);box-shadow:0 0 5px #fff,0 0 11px #e5e7eb,inset 0 0 7px #fff}}
+@keyframes cbPegasusPulse{0%{opacity:.75;transform:translate(-1px,0) skewX(-1deg)}25%{opacity:1;transform:translate(1px,-1px) skewX(1deg)}50%{opacity:.85;transform:translate(0,1px) skewX(-1deg)}75%{opacity:1;transform:translate(-1px,0) skewX(1deg)}100%{opacity:.8;transform:translate(1px,0) skewX(0)}}
 @keyframes cbWindAura{from{opacity:.55;transform:rotate(0deg) scale(1)}to{opacity:1;transform:rotate(360deg) scale(1.012)}}.cb-fighter small{font-size:10px;color:var(--muted)}.cb-result{font-weight:800;text-align:center;font-size:15px;padding:8px}
  
 /* Animal card game: pixel-art cards and rarity frames */
@@ -1157,7 +1161,7 @@ let cbUltimateEffectTimer=null;
 function cbUltimate(animal){
  if(!animal)return null;
  if(animal.rarityId==='legend'){
-  const legendary={'케르베로스':{name:'지옥의 파수견',type:'cerberus',turns:3,desc:'3턴 동안 일반 공격과 강공격을 각각 3회 연속으로 실행한다. 세 번의 공격은 각각 치명타와 회피 판정을 받으며 상대는 한 번만 반격한다.'},'피닉스':{name:'부활의 화염',type:'phoenix',desc:'체력이 0이 되면 최대 체력의 50%로 한 번 부활한다.'},'그리폰':{name:'환영 비행',type:'griffon',turns:10,desc:'10턴 동안 그리폰 본인을 향한 공격의 회피 확률이 50%가 된다.'}};
+  const legendary={'케르베로스':{name:'지옥의 파수견',type:'cerberus',turns:3,desc:'3턴 동안 일반 공격과 강공격을 각각 3회 연속으로 실행한다. 세 번의 공격은 각각 치명타와 회피 판정을 받으며 상대는 한 번만 반격한다.'},'피닉스':{name:'부활의 화염',type:'phoenix',desc:'체력이 0이 되면 최대 체력의 50%로 총 2회 부활한다.'},'그리폰':{name:'환영 비행',type:'griffon',turns:10,desc:'10턴 동안 그리폰 본인을 향한 공격의 회피 확률이 50%가 된다.'},'유니콘':{name:'성역 전개',type:'sanctuary',turns:3,desc:'3턴 동안 방어 사용 시 강공격 횟수가 2회 회복되고 강공격 피해가 2.5배가 된다.'},'페가수스':{name:'영웅의 날개',type:'heroWings',turns:30,desc:'최대 30턴 동안 페가수스의 강공격 횟수 제한이 사라진다.'}};
   return legendary[animal.name]||null;
  }
  const rank=cbRarities.findIndex(r=>r.id===animal.rarityId),kind=(animal.seed*7+animal.name.length)%9;
@@ -1217,7 +1221,7 @@ function cbStartEncounter(){
 function cbBeginEncounter(mode){
  const pool=cbAll.filter(a=>!cbOwned.includes(a.id));
  cbWild=pool.length?pool[Math.floor(Math.random()*pool.length)]:cbAll[Math.floor(Math.random()*cbAll.length)];
- cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;cbCerberusTurns=0;cbPhoenixRevive=false;cbGryphonEvadeTurns=0;cbEnemyWeakTurns=0;cbEnemyWeakPercent=0;cbCerberusTurns=0;cbPhoenixRevive=false;cbGryphonEvadeTurns=0;
+ cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;cbCerberusTurns=0;cbPhoenixRevives=0;cbGryphonEvadeTurns=0;cbSanctuaryTurns=0;cbHeroWingsTurns=0;cbEnemyWeakTurns=0;cbEnemyWeakPercent=0;
  $('cbModeSelect').hidden=true;$('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=false;
  $('cbModeLabel').textContent=mode==='strategy'?'전략전투 · 직접 행동을 선택하세요':'속전속결 · 자동 전투';
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
@@ -1225,11 +1229,11 @@ function cbBeginEncounter(mode){
  $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
  cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerAttackBoostPercent=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0,cbPlayerGuardReduction=50,cbEnemyWeakTurns=0,cbEnemyWeakPercent=0,cbCerberusTurns=0,cbPhoenixRevive=false,cbGryphonEvadeTurns=0;
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerAttackBoostPercent=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0,cbPlayerGuardReduction=50,cbEnemyWeakTurns=0,cbEnemyWeakPercent=0,cbCerberusTurns=0,cbPhoenixRevives=0,cbGryphonEvadeTurns=0,cbSanctuaryTurns=0,cbHeroWingsTurns=0;
 function cbSelectFighter(id){
  const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id)||cbUsedFighters.has(id))return;
  const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
- if(continuing&&cbSelected)cbUsedFighters.add(cbSelected.id);cbSelected=animal;cbPlayerHp=cbStats(animal).hp;cbCerberusTurns=0;cbPhoenixRevive=false;cbGryphonEvadeTurns=0;
+ if(continuing&&cbSelected)cbUsedFighters.add(cbSelected.id);cbSelected=animal;cbPlayerHp=cbStats(animal).hp;cbCerberusTurns=0;cbPhoenixRevives=0;cbGryphonEvadeTurns=0;cbSanctuaryTurns=0;cbHeroWingsTurns=0;
  if(!continuing)cbEnemyHp=cbStats(cbWild).hp;
  cbBattleDone=false;cbCanContinue=false;
  $('cbDuelStage').hidden=false;$('cbAttackButton').hidden=cbBattleMode!=='strategy';$('cbStrategyActions').hidden=cbBattleMode!=='strategy';$('cbSpeedActions').hidden=cbBattleMode!=='speed';$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
@@ -1250,7 +1254,7 @@ function cbDamage(attacker,defender,multiplier=1,canMiss=true,attackBonus=0,igno
 }
 function cbUpdateDuel(){
  const mine=cbStats(cbSelected),wild=cbStats(cbWild);
- $('cbDuelMine').textContent=cbSelected.name+' · 체력 '+cbPlayerHp+'/'+mine.maxHp;const mineFighter=$('cbMineFighter');mineFighter.classList.toggle('cb-cerberus-active',cbCerberusTurns>0);mineFighter.classList.toggle('cb-phoenix-active',cbPhoenixRevive);mineFighter.classList.toggle('cb-griffon-active',cbGryphonEvadeTurns>0);
+ $('cbDuelMine').textContent=cbSelected.name+' · 체력 '+cbPlayerHp+'/'+mine.maxHp;const mineFighter=$('cbMineFighter');mineFighter.classList.toggle('cb-cerberus-active',cbCerberusTurns>0);mineFighter.classList.toggle('cb-phoenix-active',cbPhoenixRevives>0);mineFighter.classList.toggle('cb-griffon-active',cbGryphonEvadeTurns>0);mineFighter.classList.toggle('cb-unicorn-active',cbSanctuaryTurns>0);mineFighter.classList.toggle('cb-pegasus-active',cbHeroWingsTurns>0);
  $('cbDuelWild').textContent=cbWild.name+' · 체력 '+cbEnemyHp+'/'+wild.maxHp;
  $('cbDuelMineStats').textContent='공격 '+mine.attack+' / 방어 '+mine.defense+' / 유형 '+mine.type;
  $('cbDuelWildStats').textContent='공격 '+wild.attack+' / 방어 '+wild.defense+' / 유형 '+wild.type;
@@ -1288,13 +1292,13 @@ function cbResolveTurn(action='normal'){
  const ultimate=action==='ultimate'?cbUltimate(cbSelected):null;
  if(action==='ultimate'&&(!ultimate||cbUltimateUsed))return;
  const attackBoostWasActive=cbPlayerAttackBoostTurns>0;
- if(action==='heavy'&&cbHeavyUses>=3)return;
- if(action==='heavy')cbHeavyUses++;
+ if(action==='heavy'&&cbHeavyUses>=3&&!(cbSelected.name==='페가수스'&&cbHeroWingsTurns>0))return;
+ if(action==='heavy'&&!(cbSelected.name==='페가수스'&&cbHeroWingsTurns>0))cbHeavyUses++;
  const defending=action==='defend';
- if(defending)cbHeavyUses=Math.max(0,cbHeavyUses-1);
- const multiplier=action==='heavy'?1.7:action==='special'?2.5:action==='ultimate'&&['damage','pierce','drain'].includes(ultimate.type)?ultimate.multiplier:1;
+ if(defending)cbHeavyUses=Math.max(0,cbHeavyUses-(cbSelected.name==='유니콘'&&cbSanctuaryTurns>0?2:1));
+ const multiplier=action==='heavy'?(cbSelected.name==='유니콘'&&cbSanctuaryTurns>0?2.5:1.7):action==='special'?2.5:action==='ultimate'&&['damage','pierce','drain'].includes(ultimate.type)?ultimate.multiplier:1;
  let attackBonus=attackBoostWasActive?Math.round(cbStats(cbSelected).attack*cbPlayerAttackBoostPercent/100):0;
- if(action==='ultimate'){cbUltimateUsed=true;if(ultimate.type==='cerberus')cbCerberusTurns=ultimate.turns;if(ultimate.type==='phoenix')cbPhoenixRevive=true;if(ultimate.type==='griffon')cbGryphonEvadeTurns=ultimate.turns;if(ultimate.type==='boost'){cbPlayerAttackBoostTurns=ultimate.turns;cbPlayerAttackBoostPercent=ultimate.percent;}if(ultimate.type==='evade')cbPlayerEvadeTurns=ultimate.turns;if(ultimate.type==='guard'){cbPlayerGuardTurns=ultimate.turns;cbPlayerGuardReduction=ultimate.percent;}if(ultimate.type==='heal')cbPlayerHp=Math.min(cbStats(cbSelected).maxHp,cbPlayerHp+Math.round(cbStats(cbSelected).maxHp*ultimate.percent/100));if(ultimate.type==='weaken'){cbEnemyWeakTurns=ultimate.turns;cbEnemyWeakPercent=ultimate.percent;}if(ultimate.type==='rewind')cbHeavyUses=0;cbUpdateDuel();cbShowUltimateEffect(ultimate.name);}
+ if(action==='ultimate'){cbUltimateUsed=true;if(ultimate.type==='cerberus')cbCerberusTurns=ultimate.turns;if(ultimate.type==='phoenix')cbPhoenixRevives=2;if(ultimate.type==='griffon')cbGryphonEvadeTurns=ultimate.turns;if(ultimate.type==='sanctuary')cbSanctuaryTurns=ultimate.turns;if(ultimate.type==='heroWings')cbHeroWingsTurns=ultimate.turns;if(ultimate.type==='boost'){cbPlayerAttackBoostTurns=ultimate.turns;cbPlayerAttackBoostPercent=ultimate.percent;}if(ultimate.type==='evade')cbPlayerEvadeTurns=ultimate.turns;if(ultimate.type==='guard'){cbPlayerGuardTurns=ultimate.turns;cbPlayerGuardReduction=ultimate.percent;}if(ultimate.type==='heal')cbPlayerHp=Math.min(cbStats(cbSelected).maxHp,cbPlayerHp+Math.round(cbStats(cbSelected).maxHp*ultimate.percent/100));if(ultimate.type==='weaken'){cbEnemyWeakTurns=ultimate.turns;cbEnemyWeakPercent=ultimate.percent;}if(ultimate.type==='rewind')cbHeavyUses=0;cbUpdateDuel();cbShowUltimateEffect(ultimate.name);}
  let hit={damage:0,missed:false,advantage:false,critical:false},multiHits=[];
  if(!defending&&(action!=='ultimate'||['damage','pierce','drain'].includes(ultimate.type))){
   const strikeCount=cbCerberusTurns>0&&(action==='normal'||action==='heavy')?3:1;
@@ -1312,8 +1316,13 @@ function cbResolveTurn(action='normal'){
  if(action==='ultimate'&&ultimate.type==='cerberus')$('cbBattleLog').textContent=actionName+'! 3턴 동안 일반 공격과 강공격이 3회 연속 공격으로 바뀐다.';
  if(action==='ultimate'&&ultimate.type==='phoenix')$('cbBattleLog').textContent=actionName+'! 쓰러지면 체력 절반으로 부활한다.';
  if(action==='ultimate'&&ultimate.type==='griffon')$('cbBattleLog').textContent=actionName+'! 10턴 동안 본인을 향한 공격의 회피율이 50%가 된다.';
+ if(action==='ultimate'&&ultimate.type==='phoenix')$('cbBattleLog').textContent=actionName+'! 쓰러지면 체력 절반으로 총 2회 부활한다.';
+ if(action==='ultimate'&&ultimate.type==='sanctuary')$('cbBattleLog').textContent=actionName+'! 3턴 동안 방어 시 강공격 횟수가 2회 회복되고 강공격 피해가 2.5배가 된다.';
+ if(action==='ultimate'&&ultimate.type==='heroWings')$('cbBattleLog').textContent=actionName+'! 30턴 동안 강공격 횟수 제한이 사라진다.';
  if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(attackBoostWasActive&&action!=='ultimate')cbPlayerAttackBoostTurns=Math.max(0,cbPlayerAttackBoostTurns-1);
+ if(action!=='ultimate'&&cbSanctuaryTurns>0)cbSanctuaryTurns--;
+ if(action!=='ultimate'&&cbHeroWingsTurns>0)cbHeroWingsTurns--;
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
  cbDefending=defending;
  let counter=cbDamage(cbWild,cbSelected,1,true,0,false,cbSelected.name==='그리폰'&&cbGryphonEvadeTurns>0?0.5:0.10),ultimatePreventedCounter=action==='ultimate';
@@ -1324,10 +1333,10 @@ function cbResolveTurn(action='normal'){
  if(!counter.missed&&cbEnemyWeakTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbEnemyWeakPercent/100)));cbEnemyWeakTurns--;}
  if(blocked){counterDamage=Math.max(1,Math.ceil(counterDamage*.4));cbDefending=false;}
  if(!counter.missed&&cbPlayerGuardTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbPlayerGuardReduction/100)));cbPlayerGuardTurns--;}
- if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);let phoenixRevived=false;if(cbPlayerHp<=0&&cbPhoenixRevive){cbPlayerHp=Math.max(1,Math.ceil(cbStats(cbSelected).maxHp*0.5));cbPhoenixRevive=false;phoenixRevived=true;}
+ if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);let phoenixRevived=false;if(cbPlayerHp<=0&&cbPhoenixRevives>0){cbPlayerHp=Math.max(1,Math.ceil(cbStats(cbSelected).maxHp*0.5));cbPhoenixRevives--;phoenixRevived=true;}
  cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);
  $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?(ultimatePreventedCounter?'필살기 발동으로 이번 턴 반격이 차단됐다! ':'빗나갔다! 내 동물이 회피했다. '):(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
- cbUpdateDuel();cbUpdateActionButtons();if(phoenixRevived)$('cbBattleLog').textContent+=' · 부활의 화염 발동! 체력이 절반으로 회복됐다.';if(cbPlayerHp<=0)cbFinishBattle(false);
+ cbUpdateDuel();cbUpdateActionButtons();if(phoenixRevived)$('cbBattleLog').textContent+=' · 부활의 화염 발동! 체력이 절반으로 회복됐다. 남은 부활 '+cbPhoenixRevives+'회.';if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbAttackTurn(){cbResolveTurn('normal');}
 function cbUpdateActionButtons(){
@@ -1336,7 +1345,7 @@ function cbUpdateActionButtons(){
  $('cbAttackButton').textContent=cbUltimateUsed?'필살기 사용 완료':'필살기';
  $('cbSpecial').disabled=cbSpecialCooldown>0||cbBattleDone;
  $('cbSpecial').textContent=cbSpecialCooldown>0?'특수기 대기 '+cbSpecialCooldown:'특수기';
- $('cbHeavyAttack').disabled=cbBattleDone||cbHeavyUses>=3;$('cbHeavyAttack').textContent='강공격 '+(3-cbHeavyUses)+'/3';$('cbDefend').disabled=cbBattleDone;
+ const pegasusUnlimited=cbSelected&&cbSelected.name==='페가수스'&&cbHeroWingsTurns>0;$('cbHeavyAttack').disabled=cbBattleDone||(cbHeavyUses>=3&&!pegasusUnlimited);$('cbHeavyAttack').textContent=pegasusUnlimited?'강공격 무제한':'강공격 '+(3-cbHeavyUses)+'/3';$('cbDefend').disabled=cbBattleDone;
 }
 function cbRunAutoBattle(){
  if(!cbSelected||cbBattleDone||cbAutoTimer)return;
