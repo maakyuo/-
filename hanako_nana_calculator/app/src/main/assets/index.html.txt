@@ -1326,7 +1326,7 @@ function cbResolveTurn(action='normal'){
  if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(attackBoostWasActive&&action!=='ultimate')cbPlayerAttackBoostTurns=Math.max(0,cbPlayerAttackBoostTurns-1);
  if(action!=='ultimate'&&cbSanctuaryTurns>0)cbSanctuaryTurns--;
- if(action!=='ultimate'&&cbHeroWingsTurns>0)cbHeroWingsTurns--;if(action!=='ultimate'&&cbHydraTurns>0)cbHydraTurns--;
+ if(action!=='ultimate'&&cbHeroWingsTurns>0)cbHeroWingsTurns--;
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
  cbDefending=defending;
  let counter=cbDamage(cbWild,cbSelected,1,true,0,false,cbSelected.name==='그리폰'&&cbGryphonEvadeTurns>0?0.5:0.10),ultimatePreventedCounter=action==='ultimate';
@@ -1338,7 +1338,7 @@ function cbResolveTurn(action='normal'){
  if(blocked){counterDamage=Math.max(1,Math.ceil(counterDamage*.4));cbDefending=false;}
  if(!counter.missed&&cbPlayerGuardTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbPlayerGuardReduction/100)));cbPlayerGuardTurns--;}
  if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);let phoenixRevived=false;if(cbPlayerHp<=0&&cbPhoenixRevives>0){cbPlayerHp=Math.max(1,Math.ceil(cbStats(cbSelected).maxHp*0.5));cbPhoenixRevives--;phoenixRevived=true;}
- cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);let hydraRetaliation=null;if(cbHydraTurns>0&&!ultimatePreventedCounter&&cbPlayerHp>0){hydraRetaliation=cbDamage(cbSelected,cbWild,1,false);if(hydraRetaliation.damage>0)cbEnemyHp=Math.max(0,cbEnemyHp-hydraRetaliation.damage);cbPlayAttackEffect('cbWildCard',hydraRetaliation.critical,false);}
+ cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);let hydraRetaliation=null;if(cbHydraTurns>0&&!ultimatePreventedCounter&&cbPlayerHp>0){hydraRetaliation=cbDamage(cbSelected,cbWild,1,false);if(hydraRetaliation.damage>0)cbEnemyHp=Math.max(0,cbEnemyHp-hydraRetaliation.damage);cbPlayAttackEffect('cbWildCard',hydraRetaliation.critical,false);}if(action!=='ultimate'&&cbHydraTurns>0)cbHydraTurns--;
  $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?(ultimatePreventedCounter?'필살기 발동으로 이번 턴 반격이 차단됐다! ':'빗나갔다! 내 동물이 회피했다. '):(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
  if(hydraRetaliation)$('cbBattleLog').textContent+=' · 히드라의 재반격! '+hydraRetaliation.damage+' 피해'+(hydraRetaliation.critical?' (크리티컬!)':'')+' · 남은 지속 '+cbHydraTurns+'턴.';cbUpdateDuel();cbUpdateActionButtons();if(phoenixRevived)$('cbBattleLog').textContent+=' · 부활의 화염 발동! 체력이 절반으로 회복됐다. 남은 부활 '+cbPhoenixRevives+'회.';if(cbEnemyHp<=0){cbFinishBattle(true);return;}if(cbPlayerHp<=0)cbFinishBattle(false);
 }
