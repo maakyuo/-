@@ -552,6 +552,9 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-ultimate-info strong{font-size:12px;color:#ffb4c8}
 .cb-ultimate-info p{margin:5px 0 0;font-size:11px;line-height:1.5;color:#eee}
 #cbAttackButton:disabled{opacity:.48;filter:saturate(.55)}
+.cheat-success-modal{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.78)}
+.cheat-success-modal[hidden]{display:none!important}
+.cheat-success-message{min-width:190px;padding:24px 30px;border:1px solid #d7a9c7;border-radius:14px;background:#29202e;color:#fff;text-align:center;font-size:20px;font-weight:800;letter-spacing:.04em;box-shadow:0 18px 60px rgba(0,0,0,.6)}
 </style>
 </head>
 <body>
@@ -709,6 +712,9 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
  <div class="footer">NANA EDITION · CALCULATION SYSTEM</div>
  </div>
 </main>
+<div id="cheatSuccessModal" class="cheat-success-modal" hidden>
+ <div class="cheat-success-message">치트 성공!</div>
+</div>
 <script>
 (()=>{
 const $=id=>document.getElementById(id), expr=$('expression'), out=$('result'), mode=$('mode'), tag=$('tag');
@@ -1139,14 +1145,17 @@ function cbPixelArt(animal,canvas){
 }
 function cbUltimate(animal){
  if(!animal||animal.rarityId==='legend')return null;
- const rank=cbRarities.findIndex(r=>r.id===animal.rarityId),kind=(animal.seed*7+animal.name.length)%6;
+ const rank=cbRarities.findIndex(r=>r.id===animal.rarityId),kind=(animal.seed*7+animal.name.length)%9;
  const data=[
-  {name:'필살 '+animal.name+' 강타',type:'damage',multiplier:2.7+rank*.25,desc:'기본 피해의 '+(2.7+rank*.25).toFixed(2)+'배 피해를 준다.'},
-  {name:animal.name+'의 야생 폭주',type:'boost',turns:3,percent:40+rank*10,desc:'3턴 동안 공격력이 '+(40+rank*10)+'% 증가한다.'},
-  {name:animal.name+'의 환영 질주',type:'evade',turns:2,desc:'앞으로 2번의 상대 공격을 반드시 회피한다.'},
-  {name:animal.name+'의 철벽 본능',type:'guard',turns:2,percent:50+rank*5,desc:'앞으로 2번 받는 상대 공격의 피해를 '+(50+rank*5)+'% 줄인다.'},
-  {name:animal.name+'의 생명력 폭발',type:'heal',percent:35+rank*5,desc:'최대 체력의 '+(35+rank*5)+'%만큼 체력을 회복한다.'},
-  {name:animal.name+'의 관통 일격',type:'pierce',multiplier:2.2+rank*.2,desc:'상대 방어력을 무시하고 공격력의 '+(2.2+rank*.2).toFixed(2)+'배 피해를 준다.'}
+  {name:animal.name+'의 천둥 발구르기',type:'damage',multiplier:2.6+rank*.45,desc:'천둥 같은 일격으로 기본 피해의 '+(2.6+rank*.45).toFixed(2)+'배 피해를 준다.'},
+  {name:animal.name+'의 야성 해방',type:'boost',turns:3,percent:35+rank*15,desc:'3턴 동안 공격력이 '+(35+rank*15)+'% 증가한다.'},
+  {name:animal.name+'의 잔상 도약',type:'evade',turns:1+rank,desc:'다음 '+(1+rank)+'번의 상대 공격을 완벽하게 회피한다.'},
+  {name:animal.name+'의 절대 영역',type:'guard',turns:2,percent:45+rank*12,desc:'다음 2번 받는 공격의 피해를 '+(45+rank*12)+'% 줄인다.'},
+  {name:animal.name+'의 생명의 숨결',type:'heal',percent:25+rank*15,desc:'최대 체력의 '+(25+rank*15)+'%를 즉시 회복한다.'},
+  {name:animal.name+'의 약점 꿰뚫기',type:'pierce',multiplier:2+rank*.4,desc:'방어력을 완전히 무시하고 공격력의 '+(2+rank*.4).toFixed(2)+'배 피해를 준다.'},
+  {name:animal.name+'의 포식자 흡수',type:'drain',multiplier:1.8+rank*.25,healPercent:25+rank*10,desc:'방어를 무너뜨리는 공격을 가하고 준 피해의 '+(25+rank*10)+'%만큼 체력을 흡수한다.'},
+  {name:animal.name+'의 기세 꺾기',type:'weaken',turns:2,percent:20+rank*10,desc:'상대의 기세를 꺾어 다음 2번의 반격 피해를 '+(20+rank*10)+'% 줄인다.'},
+  {name:animal.name+'의 시간 정지 포효',type:'stun',desc:'압도적인 포효로 상대의 다음 반격을 완전히 봉쇄한다.'}
  ];
  return data[kind];
 }
@@ -1193,7 +1202,7 @@ function cbStartEncounter(){
 function cbBeginEncounter(mode){
  const pool=cbAll.filter(a=>!cbOwned.includes(a.id));
  cbWild=pool.length?pool[Math.floor(Math.random()*pool.length)]:cbAll[Math.floor(Math.random()*cbAll.length)];
- cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;
+ cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;cbEnemyWeakTurns=0;cbEnemyWeakPercent=0;cbEnemyStunned=false;
  $('cbModeSelect').hidden=true;$('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=false;
  $('cbModeLabel').textContent=mode==='strategy'?'전략전투 · 직접 행동을 선택하세요':'속전속결 · 자동 전투';
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
@@ -1201,7 +1210,7 @@ function cbBeginEncounter(mode){
  $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
  cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerAttackBoostPercent=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0,cbPlayerGuardReduction=50;
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerAttackBoostPercent=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0,cbPlayerGuardReduction=50,cbEnemyWeakTurns=0,cbEnemyWeakPercent=0,cbEnemyStunned=false;
 function cbSelectFighter(id){
  const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id)||cbUsedFighters.has(id))return;
  const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
@@ -1268,30 +1277,32 @@ function cbResolveTurn(action='normal'){
  if(action==='heavy')cbHeavyUses++;
  const defending=action==='defend';
  if(defending)cbHeavyUses=Math.max(0,cbHeavyUses-1);
- const multiplier=action==='heavy'?1.7:action==='special'?2.5:action==='ultimate'&&(ultimate.type==='damage'||ultimate.type==='pierce')?ultimate.multiplier:1;
+ const multiplier=action==='heavy'?1.7:action==='special'?2.5:action==='ultimate'&&['damage','pierce','drain'].includes(ultimate.type)?ultimate.multiplier:1;
  let attackBonus=attackBoostWasActive?Math.round(cbStats(cbSelected).attack*cbPlayerAttackBoostPercent/100):0;
- if(action==='ultimate'){cbUltimateUsed=true;if(ultimate.type==='boost'){cbPlayerAttackBoostTurns=ultimate.turns;cbPlayerAttackBoostPercent=ultimate.percent;}if(ultimate.type==='evade')cbPlayerEvadeTurns=ultimate.turns;if(ultimate.type==='guard'){cbPlayerGuardTurns=ultimate.turns;cbPlayerGuardReduction=ultimate.percent;}if(ultimate.type==='heal')cbPlayerHp=Math.min(cbStats(cbSelected).maxHp,cbPlayerHp+Math.round(cbStats(cbSelected).maxHp*ultimate.percent/100));}
+ if(action==='ultimate'){cbUltimateUsed=true;if(ultimate.type==='boost'){cbPlayerAttackBoostTurns=ultimate.turns;cbPlayerAttackBoostPercent=ultimate.percent;}if(ultimate.type==='evade')cbPlayerEvadeTurns=ultimate.turns;if(ultimate.type==='guard'){cbPlayerGuardTurns=ultimate.turns;cbPlayerGuardReduction=ultimate.percent;}if(ultimate.type==='heal')cbPlayerHp=Math.min(cbStats(cbSelected).maxHp,cbPlayerHp+Math.round(cbStats(cbSelected).maxHp*ultimate.percent/100));if(ultimate.type==='weaken'){cbEnemyWeakTurns=ultimate.turns;cbEnemyWeakPercent=ultimate.percent;}if(ultimate.type==='stun')cbEnemyStunned=true;}
  let hit={damage:0,missed:false,advantage:false,critical:false};
- if(!defending&&(action!=='ultimate'||ultimate.type==='damage'||ultimate.type==='pierce')){
+ if(!defending&&(action!=='ultimate'||['damage','pierce','drain'].includes(ultimate.type))){
   hit=cbDamage(cbSelected,cbWild,multiplier,action!=='normal'&&action!=='ultimate',attackBonus,action==='ultimate'&&ultimate.type==='pierce');
-  if(!hit.missed)cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
+  if(!hit.missed){cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);if(action==='ultimate'&&ultimate.type==='drain')cbPlayerHp=Math.min(cbStats(cbSelected).maxHp,cbPlayerHp+Math.round(hit.damage*ultimate.healPercent/100));}
   const mine=$('cbMineFighter');mine.classList.remove('cb-attacking');void mine.offsetWidth;mine.classList.add('cb-attacking');
   cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
  }
  const actionName=defending?'방어':action==='heavy'?'강공격':action==='special'?'특수기':action==='ultimate'?ultimate.name:'일반 공격';
- $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다. 강공격 '+(3-cbHeavyUses)+'/3.':action==='ultimate'&&ultimate.type==='boost'?actionName+'! 3턴 동안 공격력이 '+ultimate.percent+'% 증가했다.':action==='ultimate'&&ultimate.type==='evade'?actionName+'! 다음 2번의 공격을 회피한다.':action==='ultimate'&&ultimate.type==='guard'?actionName+'! 다음 2번의 공격 피해를 '+ultimate.percent+'% 줄인다.':action==='ultimate'&&ultimate.type==='heal'?actionName+'! 체력을 회복했다.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
+ $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다. 강공격 '+(3-cbHeavyUses)+'/3.':action==='ultimate'&&ultimate.type==='boost'?actionName+'! 3턴 동안 공격력이 '+ultimate.percent+'% 증가했다.':action==='ultimate'&&ultimate.type==='evade'?actionName+'! 다음 '+ultimate.turns+'번의 공격을 회피한다.':action==='ultimate'&&ultimate.type==='guard'?actionName+'! 다음 2번의 공격 피해를 '+ultimate.percent+'% 줄인다.':action==='ultimate'&&ultimate.type==='heal'?actionName+'! 체력을 회복했다.':action==='ultimate'&&ultimate.type==='weaken'?actionName+'! 상대의 다음 2번 반격이 약화됐다.':action==='ultimate'&&ultimate.type==='stun'?actionName+'! 상대의 다음 반격을 봉쇄했다.':action==='ultimate'&&ultimate.type==='drain'?'흡수 성공! '+Math.round(hit.damage*ultimate.healPercent/100)+' 체력을 흡수했다.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
  if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(attackBoostWasActive&&action!=='ultimate')cbPlayerAttackBoostTurns=Math.max(0,cbPlayerAttackBoostTurns-1);
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
  cbDefending=defending;
  let counter=cbDamage(cbWild,cbSelected);
+ if(cbEnemyStunned){counter={damage:0,missed:true,advantage:false,critical:false};cbEnemyStunned=false;}
  if(cbPlayerEvadeTurns>0){counter={damage:0,missed:true,advantage:false,critical:false};cbPlayerEvadeTurns--;}
  let counterDamage=counter.damage,blocked=cbDefending&&!counter.missed;
+ if(!counter.missed&&cbEnemyWeakTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbEnemyWeakPercent/100)));cbEnemyWeakTurns--;}
  if(blocked){counterDamage=Math.max(1,Math.ceil(counterDamage*.4));cbDefending=false;}
  if(!counter.missed&&cbPlayerGuardTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbPlayerGuardReduction/100)));cbPlayerGuardTurns--;}
  if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);
  cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);
- $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?'빗나갔다! 내 동물이 회피했다. ':(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
+ $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?(cbEnemyStunned?'상대의 반격이 봉쇄됐다! ':'빗나갔다! 내 동물이 회피했다. '):(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
  cbUpdateDuel();cbUpdateActionButtons();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbAttackTurn(){cbResolveTurn('normal');}
@@ -1317,6 +1328,7 @@ function cbRetryBattle(){
  $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=cbBattleMode!=='strategy';$('cbStrategyActions').hidden=cbBattleMode!=='strategy';$('cbSpeedActions').hidden=cbBattleMode!=='speed';$('cbAutoBattle').disabled=false;$('cbAutoBattle').textContent='자동 전투 시작';
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();cbUpdateActionButtons();
 }
+$('cheatSuccessModal').addEventListener('click',()=>{$('cheatSuccessModal').hidden=true;});
 $('cbBattleStart').addEventListener('click',cbStartEncounter);
 $('cbChooseStrategy').addEventListener('click',()=>cbBeginEncounter('strategy'));
 $('cbChooseSpeed').addEventListener('click',()=>cbBeginEncounter('speed'));
@@ -1346,7 +1358,7 @@ $('cbCollection').addEventListener('click',e=>{
  else if(cbDeck.length<3)cbDeck.push(animal.id);
  cbSave();cbRenderCollection();
 });
-$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw==='치트238938940349012'){cbOwned=cbAll.map(a=>a.id);cbSave();alert('치트 성공!');return;}if(raw.replace(/\\s+/g,'')==='테마변경'){enterThemeScreen();return;}if(raw.replace(/\\s+/g,'')==='칸나'){enterKannaSecretScreen();return;}if(raw.replace(/\\s+/g,'')==='카드게임'){cbEnter();return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
+$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw==='치트238938940349012'){cbOwned=cbAll.map(a=>a.id);cbSave();$('cheatSuccessModal').hidden=false;return;}if(raw.replace(/\\s+/g,'')==='테마변경'){enterThemeScreen();return;}if(raw.replace(/\\s+/g,'')==='칸나'){enterKannaSecretScreen();return;}if(raw.replace(/\\s+/g,'')==='카드게임'){cbEnter();return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
 $('baseCalculate').addEventListener('click',()=>{try{let raw=$('baseInput').value.trim().replace(/\s+/g,''),base=Number($('baseFrom').value);if(!raw)throw Error();let negative=raw.startsWith('-'),digits=raw.replace(/^[+-]/,'').toLowerCase();if(!digits)throw Error();let alphabet='0123456789abcdefghijklmnopqrstuvwxyz',n=0n;for(const ch of digits){let d=alphabet.indexOf(ch);if(d<0||d>=base)throw Error();n=n*BigInt(base)+BigInt(d);}if(negative)n=-n;$('baseResult').textContent='2진법: '+n.toString(2)+'\n8진법: '+n.toString(8)+'\n10진법: '+n.toString(10)+'\n16진법: '+n.toString(16).toUpperCase();}catch(e){$('baseResult').textContent='올바른 정수를 입력해 주세요. (음수 가능)';}});
 populateUnits();
 const panel=document.createElement('div');panel.className='history-panel';panel.id='historyPanel';panel.innerHTML='<div class="history-title"><span>CALCULATION LOG</span><button class="history-close" id="historyClose">닫기</button></div><div class="history-list" id="historyList"></div><button class="history-close" id="historyClear">기록 지우기</button>';app.appendChild(panel);
