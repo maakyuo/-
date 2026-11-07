@@ -448,6 +448,97 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-impact-label{position:absolute;left:50%;top:8px;z-index:5;transform:translateX(-50%);font-weight:900;font-size:18px;color:#ffdf62;text-shadow:0 2px 5px #000;pointer-events:none;animation:cbImpactRise .7s ease-out forwards}
 @keyframes cbImpactRise{0%{opacity:0;translate:0 8px}20%{opacity:1}100%{opacity:0;translate:0 -24px}}
 
+
+
+/* Battle screen: fit the encounter, cards, duel panel and controls on one page */
+.app.cardbattle-mode .cardbattle-screen{
+  overflow:hidden!important;
+  min-height:0!important;
+  padding:5px 2px!important;
+  gap:0!important;
+}
+.app.cardbattle-mode #cbEncounter:not([hidden]){
+  display:flex!important;
+  flex:1 1 0!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:5px!important;
+}
+#cbEncounter>.mission-head{flex:0 0 auto;min-height:22px;font-size:12px}
+#cbEncounter .cb-mode-label{flex:0 0 auto;padding:4px 6px;font-size:9px;line-height:1.25}
+#cbWildCard{flex:0 0 auto;display:flex;justify-content:center;min-height:0}
+#cbWildCard .cb-wild{width:min(42vw,170px);max-width:170px}
+#cbWildCard .cb-wild .cb-art{height:clamp(58px,9vh,82px)}
+#cbWildCard .cb-wild .cb-meta{padding:4px 6px}
+#cbWildCard .cb-wild .cb-meta strong{font-size:10px}
+#cbWildCard .cb-wild .cb-meta small{font-size:8px;margin-top:2px}
+#cbWildCard .cb-wild .cb-rarity{font-size:8px;margin-top:2px}
+#cbWildCard .cb-wild .cb-stats{font-size:8px;margin-top:2px;line-height:1.2}
+#cbEncounter>#cbBattleDeck{flex:0 0 auto;min-height:0}
+#cbBattleDeck .cb-card{min-width:0}
+#cbBattleDeck .cb-art{height:clamp(38px,6vh,54px)}
+#cbBattleDeck .cb-meta{padding:3px 4px}
+#cbBattleDeck .cb-meta strong{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cbBattleDeck .cb-meta small{font-size:8px;margin-top:1px}
+#cbBattleDeck .cb-rarity{font-size:7px;margin-top:2px;padding:1px 4px}
+#cbBattleDeck .cb-stats{font-size:7px;margin-top:2px;line-height:1.15}
+#cbBattleStatus{flex:0 0 auto;font-size:9px;line-height:1.25;padding:1px 3px}
+#cbDuelStage:not([hidden]){
+  display:flex!important;
+  flex:0 1 auto!important;
+  min-height:0!important;
+  padding:5px!important;
+  gap:4px!important;
+  overflow:hidden!important;
+}
+#cbDuelStage .cb-versus{gap:5px}
+#cbDuelStage .cb-fighter{min-width:0;padding:5px 3px}
+#cbDuelStage .cb-fighter strong{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cbDuelStage .cb-fighter small{font-size:8px;line-height:1.2}
+#cbDuelStage .cb-hp{height:6px;margin-top:4px}
+#cbDuelStage .cb-note{font-size:8px;line-height:1.25;max-height:34px;overflow:hidden}
+#cbStrategyActions:not([hidden]),#cbSpeedActions:not([hidden]){
+  display:grid!important;
+  flex:0 0 auto!important;
+  gap:5px!important;
+}
+#cbStrategyActions{grid-template-columns:repeat(2,minmax(0,1fr))}
+#cbStrategyActions button,#cbSpeedActions button,#cbAttackButton{
+  min-height:36px!important;
+  height:36px!important;
+  padding:5px 7px!important;
+  font-size:11px!important;
+  margin:0!important;
+}
+#cbBattleResult:not([hidden]){flex:0 0 auto;font-size:11px;line-height:1.3;padding:3px 5px}
+#cbRetryButton:not([hidden]),#cbEncounterBack{flex:0 0 auto;min-height:32px;padding:5px 8px;font-size:10px}
+#cbEncounterBack{margin-top:auto}
+@media(max-height:700px){
+ .app.cardbattle-mode{padding-top:max(6px,env(safe-area-inset-top))!important;padding-bottom:max(6px,env(safe-area-inset-bottom))!important}
+ .app.cardbattle-mode .cardbattle-screen{padding-top:3px!important;padding-bottom:3px!important}
+ .app.cardbattle-mode #cbEncounter:not([hidden]){gap:3px!important}
+ #cbWildCard .cb-wild{width:min(36vw,145px)}
+ #cbWildCard .cb-wild .cb-art{height:52px}
+ #cbBattleDeck .cb-art{height:36px}
+ #cbBattleDeck .cb-meta{padding:2px 3px}
+ #cbBattleDeck .cb-stats{display:none}
+ #cbDuelStage:not([hidden]){padding:4px!important}
+ #cbDuelStage .cb-note{max-height:25px}
+ #cbStrategyActions button,#cbSpeedActions button,#cbAttackButton{height:32px!important;min-height:32px!important}
+ #cbRetryButton:not([hidden]),#cbEncounterBack{min-height:29px}
+}
+@media(max-height:570px){
+ #cbWildCard .cb-wild .cb-art{height:40px}
+ #cbWildCard .cb-wild .cb-stats{display:none}
+ #cbBattleDeck .cb-art{height:28px}
+ #cbBattleDeck .cb-rarity{display:none}
+ #cbDuelStage .cb-fighter{padding:3px}
+ #cbDuelStage .cb-note{display:none}
+ #cbStrategyActions button,#cbSpeedActions button,#cbAttackButton{height:29px!important;min-height:29px!important;font-size:10px!important}
+}
+
 </style>
 </head>
 <body>
