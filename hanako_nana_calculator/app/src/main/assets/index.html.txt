@@ -1192,7 +1192,7 @@ function cbStartEncounter(){
 function cbBeginEncounter(mode){
  const pool=cbAll.filter(a=>!cbOwned.includes(a.id));
  cbWild=pool.length?pool[Math.floor(Math.random()*pool.length)]:cbAll[Math.floor(Math.random()*cbAll.length)];
- cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;
+ cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;
  $('cbModeSelect').hidden=true;$('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=false;
  $('cbModeLabel').textContent=mode==='strategy'?'전략전투 · 직접 행동을 선택하세요':'속전속결 · 자동 전투';
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
@@ -1200,7 +1200,7 @@ function cbBeginEncounter(mode){
  $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
  cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0;
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerAttackBoostPercent=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0,cbPlayerGuardReduction=50;
 function cbSelectFighter(id){
  const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id)||cbUsedFighters.has(id))return;
  const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
@@ -1268,8 +1268,8 @@ function cbResolveTurn(action='normal'){
  const defending=action==='defend';
  if(defending)cbHeavyUses=Math.max(0,cbHeavyUses-1);
  const multiplier=action==='heavy'?1.7:action==='special'?2.5:action==='ultimate'&&(ultimate.type==='damage'||ultimate.type==='pierce')?ultimate.multiplier:1;
- let attackBonus=attackBoostWasActive?Math.round(cbStats(cbSelected).attack*.5):0;
- if(action==='ultimate'){cbUltimateUsed=true;if(ultimate.type==='boost'){cbPlayerAttackBoostTurns=ultimate.turns;attackBonus=Math.round(cbStats(cbSelected).attack*ultimate.percent/100);}if(ultimate.type==='evade')cbPlayerEvadeTurns=ultimate.turns;if(ultimate.type==='guard')cbPlayerGuardTurns=ultimate.turns;if(ultimate.type==='heal')cbPlayerHp=Math.min(cbStats(cbSelected).maxHp,cbPlayerHp+Math.round(cbStats(cbSelected).maxHp*ultimate.percent/100));}
+ let attackBonus=attackBoostWasActive?Math.round(cbStats(cbSelected).attack*cbPlayerAttackBoostPercent/100):0;
+ if(action==='ultimate'){cbUltimateUsed=true;if(ultimate.type==='boost'){cbPlayerAttackBoostTurns=ultimate.turns;cbPlayerAttackBoostPercent=ultimate.percent;}if(ultimate.type==='evade')cbPlayerEvadeTurns=ultimate.turns;if(ultimate.type==='guard'){cbPlayerGuardTurns=ultimate.turns;cbPlayerGuardReduction=ultimate.percent;}if(ultimate.type==='heal')cbPlayerHp=Math.min(cbStats(cbSelected).maxHp,cbPlayerHp+Math.round(cbStats(cbSelected).maxHp*ultimate.percent/100));}
  let hit={damage:0,missed:false,advantage:false,critical:false};
  if(!defending&&(action!=='ultimate'||ultimate.type==='damage'||ultimate.type==='pierce')){
   hit=cbDamage(cbSelected,cbWild,multiplier,action!=='normal'&&action!=='ultimate',attackBonus,action==='ultimate'&&ultimate.type==='pierce');
@@ -1278,7 +1278,7 @@ function cbResolveTurn(action='normal'){
   cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
  }
  const actionName=defending?'방어':action==='heavy'?'강공격':action==='special'?'특수기':action==='ultimate'?ultimate.name:'일반 공격';
- $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다. 강공격 '+(3-cbHeavyUses)+'/3.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
+ $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다. 강공격 '+(3-cbHeavyUses)+'/3.':action==='ultimate'&&ultimate.type==='boost'?actionName+'! 3턴 동안 공격력이 '+ultimate.percent+'% 증가했다.':action==='ultimate'&&ultimate.type==='evade'?actionName+'! 다음 2번의 공격을 회피한다.':action==='ultimate'&&ultimate.type==='guard'?actionName+'! 다음 2번의 공격 피해를 '+ultimate.percent+'% 줄인다.':action==='ultimate'&&ultimate.type==='heal'?actionName+'! 체력을 회복했다.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
  if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(attackBoostWasActive&&action!=='ultimate')cbPlayerAttackBoostTurns=Math.max(0,cbPlayerAttackBoostTurns-1);
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
@@ -1287,7 +1287,7 @@ function cbResolveTurn(action='normal'){
  if(cbPlayerEvadeTurns>0){counter={damage:0,missed:true,advantage:false,critical:false};cbPlayerEvadeTurns--;}
  let counterDamage=counter.damage,blocked=cbDefending&&!counter.missed;
  if(blocked){counterDamage=Math.max(1,Math.ceil(counterDamage*.4));cbDefending=false;}
- if(!counter.missed&&cbPlayerGuardTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-(cbUltimate(cbSelected)?.percent||50)/100)));cbPlayerGuardTurns--;}
+ if(!counter.missed&&cbPlayerGuardTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbPlayerGuardReduction/100)));cbPlayerGuardTurns--;}
  if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);
  cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);
  $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?'빗나갔다! 내 동물이 회피했다. ':(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
