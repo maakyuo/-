@@ -1146,7 +1146,7 @@ function cbResolveTurn(action='normal'){
  if(action==='heavy'&&cbHeavyUses>=3)return;
  if(action==='heavy')cbHeavyUses++;
  const defending=action==='defend';
- if(defending)cbHeavyUses=Math.min(3,cbHeavyUses+1);
+ if(defending)cbHeavyUses=Math.max(0,cbHeavyUses-1);
  const multiplier=action==='heavy'?1.7:action==='special'?2.5:1;
  let hit={damage:0,missed:false,advantage:false,critical:false};
  if(!defending){
@@ -1156,7 +1156,7 @@ function cbResolveTurn(action='normal'){
   cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
  }
  const actionName=defending?'방어':action==='heavy'?'강공격':action==='special'?'특수기':'일반 공격';
- $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다. 강공격 '+(3-cbHeavyUses)+'/3회 남음.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
+ $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다. 강공격 '+(3-cbHeavyUses)+'/3.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
  if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
  cbDefending=defending;
@@ -1172,7 +1172,7 @@ function cbAttackTurn(){cbResolveTurn('normal');}
 function cbUpdateActionButtons(){
  $('cbSpecial').disabled=cbSpecialCooldown>0||cbBattleDone;
  $('cbSpecial').textContent=cbSpecialCooldown>0?'특수기 대기 '+cbSpecialCooldown:'특수기';
- $('cbHeavyAttack').disabled=cbBattleDone||cbHeavyUses>=3;$('cbHeavyAttack').textContent=cbHeavyUses>=3?'강공격 사용 완료':'강공격 · '+(3-cbHeavyUses)+'회 남음';$('cbDefend').disabled=cbBattleDone;
+ $('cbHeavyAttack').disabled=cbBattleDone||cbHeavyUses>=3;$('cbHeavyAttack').textContent='강공격 '+(3-cbHeavyUses)+'/3';$('cbDefend').disabled=cbBattleDone;
 }
 function cbRunAutoBattle(){
  if(!cbSelected||cbBattleDone||cbAutoTimer)return;
