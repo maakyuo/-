@@ -1357,7 +1357,7 @@ function cbRunAutoBattle(){
  },620);
 }
 function cbRetryBattle(){
- if(!cbSelected)return;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;
+ if(!cbSelected)return;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;cbCerberusTurns=0;cbPhoenixRevives=0;cbGryphonEvadeTurns=0;cbSanctuaryTurns=0;cbHeroWingsTurns=0;cbEnemyWeakTurns=0;cbEnemyWeakPercent=0;
  $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=cbBattleMode!=='strategy';$('cbStrategyActions').hidden=cbBattleMode!=='strategy';$('cbSpeedActions').hidden=cbBattleMode!=='speed';$('cbAutoBattle').disabled=false;$('cbAutoBattle').textContent='자동 전투 시작';
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();cbUpdateActionButtons();
 }
