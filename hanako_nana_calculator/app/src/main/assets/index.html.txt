@@ -1075,7 +1075,7 @@ function cbStartEncounter(){
 function cbBeginEncounter(mode){
  const pool=cbAll.filter(a=>!cbOwned.includes(a.id));
  cbWild=pool.length?pool[Math.floor(Math.random()*pool.length)]:cbAll[Math.floor(Math.random()*cbAll.length)];
- cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;
+ cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;
  $('cbModeSelect').hidden=true;$('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=false;
  $('cbModeLabel').textContent=mode==='strategy'?'전략전투 · 직접 행동을 선택하세요':'속전속결 · 자동 전투';
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
@@ -1083,7 +1083,7 @@ function cbBeginEncounter(mode){
  $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
  cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null;
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0;
 function cbSelectFighter(id){
  const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id)||cbUsedFighters.has(id))return;
  const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
@@ -1096,9 +1096,9 @@ function cbSelectFighter(id){
  cbUpdateDuel();cbUpdateActionButtons();
  [...$('cbBattleDeck').children].forEach(el=>el.classList.toggle('selected',el.dataset.animalId===id));
 }
-function cbDamage(attacker,defender,multiplier=1){
+function cbDamage(attacker,defender,multiplier=1,canMiss=true){
  const a=cbStats(attacker),d=cbStats(defender);
- const missed=Math.random()<0.10;
+ const missed=canMiss&&Math.random()<0.10;
  if(missed)return {damage:0,advantage:false,critical:false,missed:true};
  const raw=Math.max(1,a.attack-d.defense);
  const advantage=(a.type==='공중'&&d.type==='지상')||(a.type==='지상'&&d.type==='해상')||(a.type==='해상'&&d.type==='공중');
@@ -1143,11 +1143,13 @@ function cbPlayAttackEffect(defenderId,critical,missed){
 }
 function cbResolveTurn(action='normal'){
  if(!cbSelected||cbBattleDone)return;
+ if(action==='heavy'&&cbHeavyUses>=3)return;
+ if(action==='heavy')cbHeavyUses++;
  const defending=action==='defend';
  const multiplier=action==='heavy'?1.7:action==='special'?2.5:1;
  let hit={damage:0,missed:false,advantage:false,critical:false};
  if(!defending){
-  hit=cbDamage(cbSelected,cbWild,multiplier);
+  hit=cbDamage(cbSelected,cbWild,multiplier,action!=='normal');
   if(!hit.missed)cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
   const mine=$('cbMineFighter');mine.classList.remove('cb-attacking');void mine.offsetWidth;mine.classList.add('cb-attacking');
   cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
@@ -1169,7 +1171,7 @@ function cbAttackTurn(){cbResolveTurn('normal');}
 function cbUpdateActionButtons(){
  $('cbSpecial').disabled=cbSpecialCooldown>0||cbBattleDone;
  $('cbSpecial').textContent=cbSpecialCooldown>0?'특수기 대기 '+cbSpecialCooldown:'특수기';
- $('cbHeavyAttack').disabled=cbBattleDone;$('cbDefend').disabled=cbBattleDone;
+ $('cbHeavyAttack').disabled=cbBattleDone||cbHeavyUses>=3;$('cbHeavyAttack').textContent=cbHeavyUses>=3?'강공격 사용 완료':'강공격 · '+(3-cbHeavyUses)+'회 남음';$('cbDefend').disabled=cbBattleDone;
 }
 function cbRunAutoBattle(){
  if(!cbSelected||cbBattleDone||cbAutoTimer)return;
@@ -1181,7 +1183,7 @@ function cbRunAutoBattle(){
  },620);
 }
 function cbRetryBattle(){
- if(!cbSelected)return;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbSpecialCooldown=0;cbDefending=false;
+ if(!cbSelected)return;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;
  $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=cbBattleMode!=='strategy';$('cbStrategyActions').hidden=cbBattleMode!=='strategy';$('cbSpeedActions').hidden=cbBattleMode!=='speed';$('cbAutoBattle').disabled=false;$('cbAutoBattle').textContent='자동 전투 시작';
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();cbUpdateActionButtons();
 }
