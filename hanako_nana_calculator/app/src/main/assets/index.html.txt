@@ -1143,23 +1143,27 @@ function cbPlayAttackEffect(defenderId,critical,missed){
 }
 function cbResolveTurn(action='normal'){
  if(!cbSelected||cbBattleDone)return;
+ const defending=action==='defend';
  const multiplier=action==='heavy'?1.7:action==='special'?2.5:1;
- const hit=cbDamage(cbSelected,cbWild,multiplier);
- if(!hit.missed)cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
- const mine=$('cbMineFighter');mine.classList.remove('cb-attacking');void mine.offsetWidth;mine.classList.add('cb-attacking');
- cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
- const actionName=action==='heavy'?'강공격':action==='special'?'특수기':'일반 공격';
- $('cbBattleLog').textContent=actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
+ let hit={damage:0,missed:false,advantage:false,critical:false};
+ if(!defending){
+  hit=cbDamage(cbSelected,cbWild,multiplier);
+  if(!hit.missed)cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
+  const mine=$('cbMineFighter');mine.classList.remove('cb-attacking');void mine.offsetWidth;mine.classList.add('cb-attacking');
+  cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
+ }
+ const actionName=defending?'방어':action==='heavy'?'강공격':action==='special'?'특수기':'일반 공격';
+ $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
  if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
- if(action==='defend')cbDefending=true;
+ cbDefending=defending;
  const counter=cbDamage(cbWild,cbSelected);
- let counterDamage=counter.damage;
- if(cbDefending&&!counter.missed){counterDamage=Math.max(1,Math.ceil(counterDamage*.4));cbDefending=false;}
+ let counterDamage=counter.damage,blocked=cbDefending&&!counter.missed;
+ if(blocked){counterDamage=Math.max(1,Math.ceil(counterDamage*.4));cbDefending=false;}
  if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);
  cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);
- $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?'빗나갔다! 내 동물이 회피했다. ':(cbDefending?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
- cbUpdateDuel();if(cbPlayerHp<=0)cbFinishBattle(false);
+ $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?'빗나갔다! 내 동물이 회피했다. ':(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
+ cbUpdateDuel();cbUpdateActionButtons();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbAttackTurn(){cbResolveTurn('normal');}
 function cbUpdateActionButtons(){
