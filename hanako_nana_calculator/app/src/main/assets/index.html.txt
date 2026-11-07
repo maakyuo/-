@@ -382,6 +382,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 /* NULL card battle */
 .cardbattle-screen{display:none;flex:1;min-height:0;overflow:auto;padding:10px 2px;flex-direction:column;gap:10px}
 .app.cardbattle-mode .cardbattle-screen{display:flex!important}.app.cardbattle-mode .mission3,.app.cardbattle-mode .mission4,.app.cardbattle-mode .mission5,.app.cardbattle-mode .mission6,.app.cardbattle-mode .mission7,.app.cardbattle-mode .theme-screen,.app.cardbattle-mode .kanna-secret-screen,.app.cardbattle-mode .display,.app.cardbattle-mode .key-area,.app.cardbattle-mode .footer{display:none!important}
+.app.cardbattle-mode.mission5-mode .mission5{display:none!important}
 .cardbattle-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .cb-card{min-width:0;border:1px solid var(--theme-line,#514653);border-radius:12px;background:var(--theme-panel,#211e28);color:var(--white);overflow:hidden;text-align:left;padding:0;position:relative}
 .cb-card.selected{outline:2px solid var(--theme-accent,var(--pink));background:var(--theme-soft,#30232d)}
