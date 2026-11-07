@@ -1293,8 +1293,8 @@ function cbResolveTurn(action='normal'){
  if(attackBoostWasActive&&action!=='ultimate')cbPlayerAttackBoostTurns=Math.max(0,cbPlayerAttackBoostTurns-1);
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
  cbDefending=defending;
- let counter=cbDamage(cbWild,cbSelected);
- if(cbEnemyStunned){counter={damage:0,missed:true,advantage:false,critical:false};cbEnemyStunned=false;}
+ let counter=cbDamage(cbWild,cbSelected),enemyWasStunned=cbEnemyStunned;
+ if(enemyWasStunned){counter={damage:0,missed:true,advantage:false,critical:false};cbEnemyStunned=false;}
  if(cbPlayerEvadeTurns>0){counter={damage:0,missed:true,advantage:false,critical:false};cbPlayerEvadeTurns--;}
  let counterDamage=counter.damage,blocked=cbDefending&&!counter.missed;
  if(!counter.missed&&cbEnemyWeakTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbEnemyWeakPercent/100)));cbEnemyWeakTurns--;}
@@ -1302,7 +1302,7 @@ function cbResolveTurn(action='normal'){
  if(!counter.missed&&cbPlayerGuardTurns>0){counterDamage=Math.max(1,Math.ceil(counterDamage*(1-cbPlayerGuardReduction/100)));cbPlayerGuardTurns--;}
  if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);
  cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);
- $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?(cbEnemyStunned?'상대의 반격이 봉쇄됐다! ':'빗나갔다! 내 동물이 회피했다. '):(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
+ $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?(enemyWasStunned?'상대의 반격이 봉쇄됐다! ':'빗나갔다! 내 동물이 회피했다. '):(blocked?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
  cbUpdateDuel();cbUpdateActionButtons();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
 function cbAttackTurn(){cbResolveTurn('normal');}
