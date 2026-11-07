@@ -1296,7 +1296,7 @@ function cbResolveTurn(action='normal'){
 function cbAttackTurn(){cbResolveTurn('normal');}
 function cbUpdateActionButtons(){
  $('cbAttackButton').disabled=cbBattleDone||cbUltimateUsed||!cbUltimate(cbSelected);
- $('cbAttackButton').textContent=cbUltimateUsed?'필살기 사용 완료':cbUltimate(cbSelected)?.name||'필살기';
+ $('cbAttackButton').textContent=cbUltimateUsed?'필살기 사용 완료':'필살기';
  $('cbSpecial').disabled=cbSpecialCooldown>0||cbBattleDone;
  $('cbSpecial').textContent=cbSpecialCooldown>0?'특수기 대기 '+cbSpecialCooldown:'특수기';
  $('cbHeavyAttack').disabled=cbBattleDone||cbHeavyUses>=3;$('cbHeavyAttack').textContent='강공격 '+(3-cbHeavyUses)+'/3';$('cbDefend').disabled=cbBattleDone;
@@ -1311,7 +1311,7 @@ function cbRunAutoBattle(){
  },620);
 }
 function cbRetryBattle(){
- if(!cbSelected)return;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;
+ if(!cbSelected)return;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;
  $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=cbBattleMode!=='strategy';$('cbStrategyActions').hidden=cbBattleMode!=='strategy';$('cbSpeedActions').hidden=cbBattleMode!=='speed';$('cbAutoBattle').disabled=false;$('cbAutoBattle').textContent='자동 전투 시작';
  $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();cbUpdateActionButtons();
 }
