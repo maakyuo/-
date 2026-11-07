@@ -1295,6 +1295,7 @@ function cbResolveTurn(action='normal'){
 }
 function cbAttackTurn(){cbResolveTurn('normal');}
 function cbUpdateActionButtons(){
+ $('cbAttackButton').hidden=cbBattleMode!=='strategy'||!cbUltimate(cbSelected);
  $('cbAttackButton').disabled=cbBattleDone||cbUltimateUsed||!cbUltimate(cbSelected);
  $('cbAttackButton').textContent=cbUltimateUsed?'필살기 사용 완료':'필살기';
  $('cbSpecial').disabled=cbSpecialCooldown>0||cbBattleDone;
