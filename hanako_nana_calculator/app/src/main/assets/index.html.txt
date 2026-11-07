@@ -1309,6 +1309,9 @@ function cbResolveTurn(action='normal'){
  }
  const actionName=defending?'방어':action==='heavy'?'강공격':action==='special'?'특수기':action==='ultimate'?ultimate.name:'일반 공격';if(cbCerberusTurns>0&&(action==='normal'||action==='heavy'))cbCerberusTurns--;
  $('cbBattleLog').textContent=defending?'방어 자세! 다음 반격 피해를 60% 줄인다. 강공격 '+(3-cbHeavyUses)+'/3.':action==='ultimate'&&ultimate.type==='boost'?actionName+'! 3턴 동안 공격력이 '+ultimate.percent+'% 증가했다.':action==='ultimate'&&ultimate.type==='evade'?actionName+'! 다음 '+ultimate.turns+'번의 공격을 회피한다.':action==='ultimate'&&ultimate.type==='guard'?actionName+'! 다음 2번의 공격 피해를 '+ultimate.percent+'% 줄인다.':action==='ultimate'&&ultimate.type==='heal'?actionName+'! 체력을 회복했다.':action==='ultimate'&&ultimate.type==='weaken'?actionName+'! 상대의 다음 2번 반격이 약화됐다.':action==='ultimate'&&ultimate.type==='rewind'?actionName+'! 강공격 횟수가 3회로 회복됐다.':action==='ultimate'&&ultimate.type==='drain'?'흡수 성공! '+Math.round(hit.damage*ultimate.healPercent/100)+' 체력을 흡수했다.':actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
+ if(action==='ultimate'&&ultimate.type==='cerberus')$('cbBattleLog').textContent=actionName+'! 3턴 동안 일반 공격과 강공격이 3회 연속 공격으로 바뀐다.';
+ if(action==='ultimate'&&ultimate.type==='phoenix')$('cbBattleLog').textContent=actionName+'! 쓰러지면 체력 절반으로 부활한다.';
+ if(action==='ultimate'&&ultimate.type==='griffon')$('cbBattleLog').textContent=actionName+'! 10턴 동안 본인을 향한 공격의 회피율이 50%가 된다.';
  if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(attackBoostWasActive&&action!=='ultimate')cbPlayerAttackBoostTurns=Math.max(0,cbPlayerAttackBoostTurns-1);
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
