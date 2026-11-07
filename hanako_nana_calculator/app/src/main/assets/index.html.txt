@@ -394,7 +394,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cardbattle-screen{display:none;flex:1;min-height:0;overflow:auto;padding:10px 2px;flex-direction:column;gap:12px}
 .app.cardbattle-mode .cardbattle-screen{display:flex!important}
 .app.cardbattle-mode .mission3,.app.cardbattle-mode .mission4,.app.cardbattle-mode .mission5,.app.cardbattle-mode .mission6,.app.cardbattle-mode .mission7,.app.cardbattle-mode .theme-screen,.app.cardbattle-mode .kanna-secret-screen,.app.cardbattle-mode .display,.app.cardbattle-mode .key-area,.app.cardbattle-mode .footer{display:none!important}
-#cbDeckScreen[hidden],#cbEncounter[hidden],#cbHome[hidden],#cbDexScreen[hidden],#cbDuelStage[hidden],#cbAttackButton[hidden],#cbBattleResult[hidden],#cbRetryButton[hidden]{display:none!important}
+#cbDeckScreen[hidden],#cbEncounter[hidden],#cbHome[hidden],#cbDexScreen[hidden],#cbDuelStage[hidden],#cbAttackButton[hidden],#cbBattleResult[hidden],#cbRetryButton[hidden],#cbModeSelect[hidden],#cbStrategyActions[hidden],#cbSpeedActions[hidden]{display:none!important}
 .cb-home{display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center}
 .cb-main-button{min-height:68px;border:1px solid #777;background:linear-gradient(145deg,#302d3a,#1c1a23);border-radius:13px;color:#fff;font-size:17px;font-weight:800;letter-spacing:.04em}
 .cb-summary,.cb-note{font-size:11px;color:var(--muted);line-height:1.55;text-align:center}
@@ -409,6 +409,12 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-slot{min-width:0;min-height:95px;border:2px dashed #777;border-radius:9px;padding:5px;background:#211e28;text-align:center;font-size:10px;color:#fff}
 .cb-slot .cb-art{height:62px;border-radius:5px}.cb-slot .cb-meta{padding:4px 1px}.cb-slot .cb-meta strong{font-size:10px}
 .cb-slot.empty{display:flex;align-items:center;justify-content:center;color:#aaa}
+.cb-slot{position:relative;cursor:pointer}.cb-slot:not(.empty):after{content:"눌러서 해제";display:block;color:#ffb8c8;font-size:9px;margin-top:4px}.cb-slot.empty{border-style:dashed;background:#29232d}
+.cb-mode-choice{display:grid;grid-template-columns:1fr 1fr;gap:9px}.cb-mode-choice button{min-height:100px;border:1px solid #8a6274;border-radius:12px;background:linear-gradient(145deg,#392735,#211d29);color:#fff;padding:12px 8px;font-weight:800;font-size:15px}.cb-mode-choice small{display:block;color:#d0bdc9;font-size:10px;line-height:1.5;font-weight:500;margin-top:7px}
+.cb-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.cb-actions button{min-height:43px;font-size:12px}
+.cb-hp{height:8px;background:#514653;border-radius:99px;overflow:hidden;margin-top:7px}.cb-hp span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#61d49b,#b5ed8d);transition:width .25s}.cb-hp.enemy span{background:linear-gradient(90deg,#e85e72,#ffb05c)}
+.cb-mode-label{text-align:center;font-size:10px;color:#ffd1df;border:1px solid #75485b;border-radius:7px;padding:6px}
+.cb-battle-flash{animation:cbStageFlash .35s ease-out}@keyframes cbStageFlash{0%{filter:brightness(1)}45%{filter:brightness(1.8)}100%{filter:brightness(1)}}
 .cb-wild{max-width:260px;margin:0 auto}
 
 
@@ -540,13 +546,24 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
     <div class="cardbattle-grid" id="cbDexGrid"></div>
     <button class="back-btn" id="cbDexBack">돌아가기</button>
    </div>
+  <div id="cbModeSelect" hidden>
+   <div class="mission-head"><span>전투 방식 선택</span><small>BATTLE MODE</small></div>
+   <div class="cb-mode-choice">
+    <button type="button" id="cbChooseStrategy">전략전투<small>공격·강공격·방어·특수기를 직접 선택</small></button>
+    <button type="button" id="cbChooseSpeed">속전속결<small>전투가 자동으로 빠르게 진행되는 방식</small></button>
+   </div>
+   <button class="back-btn" id="cbModeBack">돌아가기</button>
+  </div>
   <div id="cbEncounter" hidden>
    <div class="mission-head"><span>야생 동물 출현</span><small>WILD ENCOUNTER</small></div>
+   <div class="cb-mode-label" id="cbModeLabel"></div>
    <div id="cbWildCard"></div>
    <div class="mission-head"><span>도전할 덱</span><small>보유 카드 3장</small></div>
    <div class="cb-deck" id="cbBattleDeck"></div>
    <div class="cb-note" id="cbBattleStatus">야생 동물을 쓰러뜨리면 테이밍할 수 있습니다.</div>
-   <div class="cb-stage" id="cbDuelStage" hidden><div class="cb-versus"><div class="cb-fighter" id="cbMineFighter"><strong id="cbDuelMine">내 동물</strong><small id="cbDuelMineStats"></small></div><b>VS</b><div class="cb-fighter" id="cbWildFighter"><strong id="cbDuelWild">야생 동물</strong><small id="cbDuelWildStats"></small></div></div><div class="cb-note" id="cbBattleLog">전투 준비 완료</div></div>
+   <div class="cb-stage" id="cbDuelStage" hidden><div class="cb-versus"><div class="cb-fighter" id="cbMineFighter"><strong id="cbDuelMine">내 동물</strong><small id="cbDuelMineStats"></small><div class="cb-hp"><span id="cbMineHpBar"></span></div></div><b>VS</b><div class="cb-fighter" id="cbWildFighter"><strong id="cbDuelWild">야생 동물</strong><small id="cbDuelWildStats"></small><div class="cb-hp enemy"><span id="cbWildHpBar"></span></div></div></div><div class="cb-note" id="cbBattleLog">전투 준비 완료</div></div>
+   <div class="cb-actions" id="cbStrategyActions" hidden><button class="convert-btn" id="cbNormalAttack">일반 공격</button><button class="convert-btn" id="cbHeavyAttack">강공격</button><button class="back-btn" id="cbDefend">방어</button><button class="back-btn" id="cbSpecial">특수기</button></div>
+   <div id="cbSpeedActions" hidden><button class="convert-btn" id="cbAutoBattle">자동 전투 시작</button></div>
    <button class="convert-btn" id="cbAttackButton" hidden>공격하기</button><div class="cb-result" id="cbBattleResult" hidden></div><button class="back-btn" id="cbRetryButton" hidden>다시 도전</button>
    <button class="back-btn" id="cbEncounterBack">돌아가기</button>
   </div>
@@ -1026,7 +1043,7 @@ function cbOwnedAnimals(){return cbOwned.map(id=>cbAll.find(a=>a.id===id)).filte
 function cbRenderDeck(){
  $('cbDeckCount').textContent=cbDeck.length+' / 3';
  $('cbDeckSlots').replaceChildren();
- for(let i=0;i<3;i++){const id=cbDeck[i],animal=cbAll.find(a=>a.id===id),slot=document.createElement('div');slot.className='cb-slot'+(animal?'':' empty');slot.style.borderColor=animal?animal.color:'#777';if(animal)slot.appendChild(cbCard(animal,true));else slot.textContent='빈 슬롯';$('cbDeckSlots').appendChild(slot);}
+ for(let i=0;i<3;i++){const id=cbDeck[i],animal=cbAll.find(a=>a.id===id),slot=document.createElement('div');slot.className='cb-slot'+(animal?'':' empty');slot.dataset.slotIndex=i;slot.style.borderColor=animal?animal.color:'#777';if(animal){slot.appendChild(cbCard(animal,true));slot.setAttribute('role','button');slot.setAttribute('aria-label',animal.name+' 덱에서 해제');}else slot.textContent='빈 슬롯';$('cbDeckSlots').appendChild(slot);}
  $('cbBattleDeck').replaceChildren();cbDeck.forEach(id=>{const a=cbAll.find(x=>x.id===id);if(a){const card=cbCard(a,true);card.dataset.animalId=id;card.setAttribute('role','button');card.setAttribute('tabindex','0');$('cbBattleDeck').appendChild(card);}});
 }
 function cbRenderCollection(){
@@ -1044,7 +1061,7 @@ function cbEnter(){
  cbLoad();$('cbSummary').textContent='보유 동물 '+cbOwned.length+'종 · 덱 '+cbDeck.length+'/3';cbRenderDeck();
 }
 function cbBack(){app.classList.remove('cardbattle-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';}
-function cbShowHome(){ $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;$('cbDexScreen').hidden=true;}
+function cbShowHome(){ $('cbHome').hidden=false;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;$('cbModeSelect').hidden=true;$('cbDexScreen').hidden=true;}
 function cbOpenDex(){ $('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbEncounter').hidden=true;$('cbDexScreen').hidden=false;cbRenderDex();}
 function cbRenderDex(){
  const grid=$('cbDexGrid');grid.replaceChildren();
@@ -1053,35 +1070,40 @@ function cbRenderDex(){
 }
 function cbOpenDeck(){ $('cbHome').hidden=true;$('cbDeckScreen').hidden=false;$('cbEncounter').hidden=true;cbRenderCollection();}
 function cbStartEncounter(){
+ $('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=true;$('cbModeSelect').hidden=false;
+}
+function cbBeginEncounter(mode){
  const pool=cbAll.filter(a=>!cbOwned.includes(a.id));
  cbWild=pool.length?pool[Math.floor(Math.random()*pool.length)]:cbAll[Math.floor(Math.random()*cbAll.length)];
- $('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=false;
+ cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;
+ $('cbModeSelect').hidden=true;$('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=false;
+ $('cbModeLabel').textContent=mode==='strategy'?'전략전투 · 직접 행동을 선택하세요':'속전속결 · 자동 전투';
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
  $('cbBattleStatus').textContent='상대 동물이 나타났다. 덱에서 싸울 동물을 선택해.';
- $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
+ $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
  cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set();
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null;
 function cbSelectFighter(id){
  const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id)||cbUsedFighters.has(id))return;
  const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
  if(continuing&&cbSelected)cbUsedFighters.add(cbSelected.id);cbSelected=animal;cbPlayerHp=cbStats(animal).hp;
  if(!continuing)cbEnemyHp=cbStats(cbWild).hp;
  cbBattleDone=false;cbCanContinue=false;
- $('cbDuelStage').hidden=false;$('cbAttackButton').hidden=false;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
+ $('cbDuelStage').hidden=false;$('cbAttackButton').hidden=cbBattleMode!=='strategy';$('cbStrategyActions').hidden=cbBattleMode!=='strategy';$('cbSpeedActions').hidden=cbBattleMode!=='speed';$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
  $('cbBattleStatus').textContent=continuing?animal.name+' 출전! 상대의 남은 체력 '+cbEnemyHp+'을(를) 이어받아 전투를 계속한다.':animal.name+' 선택! 공격 버튼을 눌러 전투를 진행해.';
  $('cbBattleLog').textContent=continuing?'새 동물이 전투에 합류했다. 상대의 체력은 유지된다.':'전투가 시작됐다.';
- cbUpdateDuel();
+ cbUpdateDuel();cbUpdateActionButtons();
  [...$('cbBattleDeck').children].forEach(el=>el.classList.toggle('selected',el.dataset.animalId===id));
 }
-function cbDamage(attacker,defender){
+function cbDamage(attacker,defender,multiplier=1){
  const a=cbStats(attacker),d=cbStats(defender);
  const missed=Math.random()<0.10;
  if(missed)return {damage:0,advantage:false,critical:false,missed:true};
  const raw=Math.max(1,a.attack-d.defense);
  const advantage=(a.type==='공중'&&d.type==='지상')||(a.type==='지상'&&d.type==='해상')||(a.type==='해상'&&d.type==='공중');
  const critical=Math.random()<0.05;
- const damage=raw*(advantage?5:1)*(critical?3:1);
+ const damage=Math.max(1,Math.round(raw*multiplier*(advantage?5:1)*(critical?3:1)));
  return {damage,advantage,critical,missed:false};
 }
 function cbUpdateDuel(){
@@ -1090,9 +1112,10 @@ function cbUpdateDuel(){
  $('cbDuelWild').textContent=cbWild.name+' · 체력 '+cbEnemyHp+'/'+wild.maxHp;
  $('cbDuelMineStats').textContent='공격 '+mine.attack+' / 방어 '+mine.defense+' / 유형 '+mine.type;
  $('cbDuelWildStats').textContent='공격 '+wild.attack+' / 방어 '+wild.defense+' / 유형 '+wild.type;
+ $('cbMineHpBar').style.width=Math.max(0,cbPlayerHp/mine.maxHp*100)+'%';$('cbWildHpBar').style.width=Math.max(0,cbEnemyHp/wild.maxHp*100)+'%';
 }
 function cbFinishBattle(win){
- cbBattleDone=true;$('cbAttackButton').hidden=true;$('cbBattleResult').hidden=false;
+ cbBattleDone=true;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=false;
  if(win){
   cbCanContinue=false;
   const fresh=!cbOwned.includes(cbWild.id);if(fresh){cbOwned.push(cbWild.id);cbSave();}
@@ -1118,25 +1141,55 @@ function cbPlayAttackEffect(defenderId,critical,missed){
  if(label.textContent){if(getComputedStyle(target).position==='static')target.style.position='relative';target.appendChild(label);}
  setTimeout(()=>{target.classList.remove('cb-card-hit','cb-card-dodge');label.remove();},750);
 }
-function cbAttackTurn(){
+function cbResolveTurn(action='normal'){
  if(!cbSelected||cbBattleDone)return;
- const hit=cbDamage(cbSelected,cbWild);
+ const multiplier=action==='heavy'?1.7:action==='special'?2.5:1;
+ const hit=cbDamage(cbSelected,cbWild,multiplier);
  if(!hit.missed)cbEnemyHp=Math.max(0,cbEnemyHp-hit.damage);
+ const mine=$('cbMineFighter');mine.classList.remove('cb-attacking');void mine.offsetWidth;mine.classList.add('cb-attacking');
  cbPlayAttackEffect('cbWildCard',hit.critical,hit.missed);
- $('cbBattleLog').textContent=cbSelected.name+'의 공격! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
+ const actionName=action==='heavy'?'강공격':action==='special'?'특수기':'일반 공격';
+ $('cbBattleLog').textContent=actionName+'! '+(hit.missed?'빗나갔다! 상대가 회피했다. ':(hit.advantage?'상성 우위! ':'')+(hit.critical?'크리티컬! ':'')+hit.damage+' 피해');
+ if(action==='special')cbSpecialCooldown=3;else if(cbSpecialCooldown>0)cbSpecialCooldown--;
  if(cbEnemyHp<=0){cbUpdateDuel();cbFinishBattle(true);return;}
+ if(action==='defend')cbDefending=true;
  const counter=cbDamage(cbWild,cbSelected);
- if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counter.damage);
+ let counterDamage=counter.damage;
+ if(cbDefending&&!counter.missed){counterDamage=Math.max(1,Math.ceil(counterDamage*.4));cbDefending=false;}
+ if(!counter.missed)cbPlayerHp=Math.max(0,cbPlayerHp-counterDamage);
  cbPlayAttackEffect('cbMineFighter',counter.critical,counter.missed);
- $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?'빗나갔다! 내 동물이 회피했다. ':(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counter.damage+' 피해');
+ $('cbBattleLog').textContent+=' · '+cbWild.name+'의 반격! '+(counter.missed?'빗나갔다! 내 동물이 회피했다. ':(cbDefending?'방어 성공! ':'')+(counter.advantage?'상성 우위! ':'')+(counter.critical?'크리티컬! ':'')+counterDamage+' 피해');
  cbUpdateDuel();if(cbPlayerHp<=0)cbFinishBattle(false);
 }
+function cbAttackTurn(){cbResolveTurn('normal');}
+function cbUpdateActionButtons(){
+ $('cbSpecial').disabled=cbSpecialCooldown>0||cbBattleDone;
+ $('cbSpecial').textContent=cbSpecialCooldown>0?'특수기 대기 '+cbSpecialCooldown:'특수기';
+ $('cbHeavyAttack').disabled=cbBattleDone;$('cbDefend').disabled=cbBattleDone;
+}
+function cbRunAutoBattle(){
+ if(!cbSelected||cbBattleDone||cbAutoTimer)return;
+ $('cbAutoBattle').disabled=true;$('cbAutoBattle').textContent='자동 전투 진행 중…';
+ cbAutoTimer=setInterval(()=>{
+  if(cbBattleDone||!cbSelected){clearInterval(cbAutoTimer);cbAutoTimer=null;$('cbAutoBattle').disabled=false;$('cbAutoBattle').textContent='자동 전투 시작';return;}
+  cbResolveTurn('normal');
+  if(cbBattleDone){clearInterval(cbAutoTimer);cbAutoTimer=null;$('cbAutoBattle').disabled=false;$('cbAutoBattle').textContent='자동 전투 시작';}
+ },620);
+}
 function cbRetryBattle(){
- if(!cbSelected)return;cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();
- $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=false;
- $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();
+ if(!cbSelected)return;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}cbPlayerHp=cbStats(cbSelected).hp;cbEnemyHp=cbStats(cbWild).hp;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbSpecialCooldown=0;cbDefending=false;
+ $('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;$('cbAttackButton').hidden=cbBattleMode!=='strategy';$('cbStrategyActions').hidden=cbBattleMode!=='strategy';$('cbSpeedActions').hidden=cbBattleMode!=='speed';$('cbAutoBattle').disabled=false;$('cbAutoBattle').textContent='자동 전투 시작';
+ $('cbBattleLog').textContent='전투가 다시 시작됐다.';cbUpdateDuel();cbUpdateActionButtons();
 }
 $('cbBattleStart').addEventListener('click',cbStartEncounter);
+$('cbChooseStrategy').addEventListener('click',()=>cbBeginEncounter('strategy'));
+$('cbChooseSpeed').addEventListener('click',()=>cbBeginEncounter('speed'));
+$('cbModeBack').addEventListener('click',cbShowHome);
+$('cbNormalAttack').addEventListener('click',()=>cbResolveTurn('normal'));
+$('cbHeavyAttack').addEventListener('click',()=>cbResolveTurn('heavy'));
+$('cbDefend').addEventListener('click',()=>cbResolveTurn('defend'));
+$('cbSpecial').addEventListener('click',()=>{if(cbSpecialCooldown===0)cbResolveTurn('special');});
+$('cbAutoBattle').addEventListener('click',cbRunAutoBattle);
 $('cbAttackButton').addEventListener('click',cbAttackTurn);
 $('cbRetryButton').addEventListener('click',cbRetryBattle);
 $('cbBattleDeck').addEventListener('click',e=>{const card=e.target.closest('.cb-card');if(card?.dataset.animalId)cbSelectFighter(card.dataset.animalId);});
@@ -1144,6 +1197,7 @@ $('cbDeckOpen').addEventListener('click',cbOpenDeck);
 $('cbDexOpen').addEventListener('click',cbOpenDex);
 $('cbDexBack').addEventListener('click',cbShowHome);
 $('cbDeckBack').addEventListener('click',cbShowHome);
+$('cbDeckSlots').addEventListener('click',e=>{const slot=e.target.closest('.cb-slot');if(!slot)return;const index=Number(slot.dataset.slotIndex);if(!Number.isInteger(index)||!cbDeck[index])return;cbDeck.splice(index,1);cbSave();cbRenderCollection();});
 $('cbEncounterBack').addEventListener('click',cbShowHome);
 $('cbExit').addEventListener('click',cbBack);
 $('cbCollection').addEventListener('click',e=>{
