@@ -673,6 +673,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
   <div id="cbModeSelect" hidden>
    <div class="mission-head"><span>전투 방식 선택</span><small>BATTLE MODE</small></div>
    <div class="cb-mode-choice">
+    <button type="button" id="cbChooseBoss" hidden>강적 도전<small>최종 보스 만티코어에게 도전</small></button>
     <button type="button" id="cbChooseStrategy">전략전투<small>공격·강공격·방어·특수기를 직접 선택</small></button>
     <button type="button" id="cbChooseSpeed">속전속결<small>전투가 자동으로 빠르게 진행되는 방식</small></button>
    </div>
@@ -1063,6 +1064,7 @@ function cbType(animal){
  return sea.has(animal.name)?'해상':air.has(animal.name)?'공중':'지상';
 }
 function cbStats(animal){
+ if(animal?.id==='mythic-manticore')return {attack:180,defense:110,hp:1800,maxHp:1800,type:'지상'};
  const r=cbRarities.findIndex(x=>x.id===animal.rarityId),seed=animal.seed,type=cbType(animal);
  const attack=Math.max(1,Math.round((22+r*18+(seed*7%19)+(type==='공중'?5:0))/3));
  const defense=Math.max(1,Math.round((18+r*16+(seed*11%17)+(type==='지상'?5:0))/4));
@@ -1092,6 +1094,7 @@ function cbPixelArt(animal,canvas){
  '호랑이':['#e58a32','#4c3026','#ffe1a6'],'표범':['#d4ad64','#64452d','#f8e5b7'],
  '악어':['#64845c','#344b37','#bed29a'],'상어':['#8babb8','#435e6b','#e2eef0'],
  '독수리':['#8b6b4c','#443327','#e7d4ad'],'타조':['#b99a78','#67503c','#ead7bd'],
+ '만티코어':['#b51f2b','#47121d','#ff7a57'],
  '티라노사우루스':['#78905d','#3b523c','#d0d99b'],'트리케라톱스':['#8d9c69','#4e5a3d','#e1d7a0'],
  '스테고사우루스':['#6e9a83','#355b4d','#c6d9a6'],'브라키오사우루스':['#9ca66d','#59613e','#e5d99c'],
  '유니콘':['#e7c7ed','#8c659e','#fff1ff'],'페가수스':['#e2e4ed','#7c8ba7','#ffffff'],
@@ -1221,19 +1224,23 @@ function cbRenderDex(){
 function cbOpenDeck(){ $('cbHome').hidden=true;$('cbDeckScreen').hidden=false;$('cbEncounter').hidden=true;cbRenderCollection();}
 function cbStartEncounter(){
  $('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=true;$('cbModeSelect').hidden=false;
+ $('cbChooseBoss').hidden=!cbAll.every(a=>cbOwned.includes(a.id));
 }
 function cbBeginEncounter(mode){
+ const bossMode=mode==='boss';
+ if(bossMode&&!cbAll.every(a=>cbOwned.includes(a.id)))return;
  const pool=cbAll.filter(a=>!cbOwned.includes(a.id));
- cbWild=pool.length?pool[Math.floor(Math.random()*pool.length)]:cbAll[Math.floor(Math.random()*cbAll.length)];
+ cbWild=bossMode?{id:'mythic-manticore',name:'만티코어',rarity:'신화',color:'#ff3038',rarityId:'mythic',seed:90909}:pool.length?pool[Math.floor(Math.random()*pool.length)]:cbAll[Math.floor(Math.random()*cbAll.length)];
+ cbIsBossBattle=bossMode;if(bossMode)mode='strategy';
  cbBattleMode=mode;cbSpecialCooldown=0;cbDefending=false;cbHeavyUses=0;cbUltimateUsed=false;cbPlayerAttackBoostTurns=0;cbPlayerAttackBoostPercent=0;cbPlayerEvadeTurns=0;cbPlayerGuardTurns=0;cbPlayerGuardReduction=50;cbCerberusTurns=0;cbPhoenixRevives=0;cbGryphonEvadeTurns=0;cbSanctuaryTurns=0;cbHeroWingsTurns=0;cbHydraTurns=0;cbDragonApex=false;cbEnemyWeakTurns=0;cbEnemyWeakPercent=0;
  $('cbModeSelect').hidden=true;$('cbHome').hidden=true;$('cbDeckScreen').hidden=true;$('cbDexScreen').hidden=true;$('cbEncounter').hidden=false;
- $('cbModeLabel').textContent=mode==='strategy'?'전략전투 · 직접 행동을 선택하세요':'속전속결 · 자동 전투';
+ $('cbModeLabel').textContent=cbIsBossBattle?'강적 도전 · 최종 보스 만티코어':mode==='strategy'?'전략전투 · 직접 행동을 선택하세요':'속전속결 · 자동 전투';
  $('cbWildCard').replaceChildren();const card=cbCard(cbWild);card.classList.add('cb-wild');$('cbWildCard').appendChild(card);
- $('cbBattleStatus').textContent='상대 동물이 나타났다. 덱에서 싸울 동물을 선택해.';
+ $('cbBattleStatus').textContent=cbIsBossBattle?'최종 보스 만티코어가 나타났다. 덱에서 도전할 동물을 선택해.':'상대 동물이 나타났다. 덱에서 싸울 동물을 선택해.';
  $('cbDuelStage').hidden=true;$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=true;$('cbRetryButton').hidden=true;
  cbSelected=null;cbEnemyHp=cbStats(cbWild).hp;cbPlayerHp=0;cbBattleDone=false;cbCanContinue=false;cbUsedFighters=new Set();cbRenderDeck();
 }
-let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerAttackBoostPercent=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0,cbPlayerGuardReduction=50,cbEnemyWeakTurns=0,cbEnemyWeakPercent=0,cbCerberusTurns=0,cbPhoenixRevives=0,cbGryphonEvadeTurns=0,cbSanctuaryTurns=0,cbHeroWingsTurns=0,cbHydraTurns=0,cbDragonApex=false;
+let cbSelected=null,cbEnemyHp=0,cbPlayerHp=0,cbBattleDone=false,cbCanContinue=false,cbUsedFighters=new Set(),cbIsBossBattle=false,cbBattleMode='strategy',cbSpecialCooldown=0,cbDefending=false,cbAutoTimer=null,cbHeavyUses=0,cbUltimateUsed=false,cbPlayerAttackBoostTurns=0,cbPlayerAttackBoostPercent=0,cbPlayerEvadeTurns=0,cbPlayerGuardTurns=0,cbPlayerGuardReduction=50,cbEnemyWeakTurns=0,cbEnemyWeakPercent=0,cbCerberusTurns=0,cbPhoenixRevives=0,cbGryphonEvadeTurns=0,cbSanctuaryTurns=0,cbHeroWingsTurns=0,cbHydraTurns=0,cbDragonApex=false;
 function cbSelectFighter(id){
  const animal=cbAll.find(a=>a.id===id);if(!animal||!cbDeck.includes(id)||cbUsedFighters.has(id))return;
  const continuing=cbCanContinue&&cbBattleDone&&cbEnemyHp>0;
@@ -1268,9 +1275,10 @@ function cbFinishBattle(win){
  cbBattleDone=true;if(cbAutoTimer){clearInterval(cbAutoTimer);cbAutoTimer=null;}$('cbAttackButton').hidden=true;$('cbStrategyActions').hidden=true;$('cbSpeedActions').hidden=true;$('cbBattleResult').hidden=false;
  if(win){
   cbCanContinue=false;
-  const fresh=!cbOwned.includes(cbWild.id);if(fresh){cbOwned.push(cbWild.id);cbSave();}
+  if(cbIsBossBattle){$('cbBattleResult').textContent='승리! 최종 보스 만티코어를 쓰러뜨렸다!';$('cbBattleStatus').textContent='강적 도전 성공 · 만티코어는 획득할 수 없습니다.';}
+  else {const fresh=!cbOwned.includes(cbWild.id);if(fresh){cbOwned.push(cbWild.id);cbSave();}
   $('cbBattleResult').textContent=fresh?'승리! '+cbWild.name+'을(를) 테이밍했다. 도감에 등록 완료!':'승리! 이미 보유한 동물이다.';
-  $('cbBattleStatus').textContent='야생 동물 제압 성공';
+  $('cbBattleStatus').textContent='야생 동물 제압 성공';}
  }else{
   cbCanContinue=cbEnemyHp>0;
   $('cbBattleResult').textContent=cbCanContinue?'패배했다. 덱의 다른 동물을 선택하면 상대의 남은 체력 그대로 이어서 싸울 수 있다.':'패배했다. 다시 도전할 수 있다.';
@@ -1367,6 +1375,7 @@ function cbRetryBattle(){
 }
 $('cheatSuccessModal').addEventListener('click',()=>{$('cheatSuccessModal').hidden=true;});
 $('cbBattleStart').addEventListener('click',cbStartEncounter);
+$('cbChooseBoss').addEventListener('click',()=>cbBeginEncounter('boss'));
 $('cbChooseStrategy').addEventListener('click',()=>cbBeginEncounter('strategy'));
 $('cbChooseSpeed').addEventListener('click',()=>cbBeginEncounter('speed'));
 $('cbModeBack').addEventListener('click',cbShowHome);
