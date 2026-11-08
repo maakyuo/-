@@ -608,6 +608,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .gm-controls button{background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:9px 13px;font-size:12px}
 .gm-controls .gm-surrender{font-size:11px;opacity:.75}
 .gm-confirm-overlay{position:fixed;inset:0;z-index:10010;display:flex;align-items:center;justify-content:center;background:#000b;padding:22px}.gm-confirm-overlay[hidden]{display:none!important}.gm-confirm-box{width:min(100%,350px);padding:24px 20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:0 18px 60px #0009;text-align:center}.gm-confirm-box strong{display:block;font-size:19px;margin-bottom:10px}.gm-confirm-box p{color:var(--muted);font-size:14px;margin-bottom:20px}.gm-confirm-actions{display:flex;gap:10px}.gm-confirm-actions button{flex:1;border-radius:10px;padding:12px;border:1px solid var(--line);background:var(--panel2);color:var(--white);font-weight:700}.gm-confirm-actions #gmConfirmYes{background:#94364c;border-color:#b65065;color:white}
+.app.gomoku-mode #missionBtn{display:none!important}
 </style>
 </head>
 <body>
@@ -685,7 +686,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
  </section>
  <section class="kanna-secret-screen" id="kannaSecretScreen" aria-label="아이리 칸나 테마 선택"><div class="kanna-secret-button-wrap"><button type="button" class="kanna-secret-button" id="kannaThemeApply"><span class="kanna-secret-gem">💎</span><strong>아이리 칸나</strong><small>테마 적용</small></button></div><button class="back-btn" id="kannaSecretBack">기능 5로 돌아가기</button></section>
 
- <section class="gomoku-screen" id="gomokuScreen"><div class="mission-head"><span>NULL</span><small>오목</small></div><div id="gmMenu"><div class="gm-title">오목</div><p class="gm-sub">인공지능 난이도를 선택하세요.</p><div class="gm-difficulties" id="gmDifficulties"></div><button class="back-btn" id="gmExitMenu" style="width:100%;margin-top:14px">나가기</button></div><div id="gmGame" hidden><div class="gm-title" id="gmLevel"></div><div class="gm-status" id="gmStatus"></div><div class="gm-board" id="gmBoard"></div><div class="gm-controls"><button id="gmToMenu">난이도 선택</button><button id="gmSurrender" class="gm-surrender">항복</button></div></div></section>
+ <section class="gomoku-screen" id="gomokuScreen"><div id="gmMenu"><div class="gm-title">오목</div><p class="gm-sub">인공지능 난이도를 선택하세요.</p><div class="gm-difficulties" id="gmDifficulties"></div><button class="back-btn" id="gmExitMenu" style="width:100%;margin-top:14px">나가기</button></div><div id="gmGame" hidden><div class="gm-title" id="gmLevel"></div><div class="gm-status" id="gmStatus"></div><div class="gm-board" id="gmBoard"></div><div class="gm-controls"><button id="gmToMenu">난이도 선택</button><button id="gmSurrender" class="gm-surrender">항복</button></div></div></section>
  <div class="gm-confirm-overlay" id="gmConfirm" hidden><div class="gm-confirm-box" role="dialog" aria-modal="true" aria-label="항복 확인"><strong>항복하시겠습니까?</strong><p>항복하면 인공지능의 승리로 대국이 종료됩니다.</p><div class="gm-confirm-actions"><button type="button" id="gmConfirmNo">취소</button><button type="button" id="gmConfirmYes">항복</button></div></div></div>
  <section class="cardbattle-screen" id="cardBattleScreen" aria-label="동물 카드게임">
   <div class="mission-head"><span>동물 카드게임</span><small>ANIMAL TAMING</small></div>
@@ -821,7 +822,7 @@ document.addEventListener('keydown',e=>{if(appIsInMissionMode()||e.target.closes
 render();
 const app=document.querySelector('.app'),missionBtn=$('missionBtn'),historyBtn=$('historyBtn');
 function appIsInMissionMode(){return app.classList.contains('mission-mode');}
-missionBtn.addEventListener('click',()=>{if(app.classList.contains('theme-mode')){exitThemeScreen();return;}app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
+missionBtn.addEventListener('click',()=>{if(app.classList.contains('gomoku-mode'))return;if(app.classList.contains('theme-mode')){exitThemeScreen();return;}app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
 $('backBtn').addEventListener('click',()=>{app.classList.remove('mission-mode');$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 const units={
  area:{'제곱밀리미터':1e-6,'제곱센티미터':1e-4,'제곱미터':1,'제곱킬로미터':1e6,'헥타르':1e4,'평':3.305785},
