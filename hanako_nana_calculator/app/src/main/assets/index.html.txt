@@ -739,7 +739,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
   </div>
   <div class="sl-nav" style="margin-top:10px"><button id="slStorageBtn">슬라임 보관함</button><button id="slEggBtn">알 부화</button><button id="slDexBtn">슬라임 도감</button><button id="slExitBtn">나가기</button></div>
  </div>
- <div class="sl-panel" id="slFoods" hidden><h3>먹이 선택</h3><p class="sl-muted">먹이별 섭취 횟수는 슬라임마다 저장됩니다.</p><div class="sl-food-grid" id="slFoodGrid"></div><button class="sl-action" data-sl-back style="width:100%">돌아가기</button></div><div class="sl-panel" id="slStorage" hidden><h3>슬라임 보관함</h3><p class="sl-muted">선택한 슬라임 한 마리만 육성합니다.</p><div class="sl-list" id="slStorageList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
+ <div class="sl-panel" id="slEvolve" hidden><h3>진화할 슬라임 선택</h3><div class="sl-list" id="slEvolutionList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div><div class="sl-panel" id="slFoods" hidden><h3>먹이 선택</h3><p class="sl-muted">먹이별 섭취 횟수는 슬라임마다 저장됩니다.</p><div class="sl-food-grid" id="slFoodGrid"></div><button class="sl-action" data-sl-back style="width:100%">돌아가기</button></div><div class="sl-panel" id="slStorage" hidden><h3>슬라임 보관함</h3><p class="sl-muted">선택한 슬라임 한 마리만 육성합니다.</p><div class="sl-list" id="slStorageList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
  <div class="sl-panel" id="slEggs" hidden><h3>알 부화</h3><div class="sl-egg">🥚</div><p id="slEggCount" style="text-align:center"></p><p class="sl-muted">육성 활동으로 알을 얻을 수 있습니다. 알은 한 종류뿐입니다.</p><button class="sl-action" id="slHatchBtn" style="width:100%">알 부화시키기</button><p class="sl-message" id="slHatchMessage"></p><button class="sl-action" data-sl-back style="width:100%">돌아가기</button></div>
  <div class="sl-panel" id="slDex" hidden><h3>슬라임 도감</h3><div class="sl-list" id="slDexList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
 </section>
@@ -1542,16 +1542,21 @@ const slKinds=[
  {name:'일각 슬라임',rank:'희귀',color:'#57c979',horn:true},
  {name:'노랑 슬라임',rank:'영웅',color:'#f4d553'}
 ];
+const slEvolutions=[
+ {name:'큰 빨간 슬라임',rank:'일반',condition:'빨간 슬라임 레벨 10',eligible:x=>true},
+ {name:'화염 슬라임',rank:'희귀',condition:'빨간 슬라임 레벨 10 · 석탄 누적 10회 이상 섭취',eligible:x=>(x.foods?.['석탄']||0)>=10},
+ {name:'데몬 슬라임',rank:'희귀',condition:'빨간 슬라임 레벨 10 · 독버섯 누적 5회 이상 섭취 · 행복도 0',eligible:x=>(x.foods?.['독버섯']||0)>=5&&x.happy===0}
+];
 const slKey='hanako_slime_nursery_v1';
 let slState;
 function slNew(kind){return {id:Date.now().toString(36)+Math.random().toString(36).slice(2),kind,level:1,exp:0,happy:80,energy:80,clean:80};}
 function slLoad(){try{const a=JSON.parse(localStorage.getItem(slKey));if(a&&Array.isArray(a.slimes)){slState=a;if(!Array.isArray(a.discovered))a.discovered=a.slimes.map(x=>x.kind);if(!a.slimes.some(x=>x.id===a.active))a.active=a.slimes[0]?.id||null;return;}}catch(e){}slState={slimes:[slNew(Math.floor(Math.random()*3))],active:null,eggs:1,actions:0,discovered:[]};slState.discovered=[slState.slimes[0].kind];slState.active=slState.slimes[0].id;slSave();}
 function slSave(){try{localStorage.setItem(slKey,JSON.stringify(slState));}catch(e){}}
 function slCurrent(){return slState.slimes.find(x=>x.id===slState.active)||slState.slimes[0]||null;}
-function slShow(page){['slHome','slStorage','slEggs','slDex','slFoods'].forEach(x=>$(x).hidden=x!==page);if(page==='slFoods')slFoodRender();if(page==='slStorage')slStorageRender();if(page==='slEggs')$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';if(page==='slDex')slDexRender();}
+function slShow(page){['slHome','slStorage','slEggs','slDex','slFoods','slEvolve'].forEach(x=>$(x).hidden=x!==page);if(page==='slFoods')slFoodRender();if(page==='slStorage')slStorageRender();if(page==='slEggs')$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';if(page==='slDex')slDexRender();if(page==='slEvolve')slEvolutionRender();}
 function slRender(){
- const a=slCurrent();if(!a){$('slName').textContent='육성 중인 슬라임 없음';$('slRank').textContent='';$('slCreature').innerHTML='';$('slBars').innerHTML='';$('slMessage').textContent='슬라임이 없습니다. 알을 부화시키세요.';return;}if(a.level>=10){a.level=10;a.exp=0;}const k=slKinds[a.kind];$('slName').textContent=(a.nickname||k.name)+' · 레벨 '+a.level;$('slRank').textContent=k.rank+' · 1단계';
- const c=$('slCreature');c.className='sl-pixel';c.innerHTML=slSprite(a.kind);
+ const a=slCurrent();if(!a){$('slName').textContent='육성 중인 슬라임 없음';$('slRank').textContent='';$('slCreature').innerHTML='';$('slBars').innerHTML='';$('slMessage').textContent='슬라임이 없습니다. 알을 부화시키세요.';return;}if(a.level>=10){a.level=10;a.exp=0;}const k=a.evolution!==undefined?slEvolutions[a.evolution]:slKinds[a.kind];$('slName').textContent=(a.nickname||k.name)+' · 레벨 '+a.level;$('slRank').textContent=k.rank+' · '+(a.evolution!==undefined?'2':'1')+'단계';
+ const c=$('slCreature');c.className='sl-pixel';c.innerHTML=a.evolution!==undefined?slEvolvedSprite(a.evolution):slSprite(a.kind);
  $('slBars').innerHTML=[['경험치',a.exp],['행복도',a.happy],['활력',a.energy],['청결',a.clean]].map(([n,v])=>'<div><label>'+n+' '+v+'%</label><div class="sl-meter"><i style="width:'+v+'%"></i></div></div>').join('');if(a.dangerTurns>0)$('slMessage').textContent='위험 상태! 남은 회복 기회 '+(3-a.dangerTurns)+'회';
 }
 function slEnter(){if(!slState)slLoad();app.classList.remove('theme-mode','kanna-secret-mode','cardbattle-mode','gomoku-mode','mission4-mode','mission6-mode','mission7-mode');app.classList.add('mission-mode','mission5-mode','slime-mode');missionBtn.textContent='NULL';$('tag').textContent='NULL';$('brandName').textContent='슬라임 육성';$('secretCode').textContent='NULL';$('slMessage').textContent='';slShow('slHome');slRender();}
@@ -1561,12 +1566,19 @@ $('slRenameBtn').addEventListener('click',()=>{const a=slCurrent();if(!a)return;
 $('slRenameCancel').addEventListener('click',()=>{$('slRenameModal').hidden=true;});
 $('slRenameSave').addEventListener('click',()=>{const a=slCurrent();if(!a)return;const name=$('slRenameInput').value.trim();if(!name){$('slRenameError').textContent='이름을 입력해주세요.';return;}a.nickname=name.slice(0,20);slSave();$('slRenameModal').hidden=true;slRender();});
 $('slRenameInput').addEventListener('keydown',e=>{if(e.key==='Enter'){$('slRenameSave').click();}else if(e.key==='Escape'){$('slRenameCancel').click();}});
-function slStorageRender(){$('slStorageList').innerHTML=slState.slimes.map(x=>'<button class="sl-item '+(x.id===slState.active?'active':'')+'" data-sl-id="'+x.id+'"><strong>'+slEscape(x.nickname||slKinds[x.kind].name)+'</strong><div class="sl-muted">'+slKinds[x.kind].rank+' · 1단계 · 레벨 '+x.level+(x.id===slState.active?' · 육성 중':'')+'</div></button>').join('');}
-function slDexRender(){const seen=new Set([...(slState.discovered||[]),...slState.slimes.map(x=>x.kind)]);$('slDexList').innerHTML=slKinds.map((k,i)=>'<div class="sl-item"><strong>'+(seen.has(i)?k.name:'???')+'</strong><div class="sl-muted">'+(seen.has(i)?k.rank+' · 1단계':'미발견')+'</div></div>').join('');}
+function slStorageRender(){$('slStorageList').innerHTML=slState.slimes.map(x=>'<button class="sl-item '+(x.id===slState.active?'active':'')+'" data-sl-id="'+x.id+'"><strong>'+slEscape(x.nickname||(x.evolution!==undefined?slEvolutions[x.evolution].name:slKinds[x.kind].name))+'</strong><div class="sl-muted">'+(x.evolution!==undefined?slEvolutions[x.evolution].rank+' · 2단계':slKinds[x.kind].rank+' · 1단계')+' · 레벨 '+x.level+(x.id===slState.active?' · 육성 중':'')+'</div></button>').join('');}
+function slDexRender(){
+ const seen=new Set([...(slState.discovered||[]),...slState.slimes.map(x=>x.kind)]);
+ const evoSeen=new Set([...(slState.evolutionDiscovered||[]),...slState.slimes.filter(x=>x.evolution!==undefined).map(x=>x.evolution)]);
+ $('slDexList').innerHTML=slKinds.map((k,i)=>'<div class="sl-item"><strong>'+(seen.has(i)?k.name:'???')+'</strong><div class="sl-muted">'+(seen.has(i)?k.rank+' · 1단계':'미발견')+'</div></div>').join('')+slEvolutions.map((k,i)=>'<div class="sl-item"><strong>'+(evoSeen.has(i)?k.name:'???')+'</strong><div class="sl-muted">'+(evoSeen.has(i)?k.rank+' · 2단계 · 진화 조건: '+k.condition:'미발견')+'</div></div>').join('');
+}
+function slEvolutionRender(){
+ const x=slCurrent();$('slEvolutionList').innerHTML=slEvolutions.map((e,i)=>{const ok=x&&x.kind===0&&x.evolution===undefined&&x.level>=10&&e.eligible(x);return '<button class="sl-item" '+(ok?'data-sl-evolution="'+i+'"':'disabled')+'><strong>'+(ok?e.name:'???')+'</strong>'+(ok?'<div class="sl-muted">'+e.rank+'</div>':'')+'</button>';}).join('');
+}
 $('slScreen').addEventListener('click',e=>{
  const a=e.target.closest('[data-sl-action]');if(a){
   const x=slCurrent(),type=a.dataset.slAction,cap=n=>Math.max(0,Math.min(100,n));if(!x){$('slMessage').textContent='육성할 슬라임이 없습니다.';return;}
-  if(type==='feed'){slShow('slFoods');return;}if(type==='evolve'){$('slMessage').textContent='2단계 진화는 아직 준비 중입니다.';return;}
+  if(type==='feed'){slShow('slFoods');return;}if(type==='evolve'){if(x.evolution!==undefined){$('slMessage').textContent='이미 2단계로 진화한 슬라임입니다.';return;}if(x.level<10){$('slMessage').textContent='레벨 10부터 진화할 수 있습니다.';return;}if(x.kind!==0){$('slMessage').textContent='이 슬라임의 진화체는 아직 준비 중입니다.';return;}slShow('slEvolve');return;}
   if(type==='rest'){x.energy=cap(x.energy+30);x.happy=cap(x.happy+5);x.clean=cap(x.clean-10);}
   else if(type==='feed'){x.happy=cap(x.happy+12);x.energy=cap(x.energy+10);x.clean=cap(x.clean-6);}
   else if(type==='play'){x.happy=cap(x.happy+16);x.energy=cap(x.energy-12);x.clean=cap(x.clean-5);}
@@ -1577,6 +1589,7 @@ $('slScreen').addEventListener('click',e=>{
   slState.actions++;if(slAfterCare(x))return;
   slSave();slRender();const c=$('slCreature');c.classList.remove('sl-happy');void c.offsetWidth;c.classList.add('sl-happy');return;
  }
+ const ev=e.target.closest('[data-sl-evolution]');if(ev){const x=slCurrent(),i=Number(ev.dataset.slEvolution);if(!x||x.kind!==0||x.evolution!==undefined||x.level<10||!slEvolutions[i]?.eligible(x))return;x.evolution=i;x.nickname='';x.level=1;x.exp=0;slState.evolutionDiscovered=Array.from(new Set([...(slState.evolutionDiscovered||[]),i]));slSave();slShow('slHome');slRender();$('slMessage').textContent=slEvolutions[i].name+'(으)로 진화했습니다!';return;}
  const b=e.target.closest('[data-sl-id]');if(b){slState.active=b.dataset.slId;slSave();slRender();slShow('slHome');$('slMessage').textContent='육성할 슬라임을 교체했어요.';return;}
  if(e.target.closest('[data-sl-back]'))slShow('slHome');
 });
@@ -1596,6 +1609,14 @@ const slFoodEffects=[[-10,-10,-10],[12,12,-3],[5,12,-8],[0,5,0],[12,12,-8],[-25,
 function slGainExp(x,amount){if(x.level>=10){x.level=10;x.exp=0;return;}x.exp+=amount;while(x.exp>=100&&x.level<10){x.exp-=100;x.level++;}if(x.level>=10)x.exp=0;}
 function slAfterCare(x){const danger=x.happy===0||x.energy===0||x.clean===0;x.dangerTurns=danger?(x.dangerTurns||0)+1:0;if(x.dangerTurns<3)return false;slState.discovered=Array.from(new Set([...(slState.discovered||[]),x.kind]));slState.slimes=slState.slimes.filter(z=>z.id!==x.id);slState.active=slState.slimes[0]?.id||null;slSave();slShow('slHome');slRender();$('slMessage').textContent=slKinds[x.kind].name+'이(가) 사망했습니다. 보관함에서 제거되었습니다.';return true;}
 function slPixelSvg(cells){return '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">'+cells.map(([x,y,w,h,color])=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+color+'"/>').join('')+'</svg>';}
+function slEvolvedSprite(i){
+ if(i===0)return slSprite(0).replace('viewBox="0 0 16 16"','viewBox="1 1 14 14"');
+ const a=[],rows=[[5,11],[3,13],[2,14],[1,15],[1,15],[0,16],[0,16],[0,16],[0,16],[1,15],[1,15],[2,14],[3,13],[5,11]];
+ rows.forEach(([start,end],j)=>{const y=j+2;for(let x=start;x<end;x++){let c;if(i===1){c=y<5?'#ffe064':y<8?'#ffad29':y<12?'#f65a1e':'#c72c1e';if((x+y)%5===0)c=y<9?'#ffd44b':'#ff8128';}else{c=y<8?'#651b27':'#390e19';if(x<start+2||x>=end-2)c='#8c2631';}a.push([x,y,1,1,c]);}});
+ if(i===1){[[4,0],[5,1],[7,0],[9,1],[11,0],[12,2],[2,4],[13,4]].forEach(([x,y],j)=>{a.push([x,y,1,2,j%2?'#ff8b20':'#ffcf36']);});a.push([4,8,2,2,'#ff9c22'],[10,8,2,2,'#ff9c22'],[7,11,2,1,'#ff9c22']);}
+ else{a.push([3,0,2,2,'#f12d3c'],[4,2,2,2,'#b51a2c'],[11,0,2,2,'#f12d3c'],[10,2,2,2,'#b51a2c'],[4,8,2,2,'#fa2638'],[10,8,2,2,'#fa2638'],[7,11,2,1,'#fa2638']);}
+ return slPixelSvg(a);
+}
 function slSprite(kind){
  const k=slKinds[kind],base=k.color;
  let cells=[];
