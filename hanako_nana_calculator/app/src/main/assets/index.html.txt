@@ -580,7 +580,12 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 @keyframes cbManticoreFlames{0%{transform:scale(1) rotate(0deg);opacity:.8}50%{transform:scale(1.04) rotate(.5deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:.75}}
 
 .gomoku-screen{display:none;flex:1;min-height:0;overflow:auto;flex-direction:column;gap:12px;padding:8px 0 16px}
-.app.gomoku-mode .gomoku-screen{display:flex!important}
+.app.gomoku-mode .gomoku-screen{display:flex!important;position:relative;z-index:2;min-height:0;width:100%;height:100%;overflow:auto}
+.app.mission-mode.mission5-mode.gomoku-mode .mission5{display:none!important}
+.app.gomoku-mode #gmMenu[hidden],.app.gomoku-mode #gmGame[hidden]{display:none!important}
+.app.gomoku-mode .gomoku-screen{padding:6px 0 12px}
+.app.gomoku-mode .gm-board{width:min(100%,calc(100dvh - 235px));max-width:480px;max-height:480px}
+.app.gomoku-mode .gm-difficulties button{padding:12px 4px}
 .app.gomoku-mode .mission3,.app.gomoku-mode .mission4,.app.gomoku-mode .mission5,.app.gomoku-mode .mission6,.app.gomoku-mode .mission7,.app.gomoku-mode .theme-screen,.app.gomoku-mode .kanna-secret-screen,.app.gomoku-mode .cardbattle-screen,.app.gomoku-mode .display,.app.gomoku-mode .key-area,.app.gomoku-mode .footer{display:none!important}
 .gm-title{text-align:center;font-size:20px;font-weight:800;color:var(--pink)}
 .gm-sub{text-align:center;font-size:12px;color:var(--muted)}
