@@ -639,6 +639,17 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .sl-message{text-align:center;font-size:13px;color:var(--pink);min-height:20px}
 .slime-screen [hidden]{display:none!important}
 
+
+/* Slime screen isolation and pixel sprites */
+.app.mission-mode.mission5-mode.slime-mode .mission5{display:none!important}
+.app.slime-mode #slScreen{display:flex!important;position:relative;z-index:3;width:100%;height:100%;min-height:0;overflow:auto;padding:8px 2px 20px}
+.app.slime-mode .sl-habitat{height:190px}
+.sl-pixel{width:160px;height:144px;image-rendering:pixelated;filter:drop-shadow(0 12px 2px #0005);animation:slBounce 2.5s ease-in-out infinite}
+.sl-pixel.sl-happy{animation:slBounce .4s ease-in-out 4}
+.sl-food-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+.sl-food-grid button{background:var(--panel2);color:var(--white);border:1px solid var(--line);border-radius:12px;padding:10px 4px;font-weight:700}
+.sl-food-grid svg{display:block;width:64px;height:64px;image-rendering:pixelated;margin:0 auto 6px}
+
 </style>
 </head>
 <body>
@@ -727,7 +738,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
   </div>
   <div class="sl-nav" style="margin-top:10px"><button id="slStorageBtn">슬라임 보관함</button><button id="slEggBtn">알 부화</button><button id="slDexBtn">슬라임 도감</button><button id="slExitBtn">나가기</button></div>
  </div>
- <div class="sl-panel" id="slStorage" hidden><h3>슬라임 보관함</h3><p class="sl-muted">선택한 슬라임 한 마리만 육성합니다.</p><div class="sl-list" id="slStorageList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
+ <div class="sl-panel" id="slFoods" hidden><h3>먹이 선택</h3><p class="sl-muted">먹이별 섭취 횟수는 슬라임마다 저장됩니다.</p><div class="sl-food-grid" id="slFoodGrid"></div><button class="sl-action" data-sl-back style="width:100%">돌아가기</button></div><div class="sl-panel" id="slStorage" hidden><h3>슬라임 보관함</h3><p class="sl-muted">선택한 슬라임 한 마리만 육성합니다.</p><div class="sl-list" id="slStorageList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
  <div class="sl-panel" id="slEggs" hidden><h3>알 부화</h3><div class="sl-egg">🥚</div><p id="slEggCount" style="text-align:center"></p><p class="sl-muted">육성 활동으로 알을 얻을 수 있습니다. 알은 한 종류뿐입니다.</p><button class="sl-action" id="slHatchBtn" style="width:100%">알 부화시키기</button><p class="sl-message" id="slHatchMessage"></p><button class="sl-action" data-sl-back style="width:100%">돌아가기</button></div>
  <div class="sl-panel" id="slDex" hidden><h3>슬라임 도감</h3><div class="sl-list" id="slDexList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
 </section>
@@ -1536,10 +1547,10 @@ function slNew(kind){return {id:Date.now().toString(36)+Math.random().toString(3
 function slLoad(){try{const a=JSON.parse(localStorage.getItem(slKey));if(a&&Array.isArray(a.slimes)&&a.slimes.length&&a.slimes.some(x=>x.id===a.active)){slState=a;return;}}catch(e){}slState={slimes:[slNew(Math.floor(Math.random()*3))],active:null,eggs:1,actions:0};slState.active=slState.slimes[0].id;slSave();}
 function slSave(){try{localStorage.setItem(slKey,JSON.stringify(slState));}catch(e){}}
 function slCurrent(){return slState.slimes.find(x=>x.id===slState.active)||slState.slimes[0];}
-function slShow(page){['slHome','slStorage','slEggs','slDex'].forEach(x=>$(x).hidden=x!==page);if(page==='slStorage')slStorageRender();if(page==='slEggs')$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';if(page==='slDex')slDexRender();}
+function slShow(page){['slHome','slStorage','slEggs','slDex','slFoods'].forEach(x=>$(x).hidden=x!==page);if(page==='slFoods')slFoodRender();if(page==='slStorage')slStorageRender();if(page==='slEggs')$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';if(page==='slDex')slDexRender();}
 function slRender(){
  const a=slCurrent(),k=slKinds[a.kind];$('slName').textContent=k.name+' · 레벨 '+a.level;$('slRank').textContent=k.rank+' · 1단계';
- const c=$('slCreature');c.style.setProperty('--sl-color',k.color);c.innerHTML=(k.eye3?'<span class="sl-eye3"></span>':'')+(k.horn?'<span class="sl-horn"></span>':'');
+ const c=$('slCreature');c.className='sl-pixel';c.innerHTML=slSprite(a.kind);
  $('slBars').innerHTML=[['경험치',a.exp],['행복도',a.happy],['활력',a.energy],['청결',a.clean]].map(([n,v])=>'<div><label>'+n+' '+v+'%</label><div class="sl-meter"><i style="width:'+v+'%"></i></div></div>').join('');
 }
 function slEnter(){if(!slState)slLoad();app.classList.remove('theme-mode','kanna-secret-mode','cardbattle-mode','gomoku-mode','mission4-mode','mission6-mode','mission7-mode');app.classList.add('mission-mode','mission5-mode','slime-mode');missionBtn.textContent='NULL';$('tag').textContent='NULL';$('brandName').textContent='슬라임 육성';$('secretCode').textContent='NULL';$('slMessage').textContent='';slShow('slHome');slRender();}
@@ -1549,7 +1560,7 @@ function slDexRender(){const seen=new Set(slState.slimes.map(x=>x.kind));$('slDe
 $('slScreen').addEventListener('click',e=>{
  const a=e.target.closest('[data-sl-action]');if(a){
   const x=slCurrent(),type=a.dataset.slAction,cap=n=>Math.max(0,Math.min(100,n));
-  if(type==='evolve'){$('slMessage').textContent='2단계 진화는 아직 준비 중입니다.';return;}
+  if(type==='feed'){slShow('slFoods');return;}if(type==='evolve'){$('slMessage').textContent='2단계 진화는 아직 준비 중입니다.';return;}
   if(type==='rest'){x.energy=cap(x.energy+30);x.happy=cap(x.happy+5);}
   else if(type==='feed'){x.happy=cap(x.happy+12);x.energy=cap(x.energy+10);x.clean=cap(x.clean-6);}
   else if(type==='play'){if(x.energy<10){$('slMessage').textContent='활력이 부족해요. 휴식이 필요해요.';return;}x.happy=cap(x.happy+16);x.energy=cap(x.energy-12);x.clean=cap(x.clean-5);}
@@ -1557,7 +1568,7 @@ $('slScreen').addEventListener('click',e=>{
   else if(type==='train'){if(x.energy<15){$('slMessage').textContent='활력이 부족해요. 휴식이 필요해요.';return;}x.exp+=25;x.energy=cap(x.energy-15);x.happy=cap(x.happy-5);}
   if(type!=='train')x.exp+=8;
   if(x.exp>=100){x.exp-=100;x.level++;$('slMessage').textContent='레벨 '+x.level+' 달성!';}else $('slMessage').textContent={feed:'맛있게 먹었어요!',play:'신나게 뛰어놀았어요!',clean:'깨끗해졌어요!',train:'훈련을 마쳤어요!',rest:'충분히 쉬었어요!'}[type];
-  slState.actions++;if(slState.actions%8===0){slState.eggs++;$('slMessage').textContent+=' 새로운 알을 획득했어요!';}
+  slState.actions++;
   slSave();slRender();const c=$('slCreature');c.classList.remove('sl-happy');void c.offsetWidth;c.classList.add('sl-happy');return;
  }
  const b=e.target.closest('[data-sl-id]');if(b){slState.active=b.dataset.slId;slSave();slRender();slShow('slHome');$('slMessage').textContent='육성할 슬라임을 교체했어요.';return;}
@@ -1571,6 +1582,41 @@ $('slHatchBtn').addEventListener('click',()=>{
  if(slState.eggs<1){$('slHatchMessage').textContent='보유한 알이 없어요.';return;}
  const r=Math.random(),kind=r<.70?Math.floor(Math.random()*3):r<.95?3+Math.floor(Math.random()*2):5;
  const x=slNew(kind);slState.slimes.push(x);slState.eggs--;slSave();$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';$('slHatchMessage').textContent=slKinds[kind].name+' 탄생! 보관함에 등록했어요.';
+});
+
+
+const slFoods=['석탄','해초','민들레','얼음','버섯','독버섯'];
+function slPixelSvg(cells){return '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">'+cells.map(([x,y,w,h,color])=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+color+'"/>').join('')+'</svg>';}
+function slSprite(kind){
+ const k=slKinds[kind],base=k.color;
+ let cells=[];
+ // Pixel-by-pixel silhouette with stair-stepped edges.
+ const rows=[[5,11],[3,13],[2,14],[1,15],[1,15],[0,16],[0,16],[0,16],[0,16],[1,15],[1,15],[2,14],[3,13],[5,11]];
+ rows.forEach(([start,end],j)=>{const y=j+2;for(let x=start;x<end;x++){const shade=x>=end-2||y>=12?'#00000033':x<=start+1&&y<8?'#ffffff44':null;cells.push([x,y,1,1,shade?slBlend(base,shade):base]);}});
+ cells.push([4,8,2,2,'#17202b'],[10,8,2,2,'#17202b'],[7,11,2,1,'#17202b']);
+ if(k.eye3)cells.push([7,5,2,2,'#17202b']);
+ if(k.horn)cells.push([7,0,2,1,'#c3ffd0'],[6,1,4,1,'#a1f3b2'],[6,2,4,1,'#84db99'],[7,3,2,1,'#84db99']);
+ return slPixelSvg(cells);
+}
+function slBlend(hex,shade){const n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;const bright=shade.startsWith('#ffffff')?1.22:.78;return '#'+[r,g,b].map(v=>Math.min(255,Math.round(v*bright)).toString(16).padStart(2,'0')).join('');}
+function slFoodIcon(i){
+ const colors=['#363536','#328a65','#f3d454','#9de5fa','#c98765','#9e59b7'];
+ const c=colors[i],a=[];
+ for(let y=3;y<13;y++)for(let x=3;x<13;x++){if((x-8)*(x-8)+(y-8)*(y-8)<25)a.push([x,y,1,1,c]);}
+ if(i===2)a.push([7,12,2,4,'#4da55c']);
+ if(i===4||i===5)a.push([7,9,2,5,'#e9cfaa']);
+ if(i===5)a.push([5,5,2,2,'#f8f1e5'],[10,7,2,2,'#f8f1e5']);
+ if(i===3)a.push([5,5,2,2,'#ffffff']);
+ return slPixelSvg(a);
+}
+function slFoodRender(){$('slFoodGrid').innerHTML=slFoods.map((n,i)=>'<button data-sl-food="'+i+'">'+slFoodIcon(i)+n+'</button>').join('');}
+$('slFoodGrid').addEventListener('click',e=>{
+ const b=e.target.closest('[data-sl-food]');if(!b)return;
+ const i=Number(b.dataset.slFood),x=slCurrent();if(!x.foods)x.foods={};x.foods[slFoods[i]]=(x.foods[slFoods[i]]||0)+1;
+ x.happy=Math.min(100,x.happy+12);x.energy=Math.min(100,x.energy+10);x.clean=Math.max(0,x.clean-6);x.exp+=8;
+ if(x.exp>=100){x.exp-=100;x.level++;}
+ slState.actions++;slSave();slShow('slHome');slRender();$('slMessage').textContent=slFoods[i]+'을(를) 먹었어요! (총 '+x.foods[slFoods[i]]+'회)';
+ const c=$('slCreature');c.classList.remove('sl-happy');void c.offsetWidth;c.classList.add('sl-happy');
 });
 
 })();
