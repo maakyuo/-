@@ -383,7 +383,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cardbattle-screen{display:none;flex:1;min-height:0;overflow:auto;padding:10px 2px;flex-direction:column;gap:10px}
 .app.cardbattle-mode .cardbattle-screen{display:flex!important}.app.cardbattle-mode .mission3,.app.cardbattle-mode .mission4,.app.cardbattle-mode .mission5,.app.cardbattle-mode .mission6,.app.cardbattle-mode .mission7,.app.cardbattle-mode .theme-screen,.app.cardbattle-mode .kanna-secret-screen,.app.cardbattle-mode .display,.app.cardbattle-mode .key-area,.app.cardbattle-mode .footer{display:none!important}
 .app.cardbattle-mode.mission5-mode .mission5{display:none!important}
-.cardbattle-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}#cbDexGrid .cb-art,#cbDeckScreen .cb-art{height:65px}#cbDexGrid .cb-meta,#cbDeckScreen .cb-meta{padding:4px}#cbDexGrid .cb-meta strong,#cbDeckScreen .cb-meta strong{font-size:10px;overflow-wrap:anywhere}#cbDexGrid .cb-meta small,#cbDeckScreen .cb-meta small{font-size:8px}
+.cardbattle-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}#cbDexGrid .cb-art,#cbCollection .cb-art{height:65px}#cbDexGrid .cb-meta,#cbCollection .cb-meta{padding:4px}#cbDexGrid .cb-meta strong,#cbCollection .cb-meta strong{font-size:10px;overflow-wrap:anywhere}#cbDexGrid .cb-meta small,#cbCollection .cb-meta small{font-size:8px}
 .cb-card{min-width:0;border:1px solid var(--theme-line,#514653);border-radius:12px;background:var(--theme-panel,#211e28);color:var(--white);overflow:hidden;text-align:left;padding:0;position:relative}
 .cb-card.selected{outline:2px solid var(--theme-accent,var(--pink));background:var(--theme-soft,#30232d)}
 .cb-art{height:125px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--card-color,#596b9b),#141722);color:#fff;font-size:34px;font-weight:800;overflow:hidden}
@@ -414,7 +414,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .cb-home{display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center}
 .cb-main-button{min-height:68px;border:1px solid #777;background:linear-gradient(145deg,#302d3a,#1c1a23);border-radius:13px;color:#fff;font-size:17px;font-weight:800;letter-spacing:.04em}
 .cb-summary,.cb-note{font-size:11px;color:var(--muted);line-height:1.55;text-align:center}
-.cardbattle-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.cardbattle-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
 .cb-card{min-width:0;border:3px solid var(--rarity-color,#888);border-radius:10px;background:#191820;color:#fff;overflow:hidden;text-align:left;padding:0;position:relative}
 .cb-card.selected{outline:2px solid #fff;outline-offset:2px}
 .cb-art{height:120px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 90%,#45404e,#17151d 75%);overflow:hidden}
