@@ -1589,7 +1589,7 @@ $('slScreen').addEventListener('click',e=>{
   slState.actions++;if(slAfterCare(x))return;
   slSave();slRender();const c=$('slCreature');c.classList.remove('sl-happy');void c.offsetWidth;c.classList.add('sl-happy');return;
  }
- const ev=e.target.closest('[data-sl-evolution]');if(ev){const x=slCurrent(),i=Number(ev.dataset.slEvolution);if(!x||x.kind!==0||x.evolution!==undefined||x.level<10||!slEvolutions[i]?.eligible(x))return;x.evolution=i;x.nickname='';x.level=1;x.exp=0;slState.evolutionDiscovered=Array.from(new Set([...(slState.evolutionDiscovered||[]),i]));slSave();slShow('slHome');slRender();$('slMessage').textContent=slEvolutions[i].name+'(으)로 진화했습니다!';return;}
+ const ev=e.target.closest('[data-sl-evolution]');if(ev){const x=slCurrent(),i=Number(ev.dataset.slEvolution);if(!x||x.kind!==0||x.evolution!==undefined||x.level<10||!slEvolutions[i]?.eligible(x))return;x.evolution=i;x.level=1;x.exp=0;slState.evolutionDiscovered=Array.from(new Set([...(slState.evolutionDiscovered||[]),i]));slSave();slShow('slHome');slRender();$('slMessage').textContent=slEvolutions[i].name+'(으)로 진화했습니다!';return;}
  const b=e.target.closest('[data-sl-id]');if(b){slState.active=b.dataset.slId;slSave();slRender();slShow('slHome');$('slMessage').textContent='육성할 슬라임을 교체했어요.';return;}
  if(e.target.closest('[data-sl-back]'))slShow('slHome');
 });
