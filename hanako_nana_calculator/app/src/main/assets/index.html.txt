@@ -609,6 +609,36 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .gm-controls .gm-surrender{font-size:11px;opacity:.75}
 .gm-confirm-overlay{position:fixed;inset:0;z-index:10010;display:flex;align-items:center;justify-content:center;background:#000b;padding:22px}.gm-confirm-overlay[hidden]{display:none!important}.gm-confirm-box{width:min(100%,350px);padding:24px 20px;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:0 18px 60px #0009;text-align:center}.gm-confirm-box strong{display:block;font-size:19px;margin-bottom:10px}.gm-confirm-box p{color:var(--muted);font-size:14px;margin-bottom:20px}.gm-confirm-actions{display:flex;gap:10px}.gm-confirm-actions button{flex:1;border-radius:10px;padding:12px;border:1px solid var(--line);background:var(--panel2);color:var(--white);font-weight:700}.gm-confirm-actions #gmConfirmYes{background:#94364c;border-color:#b65065;color:white}
 .app.gomoku-mode #missionBtn{display:none!important}
+
+/* Hidden slime nursery */
+.slime-screen{display:none;flex:1;min-height:0;overflow:auto;flex-direction:column;gap:12px;padding:8px 2px 20px}
+.app.slime-mode .slime-screen{display:flex!important}
+.app.slime-mode .mission3,.app.slime-mode .mission4,.app.slime-mode .mission5,.app.slime-mode .mission6,.app.slime-mode .mission7,.app.slime-mode .theme-screen,.app.slime-mode .kanna-secret-screen,.app.slime-mode .cardbattle-screen,.app.slime-mode .gomoku-screen,.app.slime-mode .display,.app.slime-mode .key-area,.app.slime-mode .footer,.app.slime-mode #missionBtn{display:none!important}
+.sl-title{text-align:center;color:var(--pink);font-weight:800;font-size:22px}
+.sl-panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px}
+.sl-habitat{height:210px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 90%,#384c43 0%,#202e31 45%,#171923 80%);border-radius:14px;overflow:hidden}
+.sl-creature{width:126px;height:105px;border-radius:55% 55% 43% 43%;position:relative;background:var(--sl-color);box-shadow:inset -14px -14px 0 #0003,inset 9px 10px 0 #fff4,0 12px 18px #0005;animation:slBounce 2.5s ease-in-out infinite;transition:transform .2s}
+.sl-creature:before{content:'';position:absolute;left:29px;top:44px;width:13px;height:17px;border-radius:50%;background:#17202b;box-shadow:53px 0 #17202b}
+.sl-creature:after{content:'';position:absolute;left:53px;top:67px;width:21px;height:10px;border-bottom:3px solid #17202b;border-radius:50%}
+.sl-creature .sl-eye3{position:absolute;left:57px;top:24px;width:13px;height:17px;border-radius:50%;background:#17202b}
+.sl-creature .sl-horn{position:absolute;left:48px;top:-38px;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:48px solid #a9f5b3;filter:drop-shadow(2px 1px 1px #0005)}
+.sl-creature.sl-happy{animation:slBounce .4s ease-in-out 4}
+@keyframes slBounce{0%,100%{transform:translateY(4px) scale(1,.97)}50%{transform:translateY(-11px) scale(.96,1.05)}}
+.sl-bars{display:grid;grid-template-columns:1fr 1fr;gap:9px;font-size:12px}
+.sl-bars label{display:block;color:var(--muted);margin-bottom:4px}
+.sl-meter{height:8px;background:#38333f;border-radius:8px;overflow:hidden}
+.sl-meter i{display:block;height:100%;background:var(--pink);border-radius:8px}
+.sl-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sl-actions button,.sl-nav button,.sl-action{background:var(--panel2);border:1px solid var(--line);color:var(--white);border-radius:10px;padding:12px 5px;font-weight:700}
+.sl-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sl-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sl-item{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px;text-align:left;color:var(--white)}
+.sl-item.active{border-color:var(--pink)}
+.sl-muted{font-size:12px;color:var(--muted)}
+.sl-egg{font-size:55px;text-align:center;padding:12px}
+.sl-message{text-align:center;font-size:13px;color:var(--pink);min-height:20px}
+.slime-screen [hidden]{display:none!important}
+
 </style>
 </head>
 <body>
@@ -686,7 +716,22 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
  </section>
  <section class="kanna-secret-screen" id="kannaSecretScreen" aria-label="아이리 칸나 테마 선택"><div class="kanna-secret-button-wrap"><button type="button" class="kanna-secret-button" id="kannaThemeApply"><span class="kanna-secret-gem">💎</span><strong>아이리 칸나</strong><small>테마 적용</small></button></div><button class="back-btn" id="kannaSecretBack">기능 5로 돌아가기</button></section>
 
- <section class="gomoku-screen" id="gomokuScreen"><div id="gmMenu"><div class="gm-title">오목</div><p class="gm-sub">인공지능 난이도를 선택하세요.</p><div class="gm-difficulties" id="gmDifficulties"></div><button class="back-btn" id="gmExitMenu" style="width:100%;margin-top:14px">나가기</button></div><div id="gmGame" hidden><div class="gm-title" id="gmLevel"></div><div class="gm-status" id="gmStatus"></div><div class="gm-board" id="gmBoard"></div><div class="gm-controls"><button id="gmToMenu">난이도 선택</button><button id="gmSurrender" class="gm-surrender">항복</button></div></div></section>
+ 
+<section class="slime-screen" id="slScreen">
+ <div class="sl-title">슬라임 육성</div>
+ <div id="slHome">
+  <div class="sl-panel"><div style="display:flex;justify-content:space-between;gap:8px"><strong id="slName"></strong><span id="slRank" class="sl-muted"></span></div>
+   <div class="sl-habitat" style="margin:12px 0"><div class="sl-creature" id="slCreature"></div></div>
+   <div class="sl-bars" id="slBars"></div><p class="sl-message" id="slMessage"></p>
+   <div class="sl-actions"><button data-sl-action="feed">먹이</button><button data-sl-action="play">놀기</button><button data-sl-action="clean">청소</button><button data-sl-action="train">훈련</button><button data-sl-action="rest">휴식</button><button data-sl-action="evolve">진화</button></div>
+  </div>
+  <div class="sl-nav" style="margin-top:10px"><button id="slStorageBtn">슬라임 보관함</button><button id="slEggBtn">알 부화</button><button id="slDexBtn">슬라임 도감</button><button id="slExitBtn">나가기</button></div>
+ </div>
+ <div class="sl-panel" id="slStorage" hidden><h3>슬라임 보관함</h3><p class="sl-muted">선택한 슬라임 한 마리만 육성합니다.</p><div class="sl-list" id="slStorageList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
+ <div class="sl-panel" id="slEggs" hidden><h3>알 부화</h3><div class="sl-egg">🥚</div><p id="slEggCount" style="text-align:center"></p><p class="sl-muted">육성 활동으로 알을 얻을 수 있습니다. 알은 한 종류뿐입니다.</p><button class="sl-action" id="slHatchBtn" style="width:100%">알 부화시키기</button><p class="sl-message" id="slHatchMessage"></p><button class="sl-action" data-sl-back style="width:100%">돌아가기</button></div>
+ <div class="sl-panel" id="slDex" hidden><h3>슬라임 도감</h3><div class="sl-list" id="slDexList"></div><button class="sl-action" data-sl-back style="width:100%;margin-top:12px">돌아가기</button></div>
+</section>
+<section class="gomoku-screen" id="gomokuScreen"><div id="gmMenu"><div class="gm-title">오목</div><p class="gm-sub">인공지능 난이도를 선택하세요.</p><div class="gm-difficulties" id="gmDifficulties"></div><button class="back-btn" id="gmExitMenu" style="width:100%;margin-top:14px">나가기</button></div><div id="gmGame" hidden><div class="gm-title" id="gmLevel"></div><div class="gm-status" id="gmStatus"></div><div class="gm-board" id="gmBoard"></div><div class="gm-controls"><button id="gmToMenu">난이도 선택</button><button id="gmSurrender" class="gm-surrender">항복</button></div></div></section>
  <div class="gm-confirm-overlay" id="gmConfirm" hidden><div class="gm-confirm-box" role="dialog" aria-modal="true" aria-label="항복 확인"><strong>항복하시겠습니까?</strong><p>항복하면 인공지능의 승리로 대국이 종료됩니다.</p><div class="gm-confirm-actions"><button type="button" id="gmConfirmNo">취소</button><button type="button" id="gmConfirmYes">항복</button></div></div></div>
  <section class="cardbattle-screen" id="cardBattleScreen" aria-label="동물 카드게임">
   <div class="mission-head"><span>동물 카드게임</span><small>ANIMAL TAMING</small></div>
@@ -822,7 +867,7 @@ document.addEventListener('keydown',e=>{if(appIsInMissionMode()||e.target.closes
 render();
 const app=document.querySelector('.app'),missionBtn=$('missionBtn'),historyBtn=$('historyBtn');
 function appIsInMissionMode(){return app.classList.contains('mission-mode');}
-missionBtn.addEventListener('click',()=>{if(app.classList.contains('gomoku-mode'))return;if(app.classList.contains('theme-mode')){exitThemeScreen();return;}app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
+missionBtn.addEventListener('click',()=>{if(app.classList.contains('gomoku-mode')||app.classList.contains('slime-mode'))return;if(app.classList.contains('theme-mode')){exitThemeScreen();return;}app.classList.remove('mission4-mode','mission5-mode','mission6-mode');app.classList.add('mission-mode');missionBtn.textContent='MISSION 03';$('tag').textContent='MISSION 03 / CONVERTER';});
 $('backBtn').addEventListener('click',()=>{app.classList.remove('mission-mode');$('tag').textContent=document.body.classList.contains('sci')?'MISSION 02 / SCIENTIFIC':'MISSION 01 / BASIC';});
 const units={
  area:{'제곱밀리미터':1e-6,'제곱센티미터':1e-4,'제곱미터':1,'제곱킬로미터':1e6,'헥타르':1e4,'평':3.305785},
@@ -1448,7 +1493,7 @@ $('cbCollection').addEventListener('click',e=>{
  else if(cbDeck.length<3)cbDeck.push(animal.id);
  cbSave();cbRenderCollection();
 });
-$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw==='치트128923349023673478'){cbLoad();if(!cbOwned.includes(cbManticore.id))cbOwned.push(cbManticore.id);cbSave();$('cheatSuccessModal').hidden=false;return;}if(raw==='치트238938940349012'){cbOwned=cbAll.map(a=>a.id).concat(cbOwned.includes(cbManticore.id)?[cbManticore.id]:[]);cbSave();$('cheatSuccessModal').hidden=false;return;}if(raw.replace(/\\s+/g,'')==='테마변경'){enterThemeScreen();return;}if(raw.replace(/\\s+/g,'')==='칸나'){enterKannaSecretScreen();return;}if(raw.replace(/\\s+/g,'')==='카드게임'){cbEnter();return;}if(raw.replace(/\\s+/g,'')==='오목'){gmEnter();return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
+$('statsCalculate').addEventListener('click',()=>{try{let raw=$('statsValues').value.trim();if(raw==='치트128923349023673478'){cbLoad();if(!cbOwned.includes(cbManticore.id))cbOwned.push(cbManticore.id);cbSave();$('cheatSuccessModal').hidden=false;return;}if(raw==='치트238938940349012'){cbOwned=cbAll.map(a=>a.id).concat(cbOwned.includes(cbManticore.id)?[cbManticore.id]:[]);cbSave();$('cheatSuccessModal').hidden=false;return;}if(raw.replace(/\\s+/g,'')==='테마변경'){enterThemeScreen();return;}if(raw.replace(/\\s+/g,'')==='칸나'){enterKannaSecretScreen();return;}if(raw.replace(/\\s+/g,'')==='카드게임'){cbEnter();return;}if(raw.replace(/\\s+/g,'')==='오목'){gmEnter();return;}if(raw.replace(/\\s+/g,'')==='슬라임'){slEnter();return;}if(!raw)throw Error('숫자를 입력해 주세요.');let a=raw.split(/[\s,;]+/).filter(Boolean).map(Number);if(!a.length||a.some(n=>!Number.isFinite(n)))throw Error('숫자만 입력해 주세요.');let sorted=[...a].sort((x,y)=>x-y),sum=a.reduce((x,y)=>x+y,0),mean=sum/a.length,mid=Math.floor(a.length/2),median=a.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,counts=new Map();a.forEach(n=>counts.set(n,(counts.get(n)||0)+1));let maxCount=Math.max(...counts.values()),modes=[...counts].filter(x=>x[1]===maxCount).map(x=>x[0]),std=Math.sqrt(a.reduce((z,n)=>z+(n-mean)**2,0)/a.length),min=sorted[0],max=sorted[sorted.length-1],type=$('statsType').value,lines=[];if(type==='all'||type==='mean')lines.push('평균: '+statFmt(mean));if(type==='all'||type==='median')lines.push('중앙값: '+statFmt(median));if(type==='all'||type==='mode')lines.push('최빈값: '+(maxCount===1?'없음':modes.map(statFmt).join(', '))+(maxCount===1?'':' (등장 '+maxCount+'회)'));if(type==='all'||type==='range')lines.push('최솟값: '+statFmt(min),'최댓값: '+statFmt(max),'범위: '+statFmt(max-min));if(type==='all'||type==='std')lines.push('표준편차: '+statFmt(std));if(type==='all')lines.push('합계: '+statFmt(sum),'자료 개수: '+a.length);$('statsResult').textContent=lines.join('\n');}catch(e){$('statsResult').textContent=e.message;}});
 $('baseCalculate').addEventListener('click',()=>{try{let raw=$('baseInput').value.trim().replace(/\s+/g,''),base=Number($('baseFrom').value);if(!raw)throw Error();let negative=raw.startsWith('-'),digits=raw.replace(/^[+-]/,'').toLowerCase();if(!digits)throw Error();let alphabet='0123456789abcdefghijklmnopqrstuvwxyz',n=0n;for(const ch of digits){let d=alphabet.indexOf(ch);if(d<0||d>=base)throw Error();n=n*BigInt(base)+BigInt(d);}if(negative)n=-n;$('baseResult').textContent='2진법: '+n.toString(2)+'\n8진법: '+n.toString(8)+'\n10진법: '+n.toString(10)+'\n16진법: '+n.toString(16).toUpperCase();}catch(e){$('baseResult').textContent='올바른 정수를 입력해 주세요. (음수 가능)';}});
 populateUnits();
 const panel=document.createElement('div');panel.className='history-panel';panel.id='historyPanel';panel.innerHTML='<div class="history-title"><span>CALCULATION LOG</span><button class="history-close" id="historyClose">닫기</button></div><div class="history-list" id="historyList"></div><button class="history-close" id="historyClear">기록 지우기</button>';app.appendChild(panel);
@@ -1474,6 +1519,59 @@ $('gmDifficulties').replaceChildren(...gmLevels.map((name,i)=>{const b=document.
 $('gmBoard').addEventListener('click',e=>{const cell=e.target.closest('[data-pos]');if(!cell||!gmPlaying||gmBusy||gmTurn!==1)return;if(gmPlace(Number(cell.dataset.pos),1)&&gmPlaying)gmAI();});
 $('gmToMenu').addEventListener('click',gmMenu);$('gmExitMenu').addEventListener('click',gmExit);
 $('gmSurrender').addEventListener('click',()=>{if(gmPlaying)$('gmConfirm').hidden=false;});$('gmConfirmNo').addEventListener('click',()=>{$('gmConfirm').hidden=true;});$('gmConfirmYes').addEventListener('click',()=>{$('gmConfirm').hidden=true;if(!gmPlaying)return;gmToken++;gmPlaying=false;gmBusy=false;$('gmStatus').textContent='항복 · 인공지능 승리';gmRender();});
+
+
+/* Slime nursery: one active slime, stored collection, egg-only acquisition. */
+const slKinds=[
+ {name:'빨간 슬라임',rank:'일반',color:'#f45b69'},
+ {name:'파란 슬라임',rank:'일반',color:'#4a9cf4'},
+ {name:'초록 슬라임',rank:'일반',color:'#57c979'},
+ {name:'삼안 슬라임',rank:'희귀',color:'#4a9cf4',eye3:true},
+ {name:'일각 슬라임',rank:'희귀',color:'#57c979',horn:true},
+ {name:'노랑 슬라임',rank:'영웅',color:'#f4d553'}
+];
+const slKey='hanako_slime_nursery_v1';
+let slState;
+function slNew(kind){return {id:Date.now().toString(36)+Math.random().toString(36).slice(2),kind,level:1,exp:0,happy:80,energy:80,clean:80};}
+function slLoad(){try{const a=JSON.parse(localStorage.getItem(slKey));if(a&&Array.isArray(a.slimes)&&a.slimes.length&&a.slimes.some(x=>x.id===a.active)){slState=a;return;}}catch(e){}slState={slimes:[slNew(Math.floor(Math.random()*3))],active:null,eggs:1,actions:0};slState.active=slState.slimes[0].id;slSave();}
+function slSave(){try{localStorage.setItem(slKey,JSON.stringify(slState));}catch(e){}}
+function slCurrent(){return slState.slimes.find(x=>x.id===slState.active)||slState.slimes[0];}
+function slShow(page){['slHome','slStorage','slEggs','slDex'].forEach(x=>$(x).hidden=x!==page);if(page==='slStorage')slStorageRender();if(page==='slEggs')$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';if(page==='slDex')slDexRender();}
+function slRender(){
+ const a=slCurrent(),k=slKinds[a.kind];$('slName').textContent=k.name+' · 레벨 '+a.level;$('slRank').textContent=k.rank+' · 1단계';
+ const c=$('slCreature');c.style.setProperty('--sl-color',k.color);c.innerHTML=(k.eye3?'<span class="sl-eye3"></span>':'')+(k.horn?'<span class="sl-horn"></span>':'');
+ $('slBars').innerHTML=[['경험치',a.exp],['행복도',a.happy],['활력',a.energy],['청결',a.clean]].map(([n,v])=>'<div><label>'+n+' '+v+'%</label><div class="sl-meter"><i style="width:'+v+'%"></i></div></div>').join('');
+}
+function slEnter(){if(!slState)slLoad();app.classList.remove('theme-mode','kanna-secret-mode','cardbattle-mode','gomoku-mode','mission4-mode','mission6-mode','mission7-mode');app.classList.add('mission-mode','mission5-mode','slime-mode');missionBtn.textContent='NULL';$('tag').textContent='NULL';$('brandName').textContent='슬라임 육성';$('secretCode').textContent='NULL';$('slMessage').textContent='';slShow('slHome');slRender();}
+function slExit(){app.classList.remove('slime-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';}
+function slStorageRender(){$('slStorageList').innerHTML=slState.slimes.map(x=>'<button class="sl-item '+(x.id===slState.active?'active':'')+'" data-sl-id="'+x.id+'"><strong>'+slKinds[x.kind].name+'</strong><div class="sl-muted">'+slKinds[x.kind].rank+' · 1단계 · 레벨 '+x.level+(x.id===slState.active?' · 육성 중':'')+'</div></button>').join('');}
+function slDexRender(){const seen=new Set(slState.slimes.map(x=>x.kind));$('slDexList').innerHTML=slKinds.map((k,i)=>'<div class="sl-item"><strong>'+(seen.has(i)?k.name:'???')+'</strong><div class="sl-muted">'+(seen.has(i)?k.rank+' · 1단계':'미발견')+'</div></div>').join('');}
+$('slScreen').addEventListener('click',e=>{
+ const a=e.target.closest('[data-sl-action]');if(a){
+  const x=slCurrent(),type=a.dataset.slAction,cap=n=>Math.max(0,Math.min(100,n));
+  if(type==='evolve'){$('slMessage').textContent='2단계 진화는 아직 준비 중입니다.';return;}
+  if(type==='rest'){x.energy=cap(x.energy+30);x.happy=cap(x.happy+5);}
+  else if(type==='feed'){x.happy=cap(x.happy+12);x.energy=cap(x.energy+10);x.clean=cap(x.clean-6);}
+  else if(type==='play'){if(x.energy<10){$('slMessage').textContent='활력이 부족해요. 휴식이 필요해요.';return;}x.happy=cap(x.happy+16);x.energy=cap(x.energy-12);x.clean=cap(x.clean-5);}
+  else if(type==='clean'){x.clean=cap(x.clean+30);x.happy=cap(x.happy+4);}
+  else if(type==='train'){if(x.energy<15){$('slMessage').textContent='활력이 부족해요. 휴식이 필요해요.';return;}x.exp+=25;x.energy=cap(x.energy-15);x.happy=cap(x.happy-5);}
+  if(type!=='train')x.exp+=8;
+  if(x.exp>=100){x.exp-=100;x.level++;$('slMessage').textContent='레벨 '+x.level+' 달성!';}else $('slMessage').textContent={feed:'맛있게 먹었어요!',play:'신나게 뛰어놀았어요!',clean:'깨끗해졌어요!',train:'훈련을 마쳤어요!',rest:'충분히 쉬었어요!'}[type];
+  slState.actions++;if(slState.actions%8===0){slState.eggs++;$('slMessage').textContent+=' 새로운 알을 획득했어요!';}
+  slSave();slRender();const c=$('slCreature');c.classList.remove('sl-happy');void c.offsetWidth;c.classList.add('sl-happy');return;
+ }
+ const b=e.target.closest('[data-sl-id]');if(b){slState.active=b.dataset.slId;slSave();slRender();slShow('slHome');$('slMessage').textContent='육성할 슬라임을 교체했어요.';return;}
+ if(e.target.closest('[data-sl-back]'))slShow('slHome');
+});
+$('slStorageBtn').addEventListener('click',()=>slShow('slStorage'));
+$('slEggBtn').addEventListener('click',()=>slShow('slEggs'));
+$('slDexBtn').addEventListener('click',()=>slShow('slDex'));
+$('slExitBtn').addEventListener('click',slExit);
+$('slHatchBtn').addEventListener('click',()=>{
+ if(slState.eggs<1){$('slHatchMessage').textContent='보유한 알이 없어요.';return;}
+ const r=Math.random(),kind=r<.70?Math.floor(Math.random()*3):r<.95?3+Math.floor(Math.random()*2):5;
+ const x=slNew(kind);slState.slimes.push(x);slState.eggs--;slSave();$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';$('slHatchMessage').textContent=slKinds[kind].name+' 탄생! 보관함에 등록했어요.';
+});
 
 })();
 </script>
