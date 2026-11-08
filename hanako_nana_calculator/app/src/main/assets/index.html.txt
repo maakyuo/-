@@ -1617,7 +1617,12 @@ function slAfterCare(x){const danger=x.happy===0||x.energy===0||x.clean===0;x.da
 function slPixelSvg(cells){return '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">'+cells.map(([x,y,w,h,color])=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+color+'"/>').join('')+'</svg>';}
 function slEvolvedSprite(i){
  if(i===0||i===3)return slSprite(i===0?0:1).replace('viewBox="0 0 16 16"','viewBox="1 1 14 14"');
- if(i>=4){const a=[];if(i===4){const rows=[[7,9],[6,10],[5,11],[4,12],[3,13],[2,14],[1,15],[1,15],[2,14],[3,13],[4,12],[5,11],[6,10],[7,9]];rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1||y===0||y===13;a.push([x,y+1,1,1,edge?'#1765ca':'#87ddf6']);}});a.push([6,8,1,2,'#1765ca'],[10,8,1,2,'#1765ca']);}
+ if(i>=4){const a=[];if(i===4){
+ const rows=[[7,9],[7,9],[6,10],[5,11],[4,12],[3,13],[2,14],[2,14],[1,15],[1,15],[1,15],[2,14],[3,13],[4,12],[6,10]];
+ rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1||y===0||y===14;let color=edge?'#075bb9':x<=l+2?'#29c4e6':x>=r-3?'#1684ce':'#08a9cf';if(y<5&&x>7)color=edge?'#075bb9':'#1684ce';a.push([x,y,1,1,color]);}});
+ [[5,5],[5,6],[4,7],[4,8],[5,9],[6,10],[7,11],[6,5],[10,5],[11,6]].forEach(([x,y])=>a.push([x,y,1,1,'#ffffff']));
+ a.push([6,8,1,2,'#0876bd'],[10,8,1,2,'#0876bd']);
+}
  else if(i===5){const rows=[[7,9],[6,10],[5,11],[4,12],[3,13],[2,14],[1,15],[0,16],[1,15],[2,14],[3,13],[4,12],[5,11],[6,10],[7,9]];rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){let c=y<4?'#efffff':y<8?'#a8edfc':y<12?'#61bbef':'#287bc3';if(x===l||x===r-1)c='#e1fbff';if(x===8||x===7)c=y<8?'#ffffff':'#9adcf7';a.push([x,y,1,1,c]);}});a.push([5,8,2,1,'#3a80b5'],[10,8,2,1,'#3a80b5']);}
  else{const rows=[[5,11],[3,13],[2,14],[1,15],[1,15],[0,16],[0,16],[0,16],[0,16],[1,15],[1,15],[2,14],[3,13],[5,11]];rows.forEach(([l,r],j)=>{for(let x=l;x<r;x++)a.push([x,j+2,1,1,j<5?'#244d9a':j<10?'#183b83':'#112a66']);});a.push([4,9,3,1,'#0a1b48'],[10,9,3,1,'#0a1b48'],[7,12,2,1,'#0a1b48']);}return slPixelSvg(a);
  }
