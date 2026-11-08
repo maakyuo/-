@@ -650,6 +650,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .sl-food-grid button{background:var(--panel2);color:var(--white);border:1px solid var(--line);border-radius:12px;padding:10px 4px;font-weight:700}
 .sl-food-grid svg{display:block;width:64px;height:64px;image-rendering:pixelated;margin:0 auto 6px}
 
+#slRenameModal:not([hidden]){display:flex!important}#slRenameModal[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -729,7 +730,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 
  
 <section class="slime-screen" id="slScreen">
- <div class="sl-title">슬라임 육성</div>
+ <div class="sl-title">슬라임 육성</div><div id="slRenameModal" hidden style="position:fixed;inset:0;z-index:9999;background:#000b;align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:360px;background:#24222c;border:1px solid #625665;border-radius:16px;padding:20px"><strong style="display:block;margin-bottom:12px">슬라임 이름 변경</strong><input id="slRenameInput" maxlength="20" placeholder="이름 입력" style="width:100%;padding:12px;border:1px solid #625665;border-radius:9px;background:#15141c;color:white;font-size:17px"><p id="slRenameError" style="color:#f49aa9;min-height:18px"></p><div style="display:flex;gap:8px"><button id="slRenameCancel" style="flex:1;padding:12px;border-radius:9px">취소</button><button id="slRenameSave" style="flex:1;padding:12px;border-radius:9px">저장</button></div></div></div>
  <div id="slHome">
   <div class="sl-panel"><div style="display:flex;justify-content:space-between;gap:8px"><span style="display:flex;align-items:center;gap:5px;min-width:0"><strong id="slName"></strong><button id="slRenameBtn" aria-label="슬라임 이름 변경" style="border:0;background:transparent;color:var(--pink);font-size:21px;padding:3px 5px;cursor:pointer">✎</button></span><span id="slRank" class="sl-muted"></span></div>
    <div class="sl-habitat" style="margin:12px 0"><div class="sl-creature" id="slCreature"></div></div>
@@ -1556,7 +1557,10 @@ function slRender(){
 function slEnter(){if(!slState)slLoad();app.classList.remove('theme-mode','kanna-secret-mode','cardbattle-mode','gomoku-mode','mission4-mode','mission6-mode','mission7-mode');app.classList.add('mission-mode','mission5-mode','slime-mode');missionBtn.textContent='NULL';$('tag').textContent='NULL';$('brandName').textContent='슬라임 육성';$('secretCode').textContent='NULL';$('slMessage').textContent='';slShow('slHome');slRender();}
 function slExit(){app.classList.remove('slime-mode');missionBtn.textContent='MISSION 05';$('tag').textContent='MISSION 05 / STATISTICS';$('brandName').textContent='하나코 나나 계산기';$('secretCode').textContent='TOP SECRET CODE B';}
 function slEscape(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-$('slRenameBtn').addEventListener('click',()=>{const a=slCurrent();if(!a)return;const name=prompt('슬라임 이름을 입력하세요 (최대 20자)',a.nickname||slKinds[a.kind].name);if(name===null)return;const trimmed=name.trim();if(!trimmed){alert('이름을 입력해주세요.');return;}a.nickname=trimmed.slice(0,20);slSave();slRender();});
+$('slRenameBtn').addEventListener('click',()=>{const a=slCurrent();if(!a)return;$('slRenameInput').value=a.nickname||slKinds[a.kind].name;$('slRenameError').textContent='';$('slRenameModal').hidden=false;$('slRenameInput').focus();});
+$('slRenameCancel').addEventListener('click',()=>{$('slRenameModal').hidden=true;});
+$('slRenameSave').addEventListener('click',()=>{const a=slCurrent();if(!a)return;const name=$('slRenameInput').value.trim();if(!name){$('slRenameError').textContent='이름을 입력해주세요.';return;}a.nickname=name.slice(0,20);slSave();$('slRenameModal').hidden=true;slRender();});
+$('slRenameInput').addEventListener('keydown',e=>{if(e.key==='Enter'){$('slRenameSave').click();}else if(e.key==='Escape'){$('slRenameCancel').click();}});
 function slStorageRender(){$('slStorageList').innerHTML=slState.slimes.map(x=>'<button class="sl-item '+(x.id===slState.active?'active':'')+'" data-sl-id="'+x.id+'"><strong>'+slEscape(x.nickname||slKinds[x.kind].name)+'</strong><div class="sl-muted">'+slKinds[x.kind].rank+' · 1단계 · 레벨 '+x.level+(x.id===slState.active?' · 육성 중':'')+'</div></button>').join('');}
 function slDexRender(){const seen=new Set([...(slState.discovered||[]),...slState.slimes.map(x=>x.kind)]);$('slDexList').innerHTML=slKinds.map((k,i)=>'<div class="sl-item"><strong>'+(seen.has(i)?k.name:'???')+'</strong><div class="sl-muted">'+(seen.has(i)?k.rank+' · 1단계':'미발견')+'</div></div>').join('');}
 $('slScreen').addEventListener('click',e=>{
