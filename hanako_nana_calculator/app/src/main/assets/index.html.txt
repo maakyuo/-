@@ -656,6 +656,7 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 #slRenameModal:not([hidden]){display:flex!important}#slRenameModal[hidden]{display:none!important}
 #slScreen .sl-frozen{animation:none!important;transform:none!important}
  .sl-gold-sparkle svg{animation:slGoldGlow 2.1s ease-in-out infinite}@keyframes slGoldGlow{0%,100%{filter:drop-shadow(0 0 1px #f6d766)}50%{filter:drop-shadow(0 0 7px #fff3b2)}}
+.sl-pixel.sl-giant{width:210px;height:184px;max-width:94%;flex-shrink:0}.sl-pixel.sl-giant svg{display:block;width:100%;height:100%;overflow:visible}
 </style>
 </head>
 <body>
@@ -1584,7 +1585,7 @@ function slCurrent(){return slState.slimes.find(x=>x.id===slState.active)||slSta
 function slShow(page){['slHome','slStorage','slEggs','slDex','slFoods','slEvolve'].forEach(x=>$(x).hidden=x!==page);if(page==='slFoods')slFoodRender();if(page==='slStorage')slStorageRender();if(page==='slEggs')$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';if(page==='slDex')slDexRender();if(page==='slEvolve')slEvolutionRender();}
 function slRender(){
  const a=slCurrent();if(!a){$('slName').textContent='육성 중인 슬라임 없음';$('slRank').textContent='';$('slCreature').innerHTML='';$('slBars').innerHTML='';$('slMessage').textContent='슬라임이 없습니다. 알을 부화시키세요.';return;}if(a.level>=slLevelCap(a)){a.level=slLevelCap(a);a.exp=0;}const k=a.evolution!==undefined?slEvolutions[a.evolution]:slKinds[a.kind];$('slName').textContent=(a.nickname||k.name)+' · 레벨 '+a.level;$('slRank').textContent=k.rank+' · '+slStage(a)+'단계';
- const habitat=$('slCreature').parentElement;habitat.dataset.slRank=k.rank;const c=$('slCreature');c.className='sl-pixel'+(a.evolution===5?' sl-frozen':'')+([16,17,18].includes(a.evolution)?' sl-gold-sparkle':'');c.innerHTML=a.evolution!==undefined?slEvolvedSprite(a.evolution):slSprite(a.kind);
+ const habitat=$('slCreature').parentElement;habitat.dataset.slRank=k.rank;const c=$('slCreature');c.className='sl-pixel'+([19,21,23].includes(a.evolution)?' sl-giant':'')+(a.evolution===5?' sl-frozen':'')+([16,17,18].includes(a.evolution)?' sl-gold-sparkle':'');c.innerHTML=a.evolution!==undefined?slEvolvedSprite(a.evolution):slSprite(a.kind);
  $('slBars').innerHTML=[['경험치',a.exp],['행복도',a.happy],['활력',a.energy],['청결',a.clean]].map(([n,v])=>'<div><label>'+n+' '+v+'%</label><div class="sl-meter"><i style="width:'+v+'%"></i></div></div>').join('');if(a.dangerTurns>0)$('slMessage').textContent='위험 상태! 남은 회복 기회 '+(3-a.dangerTurns)+'회';
 }
 function slEnter(){if(!slState)slLoad();app.classList.remove('theme-mode','kanna-secret-mode','cardbattle-mode','gomoku-mode','mission4-mode','mission6-mode','mission7-mode');app.classList.add('mission-mode','mission5-mode','slime-mode');missionBtn.textContent='NULL';$('tag').textContent='NULL';$('brandName').textContent='슬라임 육성';$('secretCode').textContent='NULL';$('slMessage').textContent='';slShow('slHome');slRender();}
