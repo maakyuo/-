@@ -1697,7 +1697,7 @@ function slFoodIcon(i){
 function slFoodRender(){$('slFoodGrid').innerHTML=slFoods.map((n,i)=>'<button data-sl-food="'+i+'">'+slFoodIcon(i)+n+'</button>').join('');}
 $('slFoodGrid').addEventListener('click',e=>{
  const b=e.target.closest('[data-sl-food]');if(!b)return;
- const i=Number(b.dataset.slFood),x=slCurrent();if(!x)return;if(x.kind===5&&x.evolution===undefined&&slFoods[i]!=='얼음')x.saintBroken=true;if(!x.foods)x.foods={};x.foods[slFoods[i]]=(x.foods[slFoods[i]]||0)+1;if(slStage(x)===2&&slFoods[i]==='독버섯')x.stage3Poison=(x.stage3Poison||0)+1;
+ const i=Number(b.dataset.slFood),x=slCurrent();if(!x)return;if(x.kind===5&&x.evolution===undefined&&slFoods[i]!=='얼음')x.saintBroken=true;if(!x.foods)x.foods={};x.foods[slFoods[i]]=(x.foods[slFoods[i]]||0)+1;if(slStage(x)===2&&[0,3,7].includes(x.evolution)&&slFoods[i]==='독버섯')x.stage3Poison=(x.stage3Poison||0)+1;
  const [dh,de,dc]=slFoodEffects[i];x.happy=Math.max(0,Math.min(100,x.happy+dh));x.energy=Math.max(0,Math.min(100,x.energy+de));x.clean=Math.max(0,Math.min(100,x.clean+dc));slGainExp(x,8);
  slState.actions++;if(slAfterCare(x))return;slSave();slShow('slHome');slRender();$('slMessage').textContent=slFoods[i]+'을(를) 먹었어요! (총 '+x.foods[slFoods[i]]+'회)';
  const c=$('slCreature');c.classList.remove('sl-happy');void c.offsetWidth;c.classList.add('sl-happy');
