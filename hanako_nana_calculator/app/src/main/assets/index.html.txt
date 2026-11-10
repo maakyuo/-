@@ -1623,8 +1623,14 @@ function slAfterCare(x){const danger=x.happy===0||x.energy===0||x.clean===0;x.da
 function slPixelSvg(cells){return '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">'+cells.map(([x,y,w,h,color])=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+color+'"/>').join('')+'</svg>';}
 function slEvolvedSprite(i){
  if(i===0||i===3||i===7)return slSprite(i===0?0:i===3?1:2).replace('viewBox="0 0 16 16"','viewBox="1 1 14 14"');
- if(i===8){const a=[];const rows=[[1,15],[2,14],[3,13],[4,12],[5,11],[6,10],[6,10],[7,9],[7,9],[8,9]];rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1;const c=edge?'#167f87':y<3?'#91f9cd':y<6?'#4cddb6':'#b5ffe0';a.push([x,y+3,1,1,c]);}});a.push([5,6,2,1,'#d9fff2'],[10,6,2,1,'#d9fff2'],[6,8,1,1,'#1a6373'],[10,8,1,1,'#1a6373'],[4,4,2,1,'#d5fff1'],[12,5,2,1,'#80f5db']);return slPixelSvg(a);}
- if(i===9){const a=[];const rows=[[5,11],[3,13],[2,14],[1,15],[1,15],[1,15],[1,15],[2,14],[2,14],[3,13],[3,13],[4,12],[4,7],[4,7],[9,12],[9,12]];rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1;let c=edge?'#277f29':x<l+3?'#b4ff4d':y>8?'#53aa27':'#79dc36';a.push([x,y,1,1,c]);}});a.push([5,7,2,2,'#1e4620'],[10,7,2,2,'#1e4620'],[7,10,2,1,'#1e4620'],[2,11,2,1,'#d6ff77'],[12,5,2,1,'#d6ff77'],[12,10,1,1,'#d6ff77']);return slPixelSvg(a);}
+ if(i===8){const a=[];
+ const rows=[[4,12],[2,14],[1,15],[0,16],[1,15],[2,14],[3,13],[2,14],[3,13],[4,12],[5,11],[6,10],[7,9],[7,9]];
+ rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1;let c=edge?'#148a8c':y<4?'#91f9cd':y<8?'#42d8b9':'#4bcfae';if(y>=7&&x>=l+2&&x<r-2)c='#9cf7d4';a.push([x,y+1,1,1,c]);}});
+ [[0,4],[1,3],[2,2],[3,2],[12,2],[13,1],[14,2],[15,3],[0,10],[1,11],[14,9],[15,8],[4,13],[11,12]].forEach(([x,y],j)=>a.push([x,y,1,1,j%3===0?'#e3fff5':'#76f4d1']));
+ [[3,4],[4,4],[5,4],[6,4],[7,5],[8,5],[9,5],[10,5],[11,4],[12,4],[4,9],[5,10],[6,10],[7,11],[8,11],[9,10],[10,10]].forEach(([x,y])=>a.push([x,y,1,1,'#d0fff0']));
+ a.push([5,6,2,2,'#124d66'],[10,6,2,2,'#124d66'],[7,9,2,1,'#124d66']);
+ return slPixelSvg(a);}
+ if(i===9){const a=[];const rows=[[5,11],[3,13],[2,14],[1,15],[1,15],[1,15],[1,15],[2,14],[2,14],[3,13],[3,13],[4,12],[4,7],[4,7],[9,12],[9,12]];rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1;let c=edge?'#277f29':x<l+3?'#b4ff4d':y>8?'#53aa27':'#79dc36';a.push([x,y,1,1,c]);}});a.push([5,5,2,2,'#1e4620'],[10,5,2,2,'#1e4620'],[7,8,2,1,'#1e4620'],[2,11,2,1,'#d6ff77'],[12,5,2,1,'#d6ff77'],[12,10,1,1,'#d6ff77']);return slPixelSvg(a);}
  if(i>=4){const a=[];if(i===4){
  const rows=[[7,9],[7,9],[6,10],[5,11],[4,12],[3,13],[2,14],[2,14],[1,15],[1,15],[1,15],[2,14],[3,13],[4,12],[6,10]];
  rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1||y===0||y===14;let color=edge?'#075bb9':x<=l+2?'#29c4e6':x>=r-3?'#1684ce':'#08a9cf';if(y<5&&x>7)color=edge?'#075bb9':'#1684ce';a.push([x,y,1,1,color]);}});
