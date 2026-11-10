@@ -1599,7 +1599,7 @@ function slEvolutionRender(){
 $('slScreen').addEventListener('click',e=>{
  const a=e.target.closest('[data-sl-action]');if(a){
   const x=slCurrent(),type=a.dataset.slAction,cap=n=>Math.max(0,Math.min(100,n));if(!x){$('slMessage').textContent='육성할 슬라임이 없습니다.';return;}
-  if(type==='feed'){slShow('slFoods');return;}if(type==='evolve'){if(x.evolution!==undefined){$('slMessage').textContent='이미 2단계로 진화한 슬라임입니다.';return;}if(x.kind===5&&x.level===1){x.persistenceClicks=(x.persistenceClicks||0)+1;slSave();}if(x.level<10&&x.kind!==5){$('slMessage').textContent='레벨 10부터 진화할 수 있습니다.';return;}if(x.kind!==0&&x.kind!==1&&x.kind!==2&&x.kind!==3&&x.kind!==4&&x.kind!==5){$('slMessage').textContent='이 슬라임의 진화체는 아직 준비 중입니다.';return;}slShow('slEvolve');return;}
+  if(type==='feed'){slShow('slFoods');return;}if(type==='evolve'){if(x.evolution!==undefined){$('slMessage').textContent='이미 2단계로 진화한 슬라임입니다.';return;}if(x.kind===5&&x.level===1){x.persistenceClicks=(x.persistenceClicks||0)+1;slSave();}const available=slEvolutions.some((e,i)=>e.kind===x.kind&&(x.level>=10||i===18)&&e.eligible(x));if(!available){$('slMessage').textContent=x.kind===5&&x.level===1?'진화 조건 미충족: 집념의 슬라임 '+(x.persistenceClicks||0)+'/100회':'아직 충족한 진화 조건이 없습니다.';return;}slShow('slEvolve');return;}
   if(x.kind===5&&x.evolution===undefined&&type!=='clean')x.saintBroken=true;
   if(type==='rest'){x.restCount=(x.restCount||0)+1;x.energy=cap(x.energy+30);x.happy=cap(x.happy+5);x.clean=cap(x.clean-10);}
   else if(type==='feed'){x.happy=cap(x.happy+12);x.energy=cap(x.energy+10);x.clean=cap(x.clean-6);}
