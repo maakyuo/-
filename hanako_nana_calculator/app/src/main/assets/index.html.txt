@@ -616,6 +616,9 @@ body.theme-active .app :is(.result,.lab-status){color:var(--white)!important;}
 .app.slime-mode .mission3,.app.slime-mode .mission4,.app.slime-mode .mission5,.app.slime-mode .mission6,.app.slime-mode .mission7,.app.slime-mode .theme-screen,.app.slime-mode .kanna-secret-screen,.app.slime-mode .cardbattle-screen,.app.slime-mode .gomoku-screen,.app.slime-mode .display,.app.slime-mode .key-area,.app.slime-mode .footer,.app.slime-mode #missionBtn{display:none!important}
 .sl-title{text-align:center;color:var(--pink);font-weight:800;font-size:22px}
 .sl-panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px}
+.sl-habitat[data-sl-rank="희귀"]{background:radial-gradient(ellipse at 50% 90%,#294f85 0%,#1d304b 45%,#171923 80%)}
+.sl-habitat[data-sl-rank="영웅"]{background:radial-gradient(ellipse at 50% 90%,#624080 0%,#332342 45%,#171923 80%)}
+.sl-habitat[data-sl-rank="전설"]{background:radial-gradient(ellipse at 50% 90%,#79662b 0%,#40391f 45%,#171923 80%)}
 .sl-habitat{height:210px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 90%,#384c43 0%,#202e31 45%,#171923 80%);border-radius:14px;overflow:hidden}
 .sl-creature{width:126px;height:105px;border-radius:55% 55% 43% 43%;position:relative;background:var(--sl-color);box-shadow:inset -14px -14px 0 #0003,inset 9px 10px 0 #fff4,0 12px 18px #0005;animation:slBounce 2.5s ease-in-out infinite;transition:transform .2s}
 .sl-creature:before{content:'';position:absolute;left:29px;top:44px;width:13px;height:17px;border-radius:50%;background:#17202b;box-shadow:53px 0 #17202b}
@@ -1550,7 +1553,10 @@ const slEvolutions=[
  {name:'큰 파란 슬라임',kind:1,rank:'일반',condition:'파란 슬라임 레벨 10',eligible:x=>true},
  {name:'물 슬라임',kind:1,rank:'희귀',condition:'파란 슬라임 레벨 10 · 해초 누적 10회 이상 섭취',eligible:x=>(x.foods?.['해초']||0)>=10},
  {name:'빙결 슬라임',kind:1,rank:'희귀',condition:'파란 슬라임 레벨 10 · 얼음 누적 10회 이상 섭취',eligible:x=>(x.foods?.['얼음']||0)>=10},
- {name:'비애 슬라임',kind:1,rank:'영웅',condition:'파란 슬라임 레벨 10 · 얼음 누적 20회 이상 섭취 · 행복도 0 · 청결도 0',eligible:x=>(x.foods?.['얼음']||0)>=20&&x.happy===0&&x.clean===0}
+ {name:'비애 슬라임',kind:1,rank:'영웅',condition:'파란 슬라임 레벨 10 · 얼음 누적 20회 이상 섭취 · 행복도 0 · 청결도 0',eligible:x=>(x.foods?.['얼음']||0)>=20&&x.happy===0&&x.clean===0},
+ {name:'큰 초록 슬라임',kind:2,rank:'일반',condition:'초록 슬라임 레벨 10',eligible:x=>true},
+ {name:'바람 슬라임',kind:2,rank:'희귀',condition:'초록 슬라임 레벨 10 · 민들레 누적 10회 이상 섭취',eligible:x=>(x.foods?.['민들레']||0)>=10},
+ {name:'산성 슬라임',kind:2,rank:'희귀',condition:'초록 슬라임 레벨 10 · 버섯 누적 10회 이상 섭취 · 독버섯 누적 5회 이상 섭취',eligible:x=>(x.foods?.['버섯']||0)>=10&&(x.foods?.['독버섯']||0)>=5}
 ];
 const slKey='hanako_slime_nursery_v1';
 let slState;
@@ -1561,7 +1567,7 @@ function slCurrent(){return slState.slimes.find(x=>x.id===slState.active)||slSta
 function slShow(page){['slHome','slStorage','slEggs','slDex','slFoods','slEvolve'].forEach(x=>$(x).hidden=x!==page);if(page==='slFoods')slFoodRender();if(page==='slStorage')slStorageRender();if(page==='slEggs')$('slEggCount').textContent='보유한 알: '+slState.eggs+'개';if(page==='slDex')slDexRender();if(page==='slEvolve')slEvolutionRender();}
 function slRender(){
  const a=slCurrent();if(!a){$('slName').textContent='육성 중인 슬라임 없음';$('slRank').textContent='';$('slCreature').innerHTML='';$('slBars').innerHTML='';$('slMessage').textContent='슬라임이 없습니다. 알을 부화시키세요.';return;}if(a.level>=slLevelCap(a)){a.level=slLevelCap(a);a.exp=0;}const k=a.evolution!==undefined?slEvolutions[a.evolution]:slKinds[a.kind];$('slName').textContent=(a.nickname||k.name)+' · 레벨 '+a.level;$('slRank').textContent=k.rank+' · '+(a.evolution!==undefined?'2':'1')+'단계';
- const c=$('slCreature');c.className='sl-pixel'+(a.evolution===5?' sl-frozen':'');c.innerHTML=a.evolution!==undefined?slEvolvedSprite(a.evolution):slSprite(a.kind);
+ const habitat=$('slCreature').parentElement;habitat.dataset.slRank=k.rank;const c=$('slCreature');c.className='sl-pixel'+(a.evolution===5?' sl-frozen':'');c.innerHTML=a.evolution!==undefined?slEvolvedSprite(a.evolution):slSprite(a.kind);
  $('slBars').innerHTML=[['경험치',a.exp],['행복도',a.happy],['활력',a.energy],['청결',a.clean]].map(([n,v])=>'<div><label>'+n+' '+v+'%</label><div class="sl-meter"><i style="width:'+v+'%"></i></div></div>').join('');if(a.dangerTurns>0)$('slMessage').textContent='위험 상태! 남은 회복 기회 '+(3-a.dangerTurns)+'회';
 }
 function slEnter(){if(!slState)slLoad();app.classList.remove('theme-mode','kanna-secret-mode','cardbattle-mode','gomoku-mode','mission4-mode','mission6-mode','mission7-mode');app.classList.add('mission-mode','mission5-mode','slime-mode');missionBtn.textContent='NULL';$('tag').textContent='NULL';$('brandName').textContent='슬라임 육성';$('secretCode').textContent='NULL';$('slMessage').textContent='';slShow('slHome');slRender();}
@@ -1583,7 +1589,7 @@ function slEvolutionRender(){
 $('slScreen').addEventListener('click',e=>{
  const a=e.target.closest('[data-sl-action]');if(a){
   const x=slCurrent(),type=a.dataset.slAction,cap=n=>Math.max(0,Math.min(100,n));if(!x){$('slMessage').textContent='육성할 슬라임이 없습니다.';return;}
-  if(type==='feed'){slShow('slFoods');return;}if(type==='evolve'){if(x.evolution!==undefined){$('slMessage').textContent='이미 2단계로 진화한 슬라임입니다.';return;}if(x.level<10){$('slMessage').textContent='레벨 10부터 진화할 수 있습니다.';return;}if(x.kind!==0&&x.kind!==1){$('slMessage').textContent='이 슬라임의 진화체는 아직 준비 중입니다.';return;}slShow('slEvolve');return;}
+  if(type==='feed'){slShow('slFoods');return;}if(type==='evolve'){if(x.evolution!==undefined){$('slMessage').textContent='이미 2단계로 진화한 슬라임입니다.';return;}if(x.level<10){$('slMessage').textContent='레벨 10부터 진화할 수 있습니다.';return;}if(x.kind!==0&&x.kind!==1&&x.kind!==2){$('slMessage').textContent='이 슬라임의 진화체는 아직 준비 중입니다.';return;}slShow('slEvolve');return;}
   if(type==='rest'){x.energy=cap(x.energy+30);x.happy=cap(x.happy+5);x.clean=cap(x.clean-10);}
   else if(type==='feed'){x.happy=cap(x.happy+12);x.energy=cap(x.energy+10);x.clean=cap(x.clean-6);}
   else if(type==='play'){x.happy=cap(x.happy+16);x.energy=cap(x.energy-12);x.clean=cap(x.clean-5);}
@@ -1616,7 +1622,9 @@ function slGainExp(x,amount){const max=slLevelCap(x);if(x.level>=max){x.level=ma
 function slAfterCare(x){const danger=x.happy===0||x.energy===0||x.clean===0;x.dangerTurns=danger?(x.dangerTurns||0)+1:0;if(x.dangerTurns<3)return false;slState.discovered=Array.from(new Set([...(slState.discovered||[]),x.kind]));slState.slimes=slState.slimes.filter(z=>z.id!==x.id);slState.active=slState.slimes[0]?.id||null;slSave();slShow('slHome');slRender();$('slMessage').textContent=slKinds[x.kind].name+'이(가) 사망했습니다. 보관함에서 제거되었습니다.';return true;}
 function slPixelSvg(cells){return '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">'+cells.map(([x,y,w,h,color])=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+color+'"/>').join('')+'</svg>';}
 function slEvolvedSprite(i){
- if(i===0||i===3)return slSprite(i===0?0:1).replace('viewBox="0 0 16 16"','viewBox="1 1 14 14"');
+ if(i===0||i===3||i===7)return slSprite(i===0?0:i===3?1:2).replace('viewBox="0 0 16 16"','viewBox="1 1 14 14"');
+ if(i===8){const a=[];const rows=[[1,15],[2,14],[3,13],[4,12],[5,11],[6,10],[6,10],[7,9],[7,9],[8,9]];rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1;const c=edge?'#167f87':y<3?'#91f9cd':y<6?'#4cddb6':'#b5ffe0';a.push([x,y+3,1,1,c]);}});a.push([5,6,2,1,'#d9fff2'],[10,6,2,1,'#d9fff2'],[6,8,1,1,'#1a6373'],[10,8,1,1,'#1a6373'],[4,4,2,1,'#d5fff1'],[12,5,2,1,'#80f5db']);return slPixelSvg(a);}
+ if(i===9){const a=[];const rows=[[5,11],[3,13],[2,14],[1,15],[1,15],[1,15],[1,15],[2,14],[2,14],[3,13],[3,13],[4,12],[4,7],[4,7],[9,12],[9,12]];rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1;let c=edge?'#277f29':x<l+3?'#b4ff4d':y>8?'#53aa27':'#79dc36';a.push([x,y,1,1,c]);}});a.push([5,7,2,2,'#1e4620'],[10,7,2,2,'#1e4620'],[7,10,2,1,'#1e4620'],[2,11,2,1,'#d6ff77'],[12,5,2,1,'#d6ff77'],[12,10,1,1,'#d6ff77']);return slPixelSvg(a);}
  if(i>=4){const a=[];if(i===4){
  const rows=[[7,9],[7,9],[6,10],[5,11],[4,12],[3,13],[2,14],[2,14],[1,15],[1,15],[1,15],[2,14],[3,13],[4,12],[6,10]];
  rows.forEach(([l,r],y)=>{for(let x=l;x<r;x++){const edge=x===l||x===r-1||y===0||y===14;let color=edge?'#075bb9':x<=l+2?'#29c4e6':x>=r-3?'#1684ce':'#08a9cf';if(y<5&&x>7)color=edge?'#075bb9':'#1684ce';a.push([x,y,1,1,color]);}});
