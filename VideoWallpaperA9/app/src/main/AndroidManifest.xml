@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ <uses-permission android:name="android.permission.SET_WALLPAPER"/>
  <uses-feature android:name="android.software.live_wallpaper" android:required="true"/>
  <application android:label="Video Wallpaper A9" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false">
   <activity android:name=".MainActivity" android:exported="true">
