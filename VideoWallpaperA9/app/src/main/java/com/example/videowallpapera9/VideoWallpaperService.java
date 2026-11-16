@@ -12,7 +12,6 @@ public class VideoWallpaperService extends WallpaperService {
   MediaPlayer player;
   boolean visible, surfaceReady, prepared;
   long modified=-1;
-  Surface outputSurface;
   void status(String msg){Log.i(TAG,msg);getSharedPreferences("wallpaper_status",MODE_PRIVATE).edit().putString("status",msg).apply();}
   @Override public void onSurfaceCreated(SurfaceHolder h){super.onSurfaceCreated(h);surfaceReady=true;sync();}
   @Override public void onSurfaceChanged(SurfaceHolder h,int format,int w,int height){super.onSurfaceChanged(h,format,w,height);surfaceReady=true;sync();}
@@ -34,8 +33,7 @@ public class VideoWallpaperService extends WallpaperService {
     p.setDataSource(f.getAbsolutePath());
     // WallpaperService surfaces reject the keep-screen-on flag used by setDisplay().
     // A plain Surface avoids SurfaceHolder.setKeepScreenOn().
-    outputSurface=new Surface(getSurfaceHolder().getSurface());
-    p.setSurface(outputSurface);
+    p.setSurface(getSurfaceHolder().getSurface());
     p.setLooping(true);p.setVolume(0,0);
     p.setOnPreparedListener(mp->{
      if(player!=mp)return;
@@ -51,7 +49,7 @@ public class VideoWallpaperService extends WallpaperService {
     status("영상 불러오는 중...");
    }catch(Exception e){status("파일 열기 실패: "+e.getMessage());release();}
   }
-  void release(){MediaPlayer p=player;player=null;prepared=false;modified=-1;if(p!=null){try{p.release();}catch(Exception ignored){}}if(outputSurface!=null){outputSurface.release();outputSurface=null;}}
+  void release(){MediaPlayer p=player;player=null;prepared=false;modified=-1;if(p!=null){try{p.release();}catch(Exception ignored){}}}
   @Override public void onDestroy(){release();super.onDestroy();}
  }
 }
