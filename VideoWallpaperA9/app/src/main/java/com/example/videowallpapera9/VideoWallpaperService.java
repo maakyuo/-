@@ -2,40 +2,51 @@ package com.example.videowallpapera9;
 import android.media.MediaPlayer;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
+import android.util.Log;
 import java.io.File;
 public class VideoWallpaperService extends WallpaperService {
+ static final String TAG="VideoWallpaperA9";
  @Override public Engine onCreateEngine(){return new VideoEngine();}
  class VideoEngine extends Engine {
-  private MediaPlayer player;
-  private boolean visible=false, surfaceReady=false, prepared=false;
-  private long loadedModified=-1;
-  @Override public void onSurfaceCreated(SurfaceHolder holder){super.onSurfaceCreated(holder);surfaceReady=true;syncPlayback();}
-  @Override public void onSurfaceChanged(SurfaceHolder holder,int format,int width,int height){super.onSurfaceChanged(holder,format,width,height);syncPlayback();}
-  @Override public void onSurfaceDestroyed(SurfaceHolder holder){surfaceReady=false;release();super.onSurfaceDestroyed(holder);}
-  @Override public void onVisibilityChanged(boolean v){visible=v;syncPlayback();}
-  private void syncPlayback(){
-   if(!surfaceReady){return;}
-   File file=new File(getFilesDir(),"wallpaper.mp4");
-   if(!file.exists()){release();return;}
-   if(player!=null && loadedModified!=file.lastModified())release();
-   if(player==null){if(visible)startVideo(file);return;}
+  MediaPlayer player;
+  boolean visible, surfaceReady, prepared;
+  long modified=-1;
+  void status(String msg){Log.i(TAG,msg);getSharedPreferences("wallpaper_status",MODE_PRIVATE).edit().putString("status",msg).apply();}
+  @Override public void onSurfaceCreated(SurfaceHolder h){super.onSurfaceCreated(h);surfaceReady=true;sync();}
+  @Override public void onSurfaceChanged(SurfaceHolder h,int format,int w,int height){super.onSurfaceChanged(h,format,w,height);surfaceReady=true;sync();}
+  @Override public void onVisibilityChanged(boolean v){visible=v;sync();}
+  @Override public void onSurfaceDestroyed(SurfaceHolder h){surfaceReady=false;release();super.onSurfaceDestroyed(h);}
+  void sync(){
+   if(!surfaceReady)return;
+   File f=new File(getFilesDir(),"wallpaper.mp4");
+   if(!f.isFile()||f.length()==0){status("영상 파일이 없거나 비어 있습니다.");release();return;}
+   if(player!=null&&modified!=f.lastModified())release();
+   if(player==null){startVideo(f);return;}
    if(!prepared)return;
    try{if(visible){if(!player.isPlaying())player.start();}else if(player.isPlaying())player.pause();}
-   catch(IllegalStateException e){release();}
+   catch(Exception e){status("재생 전환 실패: "+e.getMessage());release();}
   }
-  private void startVideo(File file){
+  void startVideo(File f){
    try{
-    MediaPlayer p=new MediaPlayer();player=p;prepared=false;loadedModified=file.lastModified();
-    p.setDataSource(file.getAbsolutePath());
+    MediaPlayer p=new MediaPlayer();player=p;prepared=false;modified=f.lastModified();
+    p.setDataSource(f.getAbsolutePath());
     p.setDisplay(getSurfaceHolder());
-    p.setLooping(true);p.setVolume(0f,0f);
-    p.setVideoScalingMode(getSharedPreferences("MainActivity",MODE_PRIVATE).getInt("fit",0)==0?MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING:MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
-    p.setOnPreparedListener(mp->{if(player!=mp)return;prepared=true;syncPlayback();});
-    p.setOnErrorListener((mp,what,extra)->{if(player==mp)release();return true;});
+    p.setLooping(true);p.setVolume(0,0);
+    p.setOnPreparedListener(mp->{
+     if(player!=mp)return;
+     try{
+      int fit=getSharedPreferences("MainActivity",MODE_PRIVATE).getInt("fit",0);
+      mp.setVideoScalingMode(fit==0?MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING:MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT);
+      prepared=true;status("영상 준비 완료: "+mp.getVideoWidth()+"x"+mp.getVideoHeight());
+      sync();
+     }catch(Exception e){status("영상 준비 실패: "+e.getMessage());release();}
+    });
+    p.setOnErrorListener((mp,what,extra)->{status("재생 오류: "+what+" / "+extra);if(player==mp)release();return true;});
     p.prepareAsync();
-   }catch(Exception e){release();}
+    status("영상 불러오는 중...");
+   }catch(Exception e){status("파일 열기 실패: "+e.getMessage());release();}
   }
-  private void release(){MediaPlayer p=player;player=null;prepared=false;loadedModified=-1;if(p!=null){try{p.release();}catch(Exception ignored){}}}
+  void release(){MediaPlayer p=player;player=null;prepared=false;modified=-1;if(p!=null){try{p.release();}catch(Exception ignored){}}}
   @Override public void onDestroy(){release();super.onDestroy();}
  }
 }
